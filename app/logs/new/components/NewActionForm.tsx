@@ -7,6 +7,8 @@ import { EffectField } from "./EffectField";
 import { MealFields } from "./MealFields";
 import { ScoreFields } from "./ScoreFields";
 import { WaterFields } from "./WaterFields";
+import { TreadmillFields } from "./TreadmillFields";
+import { StrengthFields } from "./StrengthFields";
 
 type NewActionFormProps = {
   selectedType: string;
@@ -29,6 +31,8 @@ export function NewActionForm({
   const showEnergy = config.fields.includes("energy");
   const showIntensity = config.fields.includes("intensity");
   const showWater = config.fields.includes("water");
+  const showTreadmill = config.fields.includes("treadmill");
+  const showStrength = config.fields.includes("strength");
   return (
     <>
       <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)] rounded">
@@ -99,9 +103,10 @@ export function NewActionForm({
             placeholder={config.titlePlaceholder}
           />
         </label>
-
         {showMeal ? <MealFields /> : null}
         {showWater ? <WaterFields /> : null}
+        {showTreadmill ? <TreadmillFields /> : null}
+        {showStrength ? <StrengthFields /> : null}
         <ScoreFields
           showMood={showMood}
           showEnergy={showEnergy}

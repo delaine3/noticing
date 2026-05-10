@@ -3,6 +3,8 @@ export type ConditionalField =
   | "meal"
   | "water"
   | "mood"
+  | "treadmill"
+  | "strength"
   | "energy"
   | "intensity";
 
@@ -109,21 +111,23 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Treadmill walk": {
-    heading: "Treadmill rep. Count it.",
-    instruction: "Log time, duration, and whether it helped.",
+    heading: "Treadmill rep. Count it properly.",
+    instruction: "Log time and distance. Pace gets calculated automatically.",
     titleLabel: "Treadmill note",
-    titlePlaceholder: "Example: 30 min incline walk, easy pace",
-    notesPlaceholder: "Reading? Incline? Energy after?",
-    fields: ["effect", "energy", "intensity"],
+    titlePlaceholder: "Example: incline walk, easy pace, reading walk",
+    notesPlaceholder:
+      "Incline, book, energy after, anything worth remembering.",
+    fields: ["treadmill", "effect", "energy", "intensity"],
   },
 
   "Strength training": {
-    heading: "Strength work logged.",
-    instruction: "Track the session without overcomplicating it.",
+    heading: "Strength work. Receipts required.",
+    instruction:
+      "List the workout, sets, reps, and weight. Volume and records will be calculated.",
     titleLabel: "Workout focus",
     titlePlaceholder: "Example: triceps, legs, full body",
-    notesPlaceholder: "Sets, body feel, anything worth remembering.",
-    fields: ["effect", "energy", "intensity"],
+    notesPlaceholder: "Body feel, soreness, form notes, anything useful.",
+    fields: ["strength", "effect", "energy", "intensity"],
   },
 
   Reading: {

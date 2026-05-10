@@ -154,13 +154,17 @@ export function TodayCommandCenter({
               {totalWaterMl}ml
             </p>
             <p className="mt-1 text-md text-[var(--ink-soft)]">
-              {totalWaterMl >= 1500
-                ? "Hydrated citizen behavior."
-                : totalWaterMl >= 750
-                  ? "Acceptable. Keep going."
-                  : totalWaterMl > 0
-                    ? "Too low. Add another glass."
-                    : "No water logged yet."}
+              {totalWaterMl >= 2500
+                ? "Ya get the hydration award today kid!⭐"
+                : totalWaterMl >= 2000
+                  ? "This is good, but you can do better."
+                  : totalWaterMl >= 1500
+                    ? "You're close to decent. Just 500ml more, just do it."
+                    : totalWaterMl >= 750
+                      ? "Acceptable. Keep going."
+                      : totalWaterMl > 0
+                        ? "Too low. Add another glass."
+                        : "No water logged yet."}
             </p>
           </article>
 
@@ -270,6 +274,22 @@ export function TodayCommandCenter({
                               <h4 className="mt-1 font-semibold text-stone-950">
                                 {log.title || "Untitled action"}
                               </h4>
+                              {log.treadmill_duration_minutes &&
+                              log.treadmill_distance_km ? (
+                                <p className="mt-1 text-md font-medium text-[var(--leaf-dark)]">
+                                  {log.treadmill_duration_minutes} min ·{" "}
+                                  {log.treadmill_distance_km} km
+                                  {log.treadmill_pace_min_per_km
+                                    ? ` · ${log.treadmill_pace_min_per_km.toFixed(2)} min/km`
+                                    : ""}
+                                </p>
+                              ) : null}
+
+                              {log.workout_name ? (
+                                <p className="mt-1 text-md font-medium text-[var(--leaf-dark)]">
+                                  {log.workout_name}
+                                </p>
+                              ) : null}
                             </div>
                             {log.water_amount_ml ? (
                               <p className="mt-1 text-md font-medium text-[var(--leaf-dark)]">

@@ -36,6 +36,10 @@ export type InsightLog = {
   meal_source: string | null;
   occurred_at: string;
   water_amount_ml: number | null;
+  treadmill_duration_minutes: number | null;
+  treadmill_distance_km: number | null;
+  treadmill_pace_min_per_km: number | null;
+  workout_name: string | null;
 };
 export const effects = ["helpful", "neutral", "harmful"] as const;
 

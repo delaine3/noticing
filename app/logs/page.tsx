@@ -16,6 +16,10 @@ type Log = {
   meal_source: string | null;
   water_amount_ml: number | null;
   occurred_at: string;
+  treadmill_duration_minutes: number | null;
+  treadmill_distance_km: number | null;
+  treadmill_pace_min_per_km: number | null;
+  workout_name: string | null;
 };
 
 export default async function LogsPage() {

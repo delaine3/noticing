@@ -13,6 +13,10 @@ export type DailyLog = {
   meal_source: string | null;
   water_amount_ml: number | null;
   occurred_at: string;
+  treadmill_duration_minutes: number | null;
+  treadmill_distance_km: number | null;
+  treadmill_pace_min_per_km: number | null;
+  workout_name: string | null;
 };
 
 export type ReportItem = {
@@ -195,26 +199,40 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
   }
   const totalWaterMl = getTotalWaterMl(logs);
 
-  if (totalWaterMl >= 1500) {
+  if (totalWaterMl >= 2500) {
     report.push({
       label: "Water",
       status: "gold",
       emoji: "⭐",
-      message: `Water logged: ${totalWaterMl}ml. Hydrated citizen behavior.`,
+      message: `Water logged: ${totalWaterMl}ml. Ya get the hydration award today kid!⭐.`,
     });
-  } else if (totalWaterMl >= 750) {
+  } else if (totalWaterMl >= 2000) {
     report.push({
       label: "Water",
       status: "check",
       emoji: "✅",
-      message: `Water logged: ${totalWaterMl}ml. Acceptable, but do not get cocky.`,
+      message: `Water logged: ${totalWaterMl}ml. Acceptable, but do not get cocky🥳`,
+    });
+  } else if (totalWaterMl >= 1500) {
+    report.push({
+      label: "Water",
+      status: "check",
+      emoji: "✅",
+      message: `Water logged: ${totalWaterMl}ml. Keep Going!🤠`,
+    });
+  } else if (totalWaterMl >= 1000) {
+    report.push({
+      label: "Water",
+      status: "check",
+      emoji: "✅",
+      message: `Water logged: ${totalWaterMl}ml. Get in the game!🙄.`,
     });
   } else if (totalWaterMl > 0) {
     report.push({
       label: "Water",
       status: "warning",
       emoji: "👎",
-      message: `Only ${totalWaterMl}ml logged. That is decorative hydration. Drink more.`,
+      message: `Only ${totalWaterMl}ml logged. That is nothing. Drink more.`,
     });
   } else {
     report.push({

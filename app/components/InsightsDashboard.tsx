@@ -32,7 +32,61 @@ const chartColors = {
   warning: "#f4a261",
   danger: "#e76f51",
 };
+function getPaceStats(logs: InsightLog[]) {
+  const treadmillLogs = logs.filter(
+    (log) =>
+      log.log_type === "Treadmill walk" &&
+      log.treadmill_duration_minutes &&
+      log.treadmill_distance_km &&
+      log.treadmill_distance_km > 0,
+  );
 
+  const totalMinutes = treadmillLogs.reduce(
+    (sum, log) => sum + (log.treadmill_duration_minutes ?? 0),
+    0,
+  );
+
+  const totalKm = treadmillLogs.reduce(
+    (sum, log) => sum + (log.treadmill_distance_km ?? 0),
+    0,
+  );
+
+  return {
+    totalMinutes,
+    totalKm,
+    averagePace: totalKm > 0 ? totalMinutes / totalKm : null,
+  };
+}
+
+function formatPace(pace: number | null) {
+  if (pace === null) return "No data";
+
+  const minutes = Math.floor(pace);
+  const seconds = Math.round((pace - minutes) * 60);
+
+  return `${minutes}:${String(seconds).padStart(2, "0")} min/km`;
+}
+
+function isSameDay(date: string, target: Date) {
+  return date === target.toISOString().slice(0, 10);
+}
+
+function isSameWeek(date: string, target: Date) {
+  const value = new Date(`${date}T00:00:00`);
+  const diffMs = target.getTime() - value.getTime();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  return diffDays >= 0 && diffDays < 7;
+}
+
+function isSameMonth(date: string, target: Date) {
+  const value = new Date(`${date}T00:00:00`);
+
+  return (
+    value.getFullYear() === target.getFullYear() &&
+    value.getMonth() === target.getMonth()
+  );
+}
 function getDate(log: InsightLog) {
   return log.action_date || log.occurred_at.slice(0, 10);
 }
@@ -251,11 +305,24 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
   const scoreTrend = getScoreTrend(logs);
   const firstMealStats = getFirstMealStats(logs);
   const usefulTruth = getUsefulTruth(logs);
-
   const helpfulLogs = logs.filter((log) => log.effect === "helpful").length;
   const harmfulLogs = logs.filter((log) => log.effect === "harmful").length;
   const loggedDays = new Set(logs.map(getDate)).size;
   const totalWaterMl = getTotalWaterMl(logs);
+
+  const today = new Date();
+
+  const todayPace = getPaceStats(
+    logs.filter((log) => isSameDay(getDate(log), today)),
+  );
+
+  const weekPace = getPaceStats(
+    logs.filter((log) => isSameWeek(getDate(log), today)),
+  );
+
+  const monthPace = getPaceStats(
+    logs.filter((log) => isSameMonth(getDate(log), today)),
+  );
   return (
     <main className="app-bg min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
@@ -501,7 +568,43 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
               <p>🚨 After 6pm: {firstMealStats.codeRedCount}</p>
             </div>
           </article>
+          <section className="mt-5 grid gap-4 sm:grid-cols-3">
+            <article className="glass-card rounded p-5 shadow-sm">
+              <p className="text-sm font-medium text-[var(--ink-soft)]">
+                Today pace
+              </p>
+              <p className="mt-2 text-3xl font-semibold">
+                {formatPace(todayPace.averagePace)}
+              </p>
+              <p className="mt-1 text-sm text-[var(--ink-soft)]">
+                {todayPace.totalKm.toFixed(2)} km logged
+              </p>
+            </article>
 
+            <article className="glass-card rounded p-5 shadow-sm">
+              <p className="text-sm font-medium text-[var(--ink-soft)]">
+                Week pace
+              </p>
+              <p className="mt-2 text-3xl font-semibold">
+                {formatPace(weekPace.averagePace)}
+              </p>
+              <p className="mt-1 text-sm text-[var(--ink-soft)]">
+                {weekPace.totalKm.toFixed(2)} km logged
+              </p>
+            </article>
+
+            <article className="glass-card rounded p-5 shadow-sm">
+              <p className="text-sm font-medium text-[var(--ink-soft)]">
+                Month pace
+              </p>
+              <p className="mt-2 text-3xl font-semibold">
+                {formatPace(monthPace.averagePace)}
+              </p>
+              <p className="mt-1 text-sm text-[var(--ink-soft)]">
+                {monthPace.totalKm.toFixed(2)} km logged
+              </p>
+            </article>
+          </section>
           <article className="glass-card rounded-xl p-5 shadow-sm">
             <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Notes
