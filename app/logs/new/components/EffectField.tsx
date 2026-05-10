@@ -1,18 +1,27 @@
-import { effects } from "../../../lib/log-types";
+const effectOptions = [
+  { value: "restorative", label: "Restorative" },
+  { value: "helpful", label: "Helpful" },
+  { value: "neutral", label: "Neutral" },
+  { value: "unhelpful", label: "Unhelpful" },
+  { value: "harmful", label: "Harmful" },
+  { value: "detrimental", label: "Detrimental" },
+];
 
 export function EffectField() {
   return (
     <label className="block">
-      <span className="text-md font-medium text-stone-700">Effect</span>
+      <span className="text-md font-medium text-[var(--ink)]">Effect</span>
+
       <select
         name="effect"
-        className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+        className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-[var(--ink)] outline-none transition focus:border-[var(--leaf)] focus:bg-white"
         defaultValue=""
       >
         <option value="">Select effect</option>
-        {effects.map((effect) => (
-          <option key={effect} value={effect}>
-            {effect}
+
+        {effectOptions.map((effect) => (
+          <option key={effect.value} value={effect.value}>
+            {effect.label}
           </option>
         ))}
       </select>

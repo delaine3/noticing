@@ -4,12 +4,12 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Line,
   LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
+  Sector,
   Tooltip,
   XAxis,
   YAxis,
@@ -76,7 +76,84 @@ function formatSpeed(speed: number | null) {
 function formatDistance(distance: number) {
   return `${distance.toFixed(2)} km`;
 }
+export const effectStyles = {
+  restorative: {
+    label: "Restorative",
+    emoji: "⭐",
+    chartColor: "#f7c96b",
+    className: "border-[#f7c96b] bg-[#fff4c7] text-[#101636]",
+  },
+  helpful: {
+    label: "Helpful",
+    emoji: "🌿",
+    chartColor: "#8ee6be",
+    className: "border-[#8ee6be] bg-[#d9f8e8] text-[#101636]",
+  },
+  neutral: {
+    label: "Neutral",
+    emoji: "",
+    chartColor: "#a2ff85",
+    className: "border-[#cdebdc] bg-[#fffaf3] text-[#101636]",
+  },
+  unhelpful: {
+    label: "Unhelpful",
+    emoji: "🫠",
+    chartColor: "#ffd1c8",
+    className: "border-[#ffd1c8] bg-[#fff0e7] text-[#101636]",
+  },
+  harmful: {
+    label: "Harmful",
+    emoji: "⚠️",
+    chartColor: "#ffb199",
+    className: "border-[#ffb199] bg-[#ffe0d6] text-[#8f2f1f]",
+  },
+  detrimental: {
+    label: "Detrimental",
+    emoji: "🚨",
+    chartColor: "#ff7f91",
+    className: "border-[#ff7f91] bg-[#ffd7df] text-[#7a1f35]",
+  },
+} as const;
 
+type EffectKey = keyof typeof effectStyles;
+
+function getEffectStyle(effect: string) {
+  if (effect in effectStyles) {
+    return effectStyles[effect as EffectKey];
+  }
+
+  return effectStyles.neutral;
+}
+type EffectPieShapeProps = {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  fill?: string;
+  payload?: {
+    color?: string;
+  };
+};
+
+function EffectPieShape(props: EffectPieShapeProps) {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, payload } =
+    props;
+
+  return (
+    <Sector
+      cx={cx}
+      cy={cy}
+      innerRadius={innerRadius}
+      outerRadius={outerRadius}
+      startAngle={startAngle}
+      endAngle={endAngle}
+      fill={payload?.color ?? "#cdebdc"}
+    />
+  );
+}
 function formatPace(pace: number | null) {
   if (pace === null) return "No data";
 
@@ -145,14 +222,15 @@ function getActionCounts(logs: InsightLog[]) {
 }
 
 function getEffectCounts(logs: InsightLog[]) {
-  const effects = ["helpful", "neutral", "harmful"];
-
-  return effects.map((effect) => ({
+  return Object.entries(effectStyles).map(([effect, style]) => ({
     name: effect,
+    label: style.label,
+    emoji: style.emoji,
     value: logs.filter((log) => log.effect === effect).length,
+    color: style.chartColor,
+    className: style.className,
   }));
 }
-
 function getScoreTrend(logs: InsightLog[]) {
   const byDate = new Map<
     string,
@@ -464,21 +542,16 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                     <Pie
                       data={effectCounts}
                       dataKey="value"
-                      nameKey="name"
+                      nameKey="label"
                       outerRadius={95}
-                      label
-                    >
-                      {effectCounts.map((entry) => {
-                        const color =
-                          entry.name === "helpful"
-                            ? chartColors.blue
-                            : entry.name === "harmful"
-                              ? chartColors.danger
-                              : chartColors.gray;
+                      shape={<EffectPieShape />}
+                      label={(props) => {
+                        const value = Number(props.value ?? 0);
+                        const name = String(props.name ?? "");
 
-                        return <Cell key={entry.name} fill={color} />;
-                      })}
-                    </Pie>
+                        return value > 0 ? `${name}: ${value}` : "";
+                      }}
+                    />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
@@ -487,6 +560,17 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                   No effect data yet.
                 </p>
               )}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {effectCounts.map((effect) => (
+                  <span
+                    key={effect.name}
+                    className={`rounded border px-3 py-1 text-sm font-semibold ${effect.className}`}
+                  >
+                    {effect.emoji ? `${effect.emoji} ` : ""}
+                    {effect.label}: {effect.value}
+                  </span>
+                ))}
+              </div>
             </div>
           </article>
         </section>
@@ -563,6 +647,65 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </div>
         </section>
 
+        <section className="mt-5 grid gap-4 sm:grid-cols-3">
+          <article className="glass-card rounded p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
+              Today treadmill
+            </p>
+
+            <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
+              {formatSpeed(todayTreadmill.averageSpeedKmph)}
+            </p>
+
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
+              {formatDistance(todayTreadmill.totalKm)} ·{" "}
+              {todayTreadmill.totalMinutes.toFixed(0)} min
+            </p>
+
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
+              Pace: {formatPace(todayTreadmill.averagePaceMinPerKm)}
+            </p>
+          </article>
+
+          <article className="glass-card rounded p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
+              Week treadmill
+            </p>
+
+            <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
+              {formatSpeed(weekTreadmill.averageSpeedKmph)}
+            </p>
+
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
+              {formatDistance(weekTreadmill.totalKm)} ·{" "}
+              {weekTreadmill.totalMinutes.toFixed(0)} min
+            </p>
+
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
+              Pace: {formatPace(weekTreadmill.averagePaceMinPerKm)}
+            </p>
+          </article>
+
+          <article className="glass-card rounded p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
+              Month treadmill
+            </p>
+
+            <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
+              {formatSpeed(monthTreadmill.averageSpeedKmph)}
+            </p>
+
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
+              {formatDistance(monthTreadmill.totalKm)} ·{" "}
+              {monthTreadmill.totalMinutes.toFixed(0)} min
+            </p>
+
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
+              Pace: {formatPace(monthTreadmill.averagePaceMinPerKm)}
+            </p>
+          </article>
+        </section>
+
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
@@ -587,64 +730,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
               <p>🚨 After 6pm: {firstMealStats.codeRedCount}</p>
             </div>
           </article>
-          <section className="mt-5 grid gap-4 sm:grid-cols-3">
-            <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-md font-medium text-[var(--ink-soft)]">
-                Today treadmill
-              </p>
 
-              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
-                {formatSpeed(todayTreadmill.averageSpeedKmph)}
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                {formatDistance(todayTreadmill.totalKm)} ·{" "}
-                {todayTreadmill.totalMinutes.toFixed(0)} min
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                Pace: {formatPace(todayTreadmill.averagePaceMinPerKm)}
-              </p>
-            </article>
-
-            <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-md font-medium text-[var(--ink-soft)]">
-                Week treadmill
-              </p>
-
-              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
-                {formatSpeed(weekTreadmill.averageSpeedKmph)}
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                {formatDistance(weekTreadmill.totalKm)} ·{" "}
-                {weekTreadmill.totalMinutes.toFixed(0)} min
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                Pace: {formatPace(weekTreadmill.averagePaceMinPerKm)}
-              </p>
-            </article>
-
-            <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-md font-medium text-[var(--ink-soft)]">
-                Month treadmill
-              </p>
-
-              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
-                {formatSpeed(monthTreadmill.averageSpeedKmph)}
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                {formatDistance(monthTreadmill.totalKm)} ·{" "}
-                {monthTreadmill.totalMinutes.toFixed(0)} min
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                Pace: {formatPace(monthTreadmill.averagePaceMinPerKm)}
-              </p>
-            </article>
-          </section>
           <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Notes

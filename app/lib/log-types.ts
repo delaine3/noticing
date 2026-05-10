@@ -41,8 +41,14 @@ export type InsightLog = {
   treadmill_pace_min_per_km: number | null;
   workout_name: string | null;
 };
-export const effects = ["helpful", "neutral", "harmful"] as const;
-
+export const effects = [
+  "restorative",
+  "helpful",
+  "neutral",
+  "unhelpful",
+  "harmful",
+  "detrimental",
+] as const;
 export const mealSizes = ["small", "medium", "large"] as const;
 
 export const mealSources = [

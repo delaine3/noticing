@@ -60,11 +60,13 @@ function getFirstLog(logs: DailyLog[], types: string[]) {
 }
 
 export function getEffectEmoji(effect: string | null) {
+  if (effect === "restorative") return "⭐";
   if (effect === "helpful") return "🌿";
+  if (effect === "unhelpful") return "🫠";
   if (effect === "harmful") return "⚠️";
+  if (effect === "detrimental") return "🚨";
   return "";
 }
-
 export function getTimeBuckets(logs: DailyLog[]): TimeBucket[] {
   const buckets: TimeBucket[] = [
     { label: "Before 10am", endTime: "10:00", logs: [] },
