@@ -261,7 +261,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       status: "demerit",
       emoji: "🚫",
       message:
-        "No movement logged. Tomorrow: five minutes counts. No speeches.",
+        "No movement logged. Do it now: five minutes counts. No speeches.",
     });
   }
 

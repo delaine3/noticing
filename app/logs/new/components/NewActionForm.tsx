@@ -47,7 +47,7 @@ export function NewActionForm({
 
       <form
         action={createLog}
-        className="mt-6 space-y-5 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
+        className="glass-card mt-6 space-y-5 rounded-3xl border border-stone-200 p-6 shadow-sm"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">

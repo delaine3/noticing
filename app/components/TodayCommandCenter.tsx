@@ -110,7 +110,7 @@ export function TodayCommandCenter({
           </p>
         </div>
 
-        <section className="rounded-3xl border border-green-200 bg-green-50 p-5 shadow-sm sm:p-6">
+        <section className="message-card rounded-3xl border border-green-200 shadow-sm sm:p-6">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-800">
             Next best action
           </p>
@@ -140,7 +140,7 @@ export function TodayCommandCenter({
           </div>
         </section>
 
-        <section className="mt-5 rounded-3xl border border-stone-200 bg-white p-5 shadow-sm">
+        <section className="glass-card rounded-3xl border border-stone-200 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
             Quick log
           </p>

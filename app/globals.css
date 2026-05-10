@@ -34,11 +34,19 @@
     ),
     linear-gradient(90deg, #ffa9b7 0%, #fffaf3 45%, #e4faef 75%, #d1f7f2 100%);
 }
-
+.message-card {
+  border: 1px solid rgba(205, 235, 220, 0.9);
+  background: rgba(255, 255, 255, 0.533);
+  backdrop-filter: blur(18px);
+  margin-top: 16px;
+  padding: 30px;
+}
 .glass-card {
   border: 1px solid rgba(205, 235, 220, 0.9);
-  background: rgba(255, 250, 243, 0.78);
+  background: rgba(255, 255, 255, 0.34);
   backdrop-filter: blur(18px);
+  margin-top: 16px;
+  padding: 30px;
 }
 
 .soft-card {

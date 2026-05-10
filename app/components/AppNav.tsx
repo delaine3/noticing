@@ -14,10 +14,13 @@ export function AppNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border-soft)] bg-[rgba(255,250,243,0.82)] backdrop-blur-xl">
-      <nav className="flex w-full items-center justify-between px-4 py-3 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--border-soft)] bg-[var(--mint)] text-base">
+    <header className="sticky top-0 z-40 h-16 border-b border-[rgba(36,81,61,0.14)] bg-[linear-gradient(90deg,_#ffa9b7_0%,_#fffaf3_45%,_#e4faef_75%,_#d1f7f2_100%)] backdrop-blur-xl">
+      <nav className="flex h-full w-full items-stretch justify-between">
+        <Link
+          href="/"
+          className="flex h-full items-center gap-2 px-4 transition hover:bg-white/30 sm:px-6"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-md border border-[rgba(36,81,61,0.16)] bg-[rgba(255,250,243,0.55)] text-base">
             🌿
           </span>
 
@@ -31,7 +34,7 @@ export function AppNav() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex h-full items-stretch overflow-x-auto border-l border-[rgba(36,81,61,0.14)]">
           {navItems.map((item) => {
             const isActive =
               item.href === "/"
@@ -42,10 +45,10 @@ export function AppNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition ${
+                className={`flex h-full items-center border-r border-[rgba(36,81,61,0.14)] px-4 text-sm font-medium transition sm:px-5 ${
                   isActive
-                    ? "bg-[var(--mint)] text-[var(--leaf-dark)]"
-                    : "text-[var(--ink-soft)] hover:bg-[var(--blush)] hover:text-[var(--ink)]"
+                    ? "bg-white/40 text-[var(--leaf-dark)]"
+                    : "text-[var(--ink-soft)] hover:bg-white/35 hover:text-[var(--ink)]"
                 }`}
               >
                 {item.label}
@@ -55,7 +58,7 @@ export function AppNav() {
 
           <Link
             href="/logs/new"
-            className="whitespace-nowrap rounded-md bg-[var(--leaf)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--leaf-dark)]"
+            className="flex h-full items-center bg-[rgba(63,127,99,0.88)] px-4 text-sm font-semibold text-white transition hover:bg-[rgba(36,81,61,0.94)] sm:px-5"
           >
             New log
           </Link>
