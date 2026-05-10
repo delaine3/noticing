@@ -32,7 +32,7 @@ export function NewActionForm({
   return (
     <>
       <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)] rounded">
-        <p className="text-sm font-medium uppercase tracking-[0.25em]">
+        <p className="text-md font-medium uppercase tracking-[0.25em]">
           Command
         </p>
 
@@ -49,7 +49,7 @@ export function NewActionForm({
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-medium text-stone-700">Action</span>
+            <span className="text-md font-medium text-stone-700">Action</span>
             <select
               name="log_type"
               required
@@ -70,7 +70,7 @@ export function NewActionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-sm font-medium text-stone-700">Date</span>
+            <span className="text-md font-medium text-stone-700">Date</span>
             <input
               name="action_date"
               type="date"
@@ -80,7 +80,7 @@ export function NewActionForm({
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-stone-700">Time</span>
+            <span className="text-md font-medium text-stone-700">Time</span>
             <input
               name="action_time"
               type="time"
@@ -90,7 +90,7 @@ export function NewActionForm({
         </div>
 
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">
+          <span className="text-md font-medium text-stone-700">
             {config.titleLabel}
           </span>
           <input
@@ -109,7 +109,7 @@ export function NewActionForm({
         />
 
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Notes</span>
+          <span className="text-md font-medium text-stone-700">Notes</span>
           <textarea
             name="notes"
             rows={5}

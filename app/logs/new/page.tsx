@@ -65,7 +65,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
   return (
     <main className="min-h-screen app-bg px-6 py-10 text-stone-950">
       <section className="mx-auto max-w-3xl">
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-700">
+        <p className="text-md font-medium uppercase tracking-[0.25em] text-green-700">
           New action
         </p>
 

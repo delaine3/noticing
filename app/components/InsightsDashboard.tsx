@@ -260,7 +260,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
     <main className="app-bg min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.25em] text-[var(--leaf-dark)]">
+          <p className="text-md font-medium uppercase tracking-[0.25em] text-[var(--leaf-dark)]">
             Insights
           </p>
 
@@ -274,8 +274,8 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
         </div>
 
-        <section className="glass-card mt-6 rounded p-5 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+        <section className="glass-card mt-6 rounded-xl p-5 shadow-sm">
+          <p className="text-md font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
             Current read
           </p>
 
@@ -289,29 +289,29 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
 
         <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-sm font-medium text-[var(--ink-soft)]">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
               Total logs
             </p>
             <p className="mt-2 text-3xl font-semibold">{logs.length}</p>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-sm font-medium text-[var(--ink-soft)]">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
               Days logged
             </p>
             <p className="mt-2 text-3xl font-semibold">{loggedDays}</p>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-sm font-medium text-[var(--ink-soft)]">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
               Helpful actions
             </p>
             <p className="mt-2 text-3xl font-semibold">{helpfulLogs}</p>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-sm font-medium text-[var(--ink-soft)]">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
+            <p className="text-md font-medium text-[var(--ink-soft)]">
               Harmful actions
             </p>
             <p className="mt-2 text-3xl font-semibold">{harmfulLogs}</p>
@@ -319,9 +319,9 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
 
         <section className="mt-5 grid gap-5 lg:grid-cols-2">
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
             <div className="mb-5">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+              <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
                 Actions
               </p>
               <h2 className="mt-2 text-xl font-semibold">
@@ -354,16 +354,16 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-[var(--ink-soft)]">
+                <p className="text-md text-[var(--ink-soft)]">
                   No action data yet.
                 </p>
               )}
             </div>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
             <div className="mb-5">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+              <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
                 Effect
               </p>
               <h2 className="mt-2 text-xl font-semibold">
@@ -397,22 +397,22 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-[var(--ink-soft)]">
+                <p className="text-md text-[var(--ink-soft)]">
                   No effect data yet.
                 </p>
               )}
             </div>
           </article>
         </section>
-        <article className="glass-card rounded p-5 shadow-sm">
-          <p className="text-sm font-medium text-[var(--ink-soft)]">
+        <article className="glass-card rounded-xl p-5 shadow-sm">
+          <p className="text-md font-medium text-[var(--ink-soft)]">
             Water logged
           </p>
           <p className="mt-2 text-3xl font-semibold">{totalWaterMl}ml</p>
         </article>
-        <section className="mt-5 glass-card rounded p-5 shadow-sm">
+        <section className="mt-5 glass-card rounded-xl p-5 shadow-sm">
           <div className="mb-5">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+            <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Scores
             </p>
             <h2 className="mt-2 text-xl font-semibold">
@@ -464,13 +464,13 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-sm text-[var(--ink-soft)]">
+              <p className="text-md text-[var(--ink-soft)]">
                 Add mood, energy, or intensity scores to see trends.
               </p>
             )}
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--ink-soft)]">
+          <div className="mt-4 flex flex-wrap gap-3 text-md text-[var(--ink-soft)]">
             <span>● Mood</span>
             <span>● Energy</span>
             <span>● Intensity</span>
@@ -478,14 +478,14 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
 
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
+            <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               First meal
             </p>
 
             <h2 className="mt-2 text-xl font-semibold">Meal timing audit</h2>
 
-            <div className="mt-5 space-y-3 text-sm text-[var(--ink-soft)]">
+            <div className="mt-5 space-y-3 text-md text-[var(--ink-soft)]">
               <p>
                 Average first meal:{" "}
                 <span className="font-semibold text-[var(--ink)]">
@@ -502,8 +502,8 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             </div>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+          <article className="glass-card rounded-xl p-5 shadow-sm">
+            <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Notes
             </p>
 

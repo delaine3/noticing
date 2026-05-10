@@ -33,7 +33,7 @@ export default async function LogsPage() {
       <section className="mx-auto max-w-5xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-700">
+            <p className="text-md font-medium uppercase tracking-[0.25em] text-green-700">
               Logs
             </p>
 
@@ -60,7 +60,7 @@ export default async function LogsPage() {
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm font-medium text-green-700">
+                    <p className="text-md font-medium text-green-700">
                       {log.log_type}
                     </p>
 
@@ -70,12 +70,12 @@ export default async function LogsPage() {
                   </div>
 
                   <div className="text-left sm:text-right">
-                    <time className="text-sm text-stone-500">
+                    <time className="text-md text-stone-500">
                       Created {new Date(log.occurred_at).toLocaleString()}
                     </time>
 
                     {log.action_date ? (
-                      <p className="mt-1 text-sm text-stone-500">
+                      <p className="mt-1 text-md text-stone-500">
                         Happened {log.action_date}
                         {log.action_time
                           ? ` at ${log.action_time.slice(0, 5)}`
@@ -89,7 +89,7 @@ export default async function LogsPage() {
                   <p className="mt-4 leading-7 text-stone-700">{log.notes}</p>
                 ) : null}
 
-                <div className="mt-5 flex flex-wrap gap-2 text-sm text-stone-700">
+                <div className="mt-5 flex flex-wrap gap-2 text-md text-stone-700">
                   {log.effect ? (
                     <span className="rounded-full bg-stone-100 px-3 py-1">
                       Effect: {log.effect}

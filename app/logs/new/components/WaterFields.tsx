@@ -1,16 +1,16 @@
 export function WaterFields() {
   return (
-    <section className="rounded border border-[var(--border-soft)] bg-[rgba(255,250,243,0.72)] p-4">
-      <h2 className="text-sm font-semibold text-[var(--ink)]">
+    <section className="rounded-xl border border-[var(--border-soft)] bg-[rgba(255,250,243,0.72)] p-4">
+      <h2 className="text-md font-semibold text-[var(--ink)]">
         Water quantity
       </h2>
 
-      <p className="mt-1 text-sm text-[var(--ink-soft)]">
+      <p className="mt-1 text-md text-[var(--ink-soft)]">
         Estimate is fine. The app needs direction, not courtroom evidence.
       </p>
 
       <label className="mt-4 block">
-        <span className="text-sm font-medium text-[var(--ink-soft)]">
+        <span className="text-md font-medium text-[var(--ink-soft)]">
           Amount in ml
         </span>
 

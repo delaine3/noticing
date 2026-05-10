@@ -17,7 +17,7 @@ export function ScoreFields({
     <div className="grid gap-4 sm:grid-cols-3">
       {showMood ? (
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Mood</span>
+          <span className="text-md font-medium text-stone-700">Mood</span>
           <input
             name="mood_score"
             type="number"
@@ -31,7 +31,7 @@ export function ScoreFields({
 
       {showEnergy ? (
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Energy</span>
+          <span className="text-md font-medium text-stone-700">Energy</span>
           <input
             name="energy_score"
             type="number"
@@ -45,7 +45,7 @@ export function ScoreFields({
 
       {showIntensity ? (
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Intensity</span>
+          <span className="text-md font-medium text-stone-700">Intensity</span>
           <input
             name="intensity_score"
             type="number"

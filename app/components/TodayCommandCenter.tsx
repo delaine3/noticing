@@ -153,7 +153,7 @@ export function TodayCommandCenter({
             <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
               {totalWaterMl}ml
             </p>
-            <p className="mt-1 text-sm text-[var(--ink-soft)]">
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
               {totalWaterMl >= 1500
                 ? "Hydrated citizen behavior."
                 : totalWaterMl >= 750
@@ -171,7 +171,7 @@ export function TodayCommandCenter({
             <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
               {logs.length}
             </p>
-            <p className="mt-1 text-sm text-[var(--ink-soft)]">Logged today.</p>
+            <p className="mt-1 text-md text-[var(--ink-soft)]">Logged today.</p>
           </article>
 
           <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
@@ -181,7 +181,7 @@ export function TodayCommandCenter({
             <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
               {report.length}
             </p>
-            <p className="mt-1 text-sm text-[var(--ink-soft)]">
+            <p className="mt-1 text-md text-[var(--ink-soft)]">
               Checks generated.
             </p>
           </article>
@@ -196,7 +196,7 @@ export function TodayCommandCenter({
               <Link
                 key={action.label}
                 href={action.href}
-                className="rounded border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-semibold text-stone-800 hover:border-green-400 hover:bg-green-50"
+                className="rounded border border-stone-200 bg-stone-50 px-4 py-3 text-md font-semibold text-stone-800 hover:border-green-400 hover:bg-green-50"
               >
                 {action.label}
               </Link>
@@ -225,7 +225,7 @@ export function TodayCommandCenter({
                         {item.label}
                       </h3>
 
-                      <p className="mt-1 text-sm leading-6 text-stone-700">
+                      <p className="mt-1 text-md leading-6 text-stone-700">
                         {item.message}
                       </p>
                     </div>
@@ -251,7 +251,7 @@ export function TodayCommandCenter({
                   </h3>
 
                   {bucket.logs.length === 0 ? (
-                    <p className="mt-3 text-sm text-stone-500">
+                    <p className="mt-3 text-md text-stone-500">
                       Nothing logged here.
                     </p>
                   ) : (
@@ -263,7 +263,7 @@ export function TodayCommandCenter({
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div>
-                              <p className="text-sm font-semibold text-green-700">
+                              <p className="text-md font-semibold text-green-700">
                                 {log.log_type} {getEffectEmoji(log.effect)}
                               </p>
 
@@ -272,11 +272,11 @@ export function TodayCommandCenter({
                               </h4>
                             </div>
                             {log.water_amount_ml ? (
-                              <p className="mt-1 text-sm font-medium text-[var(--leaf-dark)]">
+                              <p className="mt-1 text-md font-medium text-[var(--leaf-dark)]">
                                 {log.water_amount_ml}ml
                               </p>
                             ) : null}
-                            <p className="text-sm text-stone-500">
+                            <p className="text-md text-stone-500">
                               {log.action_time
                                 ? log.action_time.slice(0, 5)
                                 : "No time"}
@@ -284,7 +284,7 @@ export function TodayCommandCenter({
                           </div>
 
                           {log.notes ? (
-                            <p className="mt-3 text-sm leading-6 text-stone-700">
+                            <p className="mt-3 text-md leading-6 text-stone-700">
                               {log.notes}
                             </p>
                           ) : null}
