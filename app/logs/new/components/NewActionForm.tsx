@@ -30,8 +30,11 @@ export function NewActionForm({
 
   return (
     <>
-      <div className="mt-6 rounded-3xl border border-emerald-200 bg-emerald-950 p-5 text-white">
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-200">
+      <div
+        className="glass-card text-[var(--ink)] text-[var(--leaf-dark)]
+                   brand-button"
+      >
+        <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-200">
           Command
         </p>
 
@@ -39,7 +42,7 @@ export function NewActionForm({
           {config.heading}
         </h2>
 
-        <p className="mt-3 leading-7 text-emerald-50">{config.instruction}</p>
+        <p className="mt-3 leading-7 text-green-300">{config.instruction}</p>
       </div>
 
       <form
@@ -54,7 +57,7 @@ export function NewActionForm({
               required
               value={actionType}
               onChange={(event) => setActionType(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
+              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             >
               {actionTypes.map((type) => (
                 <option key={type} value={type}>
@@ -74,7 +77,7 @@ export function NewActionForm({
               name="action_date"
               type="date"
               defaultValue={today}
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
+              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             />
           </label>
 
@@ -83,7 +86,7 @@ export function NewActionForm({
             <input
               name="action_time"
               type="time"
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
+              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             />
           </label>
         </div>
@@ -94,7 +97,7 @@ export function NewActionForm({
           </span>
           <input
             name="title"
-            className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
+            className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             placeholder={config.titlePlaceholder}
           />
         </label>
@@ -112,14 +115,14 @@ export function NewActionForm({
           <textarea
             name="notes"
             rows={5}
-            className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
+            className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             placeholder={config.notesPlaceholder}
           />
         </label>
 
         <button
           type="submit"
-          className="rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-900"
+          className="rounded-full bg-green-800 px-6 py-3 text-sm font-semibold text-green-300 shadow-sm hover:bg-green-900"
         >
           Save action
         </button>

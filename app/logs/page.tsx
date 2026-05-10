@@ -28,11 +28,11 @@ export default async function LogsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-stone-50 px-6 py-10 text-stone-950">
+    <main className="min-h-screen app-bg px-6 py-10 text-stone-950">
       <section className="mx-auto max-w-5xl">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-700">
+            <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-700">
               Logs
             </p>
 
@@ -43,7 +43,7 @@ export default async function LogsPage() {
 
           <Link
             href="/logs/new"
-            className="rounded-full bg-emerald-800 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-900"
+            className="rounded-full bg-green-800 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-green-900"
           >
             New action
           </Link>
@@ -62,7 +62,7 @@ export default async function LogsPage() {
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm font-medium text-emerald-700">
+                    <p className="text-sm font-medium text-green-700">
                       {log.log_type}
                     </p>
 

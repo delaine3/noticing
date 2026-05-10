@@ -26,7 +26,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "First meal": {
-    heading: "Good. Feed the organism.",
+    heading: "Good. Feed the body.",
     instruction:
       "Log what you ate, when, how big it was, and where it came from.",
     titleLabel: "What did you eat?",

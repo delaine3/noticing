@@ -124,7 +124,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       status: "demerit",
       emoji: "🚫",
       message:
-        "No first meal logged. The organism was left unmanaged. Fix this tomorrow.",
+        "No first meal logged. The body was left unmanaged. Fix this tomorrow.",
     });
   } else if (firstMealMinutes !== null && firstMealMinutes < 10 * 60) {
     report.push({
@@ -222,7 +222,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       label: "Sunlight",
       status: "gold",
       emoji: "⭐",
-      message: "Sunlight before 2pm. Elite organism management.",
+      message: "Sunlight before 2pm. Elite body management.",
     });
   } else if (sunlightMinutes !== null && sunlightMinutes < 18 * 60) {
     report.push({

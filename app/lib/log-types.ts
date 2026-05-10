@@ -5,7 +5,7 @@ export const actionTypes = [
   "Dessert eaten",
   "Dessert craving",
   "Water",
-  "Wash Up",
+  "WashUp",
   "Sunlight",
   "Movement",
   "Exercise",
@@ -19,6 +19,7 @@ export const actionTypes = [
   "Recurring thought",
   "Social interaction",
   "Rest",
+  "Family system",
 ] as const;
 
 export const effects = ["helpful", "neutral", "harmful"] as const;

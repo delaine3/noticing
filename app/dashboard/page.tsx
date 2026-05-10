@@ -11,10 +11,10 @@ const careActions = [
 
 export default function DashboardPage() {
   return (
-    <main className="min-h-screen bg-stone-50 px-6 py-10 text-stone-950">
+    <main className="min-h-screen app-bg px-6 py-10 text-stone-950">
       <section className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-700">
+          <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-700">
             Dashboard
           </p>
 
