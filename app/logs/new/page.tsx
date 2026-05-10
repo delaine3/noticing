@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 import { supabase } from "../../lib/supabase";
-import {
-  actionTypes,
-  effects,
-  mealSizes,
-  mealSources,
-} from "../../lib/log-types";
+import { actionTypes } from "../../lib/log-types";
+import { NewActionForm } from "./components/NewActionForm";
+
+type NewLogPageProps = {
+  searchParams?: Promise<{
+    type?: string;
+  }>;
+};
 
 async function createLog(formData: FormData) {
   "use server";
@@ -44,7 +46,18 @@ async function createLog(formData: FormData) {
   redirect("/logs");
 }
 
-export default function NewLogPage() {
+export default async function NewLogPage({ searchParams }: NewLogPageProps) {
+  const params = await searchParams;
+  const requestedType = params?.type;
+
+  type ActionType = (typeof actionTypes)[number];
+
+  const selectedType: ActionType = actionTypes.includes(
+    requestedType as ActionType,
+  )
+    ? (requestedType as ActionType)
+    : actionTypes[0];
+
   const today = new Date().toISOString().slice(0, 10);
 
   return (
@@ -55,185 +68,18 @@ export default function NewLogPage() {
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-          What happened?
+          Log the thing. Then move.
         </h1>
 
         <p className="mt-4 text-stone-700">
-          Record the action, the time, and any useful evidence about how it
-          affected your day.
+          Pick the action. The form will stop showing irrelevant nonsense.
         </p>
 
-        <form
-          action={createLog}
-          className="mt-8 space-y-5 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">Action</span>
-              <select
-                name="log_type"
-                required
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-              >
-                {actionTypes.map((type) => (
-                  <option key={type}>{type}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">Effect</span>
-              <select
-                name="effect"
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-                defaultValue=""
-              >
-                <option value="">Select effect</option>
-                {effects.map((effect) => (
-                  <option key={effect} value={effect}>
-                    {effect}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">Date</span>
-              <input
-                name="action_date"
-                type="date"
-                defaultValue={today}
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">Time</span>
-              <input
-                name="action_time"
-                type="time"
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-              />
-            </label>
-          </div>
-
-          <label className="block">
-            <span className="text-sm font-medium text-stone-700">
-              Short label
-            </span>
-            <input
-              name="title"
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-              placeholder="Example: woke up late, leftover pizza, 30 min treadmill"
-            />
-          </label>
-
-          <section className="rounded-3xl border border-stone-200 bg-stone-50 p-4">
-            <h2 className="text-sm font-semibold text-stone-800">
-              Meal details
-            </h2>
-            <p className="mt-1 text-sm text-stone-600">
-              Use this when the action is a meal, dessert, craving, or snack.
-            </p>
-
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <label className="block">
-                <span className="text-sm font-medium text-stone-700">
-                  Meal size
-                </span>
-                <select
-                  name="meal_size"
-                  className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-                  defaultValue=""
-                >
-                  <option value="">Select size</option>
-                  {mealSizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="block">
-                <span className="text-sm font-medium text-stone-700">
-                  Meal source
-                </span>
-                <select
-                  name="meal_source"
-                  className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-                  defaultValue=""
-                >
-                  <option value="">Select source</option>
-                  {mealSources.map((source) => (
-                    <option key={source} value={source}>
-                      {source}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          </section>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">Mood</span>
-              <input
-                name="mood_score"
-                type="number"
-                min="1"
-                max="10"
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-                placeholder="1-10"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">Energy</span>
-              <input
-                name="energy_score"
-                type="number"
-                min="1"
-                max="10"
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-                placeholder="1-10"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-stone-700">
-                Intensity
-              </span>
-              <input
-                name="intensity_score"
-                type="number"
-                min="1"
-                max="10"
-                className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-                placeholder="1-10"
-              />
-            </label>
-          </div>
-
-          <label className="block">
-            <span className="text-sm font-medium text-stone-700">Notes</span>
-            <textarea
-              name="notes"
-              rows={5}
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-emerald-700"
-              placeholder="What did you notice? What was the context?"
-            />
-          </label>
-
-          <button
-            type="submit"
-            className="rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-900"
-          >
-            Save action
-          </button>
-        </form>
+        <NewActionForm
+          selectedType={selectedType}
+          today={today}
+          createLog={createLog}
+        />
       </section>
     </main>
   );
