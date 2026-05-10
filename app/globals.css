@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #fffaf3;
+  --cream-strong: #fff3e7;
+
+  --coral: #ff9f98;
+  --coral-soft: #ffd1c8;
+  --blush: #ffe4ea;
+
+  --mint: #c9f5dd;
+  --mint-strong: #89e7c0;
+  --aqua: #99efe5;
+
+  --leaf: #3f7f63;
+  --leaf-dark: #24513d;
+
+  --ink: #1f342d;
+  --ink-soft: #4f6f63;
+
+  --border-soft: #cdebdc;
+}
+.app-bg {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 159, 152, 0.5),
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(153, 239, 229, 0.55),
+      transparent 32rem
+    ),
+    linear-gradient(90deg, #ffa9b7 0%, #fffaf3 45%, #e4faef 75%, #d1f7f2 100%);
+}
+.message-card {
+  border: 1px solid rgba(205, 235, 220, 0.9);
+  background: rgba(255, 255, 255, 0.533);
+  backdrop-filter: blur(18px);
+  margin-top: 16px;
+  padding: 30px;
+}
+.glass-card {
+  border: 1px solid rgba(205, 235, 220, 0.9);
+  background: rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(18px);
+  margin-top: 16px;
+  padding: 30px;
+}
+
+.soft-card {
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 250, 243, 0.9);
+}
+
+.brand-gradient {
+  background: linear-gradient(
+    90deg,
+    #ffa9b7 0%,
+    #ff9f98 19%,
+    #ff9dc2 28%,
+    #ffe4ea 38%,
+    #c9f5dd 68%,
+    #99efe5 100%
+  );
+}
+
+.brand-text {
+  color: var(--ink);
+}
+
+.brand-muted {
+  color: var(--ink-soft);
+}
+
+.brand-button {
+  background: linear-gradient(
+    90deg,
+    #f0fff7,
+    #ecfff5,
+    #e4faef,
+    #d1f7f2,
+    #b3f5f7,
+    #93f1f3,
+    #a2f2f9
+  );
+  color: rgb(0, 0, 0);
+  padding: 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(146, 146, 146, 0.477);
+}
+
+.brand-button:hover {
+  background: #a2f2f9;
+}
+.muted-button {
+  background: linear-gradient(
+    90deg,
+    #fffaf3,
+    #fff8ed,
+    #ffe4f6,
+    #ffcbe0,
+    #ffbfc0,
+    #ffb9b2,
+    #ffa7a8
+  );
+  color: #3f3f3f;
+  padding: 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(146, 146, 146, 0.477);
+}
+
+.muted-button:hover {
+  background: #ffa7a8;
+}
+.brand-pill {
+  background: rgba(201, 245, 221, 0.55);
+  color: var(--leaf-dark);
+}
+
+.brand-pill:hover {
+  background: rgba(153, 239, 229, 0.55);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
