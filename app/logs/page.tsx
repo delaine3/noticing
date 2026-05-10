@@ -48,7 +48,7 @@ export default async function LogsPage() {
         </div>
 
         {!logs?.length ? (
-          <div className="mt-8 rounded-3xl border border-dashed border-stone-300 bg-white p-8 text-stone-600">
+          <div className="mt-8 rounded border border-dashed border-stone-300 bg-white p-8 text-stone-600">
             No logs yet. Your future receipts will live here.
           </div>
         ) : (
@@ -56,7 +56,7 @@ export default async function LogsPage() {
             {(logs as Log[]).map((log) => (
               <article
                 key={log.id}
-                className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
+                className="rounded border border-stone-200 bg-white p-6 shadow-sm"
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>

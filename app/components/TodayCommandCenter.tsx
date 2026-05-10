@@ -122,7 +122,7 @@ export function TodayCommandCenter({
           </p>
         </div>
 
-        <section className="message-card rounded-3xl border border-green-200 shadow-sm sm:p-6">
+        <section className="message-card rounded border border-green-200 shadow-sm sm:p-6">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-800">
             Next best action
           </p>
@@ -186,7 +186,7 @@ export function TodayCommandCenter({
             </p>
           </article>
         </section>
-        <section className="glass-card rounded-3xl border border-stone-200 shadow-sm">
+        <section className="glass-card rounded border border-stone-200 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
             Quick log
           </p>
@@ -196,7 +196,7 @@ export function TodayCommandCenter({
               <Link
                 key={action.label}
                 href={action.href}
-                className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-semibold text-stone-800 hover:border-green-400 hover:bg-green-50"
+                className="rounded border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-semibold text-stone-800 hover:border-green-400 hover:bg-green-50"
               >
                 {action.label}
               </Link>
@@ -215,7 +215,7 @@ export function TodayCommandCenter({
               {report.map((item) => (
                 <article
                   key={`${item.label}-${item.status}`}
-                  className={`rounded-2xl border p-4 ${getReportCardStyle(item.status)}`}
+                  className={`rounded border p-4 ${getReportCardStyle(item.status)}`}
                 >
                   <div className="flex gap-3">
                     <span className="text-2xl">{item.emoji}</span>
@@ -244,7 +244,7 @@ export function TodayCommandCenter({
               {buckets.map((bucket) => (
                 <section
                   key={bucket.label}
-                  className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
+                  className="rounded border border-stone-200 bg-stone-50 p-4"
                 >
                   <h3 className="font-semibold text-stone-950">
                     {bucket.label}
@@ -259,7 +259,7 @@ export function TodayCommandCenter({
                       {bucket.logs.map((log) => (
                         <article
                           key={log.id}
-                          className="rounded-2xl border border-stone-200 bg-white p-4"
+                          className="rounded border border-stone-200 bg-white p-4"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div>

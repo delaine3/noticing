@@ -31,7 +31,7 @@ export function NewActionForm({
   const showWater = config.fields.includes("water");
   return (
     <>
-      <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)]">
+      <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)] rounded">
         <p className="text-sm font-medium uppercase tracking-[0.25em]">
           Command
         </p>
@@ -45,7 +45,7 @@ export function NewActionForm({
 
       <form
         action={createLog}
-        className="glass-card mt-6 space-y-5 rounded-3xl border border-stone-200 p-6 shadow-sm"
+        className="glass-card mt-6 space-y-5 rounded border border-stone-200 p-6 shadow-sm"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
@@ -55,7 +55,7 @@ export function NewActionForm({
               required
               value={actionType}
               onChange={(event) => setActionType(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             >
               {actionTypes.map((type) => (
                 <option key={type} value={type}>
@@ -75,7 +75,7 @@ export function NewActionForm({
               name="action_date"
               type="date"
               defaultValue={today}
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             />
           </label>
 
@@ -84,7 +84,7 @@ export function NewActionForm({
             <input
               name="action_time"
               type="time"
-              className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             />
           </label>
         </div>
@@ -95,7 +95,7 @@ export function NewActionForm({
           </span>
           <input
             name="title"
-            className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             placeholder={config.titlePlaceholder}
           />
         </label>
@@ -113,7 +113,7 @@ export function NewActionForm({
           <textarea
             name="notes"
             rows={5}
-            className="mt-2 w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             placeholder={config.notesPlaceholder}
           />
         </label>

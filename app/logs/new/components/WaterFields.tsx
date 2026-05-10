@@ -1,6 +1,6 @@
 export function WaterFields() {
   return (
-    <section className="rounded-xl border border-[var(--border-soft)] bg-[rgba(255,250,243,0.72)] p-4">
+    <section className="rounded border border-[var(--border-soft)] bg-[rgba(255,250,243,0.72)] p-4">
       <h2 className="text-sm font-semibold text-[var(--ink)]">
         Water quantity
       </h2>
