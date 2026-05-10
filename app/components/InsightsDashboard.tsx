@@ -25,14 +25,18 @@ const chartColors = {
   blush: "#ffd7df",
   cream: "#fffaf3",
   mint: "#c9f5dd",
-  aqua: "#99efe5",
+  aqua: "#5effe4",
   leaf: "#3f7f63",
   ink: "#1f342d",
+  green: "#398b29",
   softInk: "#4f6f63",
+  gray: "#5d647395",
+  blue: "#18bcbc90",
   warning: "#f4a261",
-  danger: "#e76f51",
+  gold: "#fbbf24",
+  danger: "#d5145198",
 };
-function getPaceStats(logs: InsightLog[]) {
+function getTreadmillStats(logs: InsightLog[]) {
   const treadmillLogs = logs.filter(
     (log) =>
       log.log_type === "Treadmill walk" &&
@@ -51,11 +55,26 @@ function getPaceStats(logs: InsightLog[]) {
     0,
   );
 
+  const averageSpeedKmph =
+    totalMinutes > 0 ? totalKm / (totalMinutes / 60) : null;
+
+  const averagePaceMinPerKm = totalKm > 0 ? totalMinutes / totalKm : null;
+
   return {
     totalMinutes,
     totalKm,
-    averagePace: totalKm > 0 ? totalMinutes / totalKm : null,
+    averageSpeedKmph,
+    averagePaceMinPerKm,
   };
+}
+
+function formatSpeed(speed: number | null) {
+  if (speed === null) return "No data";
+  return `${speed.toFixed(2)} km/h`;
+}
+
+function formatDistance(distance: number) {
+  return `${distance.toFixed(2)} km`;
 }
 
 function formatPace(pace: number | null) {
@@ -312,15 +331,15 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
 
   const today = new Date();
 
-  const todayPace = getPaceStats(
+  const todayTreadmill = getTreadmillStats(
     logs.filter((log) => isSameDay(getDate(log), today)),
   );
 
-  const weekPace = getPaceStats(
+  const weekTreadmill = getTreadmillStats(
     logs.filter((log) => isSameWeek(getDate(log), today)),
   );
 
-  const monthPace = getPaceStats(
+  const monthTreadmill = getTreadmillStats(
     logs.filter((log) => isSameMonth(getDate(log), today)),
   );
   return (
@@ -341,7 +360,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
         </div>
 
-        <section className="glass-card mt-6 rounded-xl p-5 shadow-sm">
+        <section className="glass-card mt-6 rounded p-5 shadow-sm">
           <p className="text-md font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
             Current read
           </p>
@@ -356,28 +375,28 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
 
         <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Total logs
             </p>
             <p className="mt-2 text-3xl font-semibold">{logs.length}</p>
           </article>
 
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Days logged
             </p>
             <p className="mt-2 text-3xl font-semibold">{loggedDays}</p>
           </article>
 
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Helpful actions
             </p>
             <p className="mt-2 text-3xl font-semibold">{helpfulLogs}</p>
           </article>
 
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Harmful actions
             </p>
@@ -386,7 +405,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
 
         <section className="mt-5 grid gap-5 lg:grid-cols-2">
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <div className="mb-5">
               <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
                 Actions
@@ -428,7 +447,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             </div>
           </article>
 
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <div className="mb-5">
               <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
                 Effect
@@ -452,10 +471,10 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                       {effectCounts.map((entry) => {
                         const color =
                           entry.name === "helpful"
-                            ? chartColors.mint
+                            ? chartColors.blue
                             : entry.name === "harmful"
-                              ? chartColors.coral
-                              : chartColors.aqua;
+                              ? chartColors.danger
+                              : chartColors.gray;
 
                         return <Cell key={entry.name} fill={color} />;
                       })}
@@ -471,13 +490,13 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             </div>
           </article>
         </section>
-        <article className="glass-card rounded-xl p-5 shadow-sm">
+        <article className="glass-card rounded p-5 shadow-sm">
           <p className="text-md font-medium text-[var(--ink-soft)]">
             Water logged
           </p>
           <p className="mt-2 text-3xl font-semibold">{totalWaterMl}ml</p>
         </article>
-        <section className="mt-5 glass-card rounded-xl p-5 shadow-sm">
+        <section className="mt-5 glass-card rounded p-5 shadow-sm">
           <div className="mb-5">
             <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Scores
@@ -545,7 +564,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
 
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               First meal
             </p>
@@ -570,42 +589,63 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </article>
           <section className="mt-5 grid gap-4 sm:grid-cols-3">
             <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-sm font-medium text-[var(--ink-soft)]">
-                Today pace
+              <p className="text-md font-medium text-[var(--ink-soft)]">
+                Today treadmill
               </p>
-              <p className="mt-2 text-3xl font-semibold">
-                {formatPace(todayPace.averagePace)}
+
+              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
+                {formatSpeed(todayTreadmill.averageSpeedKmph)}
               </p>
-              <p className="mt-1 text-sm text-[var(--ink-soft)]">
-                {todayPace.totalKm.toFixed(2)} km logged
+
+              <p className="mt-1 text-md text-[var(--ink-soft)]">
+                {formatDistance(todayTreadmill.totalKm)} ·{" "}
+                {todayTreadmill.totalMinutes.toFixed(0)} min
+              </p>
+
+              <p className="mt-1 text-md text-[var(--ink-soft)]">
+                Pace: {formatPace(todayTreadmill.averagePaceMinPerKm)}
               </p>
             </article>
 
             <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-sm font-medium text-[var(--ink-soft)]">
-                Week pace
+              <p className="text-md font-medium text-[var(--ink-soft)]">
+                Week treadmill
               </p>
-              <p className="mt-2 text-3xl font-semibold">
-                {formatPace(weekPace.averagePace)}
+
+              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
+                {formatSpeed(weekTreadmill.averageSpeedKmph)}
               </p>
-              <p className="mt-1 text-sm text-[var(--ink-soft)]">
-                {weekPace.totalKm.toFixed(2)} km logged
+
+              <p className="mt-1 text-md text-[var(--ink-soft)]">
+                {formatDistance(weekTreadmill.totalKm)} ·{" "}
+                {weekTreadmill.totalMinutes.toFixed(0)} min
+              </p>
+
+              <p className="mt-1 text-md text-[var(--ink-soft)]">
+                Pace: {formatPace(weekTreadmill.averagePaceMinPerKm)}
               </p>
             </article>
 
             <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-sm font-medium text-[var(--ink-soft)]">
-                Month pace
+              <p className="text-md font-medium text-[var(--ink-soft)]">
+                Month treadmill
               </p>
-              <p className="mt-2 text-3xl font-semibold">
-                {formatPace(monthPace.averagePace)}
+
+              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
+                {formatSpeed(monthTreadmill.averageSpeedKmph)}
               </p>
-              <p className="mt-1 text-sm text-[var(--ink-soft)]">
-                {monthPace.totalKm.toFixed(2)} km logged
+
+              <p className="mt-1 text-md text-[var(--ink-soft)]">
+                {formatDistance(monthTreadmill.totalKm)} ·{" "}
+                {monthTreadmill.totalMinutes.toFixed(0)} min
+              </p>
+
+              <p className="mt-1 text-md text-[var(--ink-soft)]">
+                Pace: {formatPace(monthTreadmill.averagePaceMinPerKm)}
               </p>
             </article>
           </section>
-          <article className="glass-card rounded-xl p-5 shadow-sm">
+          <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Notes
             </p>

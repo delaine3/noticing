@@ -9,6 +9,7 @@ import { ScoreFields } from "./ScoreFields";
 import { WaterFields } from "./WaterFields";
 import { TreadmillFields } from "./TreadmillFields";
 import { StrengthFields } from "./StrengthFields";
+import { TimeField } from "./TimeField";
 
 type NewActionFormProps = {
   selectedType: string;
@@ -83,14 +84,7 @@ export function NewActionForm({
             />
           </label>
 
-          <label className="block">
-            <span className="text-md font-medium text-stone-700">Time</span>
-            <input
-              name="action_time"
-              type="time"
-              className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
-            />
-          </label>
+          <TimeField />
         </div>
 
         <label className="block">

@@ -19,7 +19,7 @@ export function AppNav() {
           href="/"
           className="flex h-full items-center gap-2 px-4 transition hover:bg-white/30 sm:px-6"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-md border border-[rgba(36,81,61,0.16)] bg-[rgba(255,250,243,0.55)] text-base">
+          <span className="flex h-8 w-8 items-center justify-center rounded border border-[rgba(36,81,61,0.16)] bg-[rgba(255,250,243,0.55)] text-base">
             🌿
           </span>
 

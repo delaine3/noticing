@@ -38,16 +38,16 @@ export function StrengthFields() {
 
   return (
     <section className="rounded border border-[var(--border-soft)] bg-white/55 p-4">
-      <h2 className="text-sm font-semibold text-[var(--ink)]">
+      <h2 className="text-md font-semibold text-[var(--ink)]">
         Strength details
       </h2>
 
-      <p className="mt-1 text-sm text-[var(--ink-soft)]">
+      <p className="mt-1 text-md text-[var(--ink-soft)]">
         Add each set. Volume is calculated after saving.
       </p>
 
       <label className="mt-4 block">
-        <span className="text-sm font-medium text-[var(--ink-soft)]">
+        <span className="text-md font-medium text-[var(--ink-soft)]">
           Workout name
         </span>
         <input
@@ -64,7 +64,7 @@ export function StrengthFields() {
             className="rounded border border-[var(--border-soft)] bg-[rgba(255,250,243,0.7)] p-3"
           >
             <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-[var(--ink)]">
+              <p className="text-md font-semibold text-[var(--ink)]">
                 Set {index + 1}
               </p>
 
@@ -72,7 +72,7 @@ export function StrengthFields() {
                 <button
                   type="button"
                   onClick={() => removeSet(index)}
-                  className="text-sm font-medium text-[var(--ink-soft)] hover:text-[var(--ink)]"
+                  className="text-md font-medium text-[var(--ink-soft)] hover:text-[var(--ink)]"
                 >
                   Remove
                 </button>
@@ -131,7 +131,7 @@ export function StrengthFields() {
               </label>
             </div>
 
-            <p className="mt-2 text-sm text-[var(--ink-soft)]">
+            <p className="mt-2 text-md text-[var(--ink-soft)]">
               Set volume: {Number(set.reps || 0) * Number(set.weightKg || 0)} kg
             </p>
           </div>
@@ -141,7 +141,7 @@ export function StrengthFields() {
       <button
         type="button"
         onClick={addSet}
-        className="mt-4 rounded bg-[var(--mint)] px-4 py-2 text-sm font-semibold text-[var(--leaf-dark)] hover:bg-[var(--aqua)]"
+        className="mt-4 rounded bg-[var(--mint)] px-4 py-2 text-md font-semibold text-[var(--leaf-dark)] hover:bg-[var(--aqua)]"
       >
         Add set
       </button>

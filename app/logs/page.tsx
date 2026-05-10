@@ -95,41 +95,41 @@ export default async function LogsPage() {
 
                 <div className="mt-5 flex flex-wrap gap-2 text-md text-stone-700">
                   {log.effect ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Effect: {log.effect}
                     </span>
                   ) : null}
 
                   {log.meal_size ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Size: {log.meal_size}
                     </span>
                   ) : null}
 
                   {log.meal_source ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Source: {log.meal_source}
                     </span>
                   ) : null}
                   {log.water_amount_ml ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Water: {log.water_amount_ml}ml
                     </span>
                   ) : null}
                   {log.mood_score ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Mood: {log.mood_score}/10
                     </span>
                   ) : null}
 
                   {log.energy_score ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Energy: {log.energy_score}/10
                     </span>
                   ) : null}
 
                   {log.intensity_score ? (
-                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                    <span className="rounded bg-stone-100 px-3 py-1">
                       Intensity: {log.intensity_score}/10
                     </span>
                   ) : null}

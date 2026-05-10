@@ -1,17 +1,17 @@
 export function TreadmillFields() {
   return (
     <section className="rounded border border-[var(--border-soft)] bg-white/55 p-4">
-      <h2 className="text-sm font-semibold text-[var(--ink)]">
+      <h2 className="text-md font-semibold text-[var(--ink)]">
         Treadmill details
       </h2>
 
-      <p className="mt-1 text-sm text-[var(--ink-soft)]">
+      <p className="mt-1 text-md text-[var(--ink-soft)]">
         Time and distance. The app will calculate pace.
       </p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-[var(--ink-soft)]">
+          <span className="text-md font-medium text-[var(--ink-soft)]">
             Duration minutes
           </span>
           <input
@@ -25,7 +25,7 @@ export function TreadmillFields() {
         </label>
 
         <label className="block">
-          <span className="text-sm font-medium text-[var(--ink-soft)]">
+          <span className="text-md font-medium text-[var(--ink-soft)]">
             Distance km
           </span>
           <input

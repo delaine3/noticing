@@ -146,7 +146,7 @@ export function TodayCommandCenter({
           </div>
         </section>
         <section className="mt-5 grid gap-3 sm:grid-cols-3">
-          <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
+          <article className="glass-card rounded border border-[var(--border-soft)] p-4 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Water
             </p>
@@ -168,7 +168,7 @@ export function TodayCommandCenter({
             </p>
           </article>
 
-          <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
+          <article className="glass-card rounded border border-[var(--border-soft)] p-4 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Actions
             </p>
@@ -178,7 +178,7 @@ export function TodayCommandCenter({
             <p className="mt-1 text-md text-[var(--ink-soft)]">Logged today.</p>
           </article>
 
-          <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
+          <article className="glass-card rounded border border-[var(--border-soft)] p-4 shadow-sm">
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
               Report
             </p>
