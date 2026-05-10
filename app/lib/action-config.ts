@@ -1,6 +1,7 @@
 export type ConditionalField =
   | "effect"
   | "meal"
+  | "water"
   | "mood"
   | "energy"
   | "intensity";
@@ -65,13 +66,12 @@ export const actionConfig: Record<string, ActionConfig> = {
 
   Water: {
     heading: "Water. Basic maintenance.",
-    instruction: "Log it. Then continue being a hydrated citizen.",
+    instruction: "Log the amount. The body likes receipts.",
     titleLabel: "Water note",
-    titlePlaceholder: "Example: 500ml rooibos, one glass, bottle refill",
+    titlePlaceholder: "Example: rooibos, one glass, bottle refill",
     notesPlaceholder: "Optional. Only note what matters.",
-    fields: ["effect"],
+    fields: ["water", "effect"],
   },
-
   WashUp: {
     heading: "Washed up. Excellent. System reset.",
     instruction: "Track the reset action.",

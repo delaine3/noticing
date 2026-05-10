@@ -6,6 +6,7 @@ import { getActionConfig } from "../../../lib/action-config";
 import { EffectField } from "./EffectField";
 import { MealFields } from "./MealFields";
 import { ScoreFields } from "./ScoreFields";
+import { WaterFields } from "./WaterFields";
 
 type NewActionFormProps = {
   selectedType: string;
@@ -27,14 +28,11 @@ export function NewActionForm({
   const showMood = config.fields.includes("mood");
   const showEnergy = config.fields.includes("energy");
   const showIntensity = config.fields.includes("intensity");
-
+  const showWater = config.fields.includes("water");
   return (
     <>
-      <div
-        className="glass-card text-[var(--ink)] text-[var(--leaf-dark)]
-                   brand-button"
-      >
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-200">
+      <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)]">
+        <p className="text-sm font-medium uppercase tracking-[0.25em]">
           Command
         </p>
 
@@ -42,7 +40,7 @@ export function NewActionForm({
           {config.heading}
         </h2>
 
-        <p className="mt-3 leading-7 text-green-300">{config.instruction}</p>
+        <p className="mt-3 leading-7">{config.instruction}</p>
       </div>
 
       <form
@@ -103,7 +101,7 @@ export function NewActionForm({
         </label>
 
         {showMeal ? <MealFields /> : null}
-
+        {showWater ? <WaterFields /> : null}
         <ScoreFields
           showMood={showMood}
           showEnergy={showEnergy}
@@ -120,10 +118,7 @@ export function NewActionForm({
           />
         </label>
 
-        <button
-          type="submit"
-          className="rounded-full bg-green-800 px-6 py-3 text-sm font-semibold text-green-300 shadow-sm hover:bg-green-900"
-        >
+        <button type="submit" className="brand-button">
           Save action
         </button>
       </form>

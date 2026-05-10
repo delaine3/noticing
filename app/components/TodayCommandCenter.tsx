@@ -30,10 +30,13 @@ function getReportCardStyle(status: string) {
   if (status === "demerit") return "border-stone-300 bg-stone-100";
   return "border-stone-200 bg-white";
 }
-
+function getTotalWaterMl(logs: DailyLog[]) {
+  return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
+}
 function getNextActionCopy(logs: DailyLog[]) {
   const hasFirstMeal = logs.some((log) => log.log_type === "First meal");
-  const hasWater = logs.some((log) => log.log_type === "Water");
+  const totalWaterMl = getTotalWaterMl(logs);
+  const hasWater = totalWaterMl > 0;
   const hasSunlight = logs.some((log) => log.log_type === "Sunlight");
   const hasMovement = logs.some((log) =>
     ["Movement", "Exercise", "Treadmill walk", "Strength training"].includes(
@@ -41,12 +44,21 @@ function getNextActionCopy(logs: DailyLog[]) {
     ),
   );
 
-  if (!hasWater) {
+  if (totalWaterMl === 0) {
     return {
       title: "Drink water first.",
       body: "Get a glass. Drink it. Then come back. No committee meeting.",
       href: "/logs/new?type=Water",
       label: "Log water",
+    };
+  }
+
+  if (totalWaterMl < 750) {
+    return {
+      title: "Drink more water.",
+      body: `Only ${totalWaterMl}ml logged today. That is decorative hydration. Add another glass.`,
+      href: "/logs/new?type=Water",
+      label: "Log more water",
     };
   }
 
@@ -91,7 +103,7 @@ export function TodayCommandCenter({
   buckets,
 }: TodayCommandCenterProps) {
   const nextAction = getNextActionCopy(logs);
-
+  const totalWaterMl = getTotalWaterMl(logs);
   return (
     <main className="min-h-screen app-bg px-4 py-8 text-stone-950 sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
@@ -124,22 +136,56 @@ export function TodayCommandCenter({
           </p>
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href={nextAction.href}
-              className="rounded-full bg-green-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-green-800"
-            >
+            <Link href={nextAction.href} className="brand-button">
               {nextAction.label}
             </Link>
 
-            <Link
-              href="/logs/new"
-              className="rounded-full border border-green-300 bg-white px-5 py-3 text-center text-sm font-semibold text-stone-800 hover:bg-green-100"
-            >
+            <Link href="/logs/new" className="muted-button">
               Log something else
             </Link>
           </div>
         </section>
+        <section className="mt-5 grid gap-3 sm:grid-cols-3">
+          <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+              Water
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
+              {totalWaterMl}ml
+            </p>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">
+              {totalWaterMl >= 1500
+                ? "Hydrated citizen behavior."
+                : totalWaterMl >= 750
+                  ? "Acceptable. Keep going."
+                  : totalWaterMl > 0
+                    ? "Too low. Add another glass."
+                    : "No water logged yet."}
+            </p>
+          </article>
 
+          <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+              Actions
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
+              {logs.length}
+            </p>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">Logged today.</p>
+          </article>
+
+          <article className="glass-card rounded-xl border border-[var(--border-soft)] p-4 shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
+              Report
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-[var(--ink)]">
+              {report.length}
+            </p>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">
+              Checks generated.
+            </p>
+          </article>
+        </section>
         <section className="glass-card rounded-3xl border border-stone-200 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
             Quick log
@@ -225,7 +271,11 @@ export function TodayCommandCenter({
                                 {log.title || "Untitled action"}
                               </h4>
                             </div>
-
+                            {log.water_amount_ml ? (
+                              <p className="mt-1 text-sm font-medium text-[var(--leaf-dark)]">
+                                {log.water_amount_ml}ml
+                              </p>
+                            ) : null}
                             <p className="text-sm text-stone-500">
                               {log.action_time
                                 ? log.action_time.slice(0, 5)

@@ -21,7 +21,22 @@ export const actionTypes = [
   "Rest",
   "Family system",
 ] as const;
-
+export type InsightLog = {
+  id: number;
+  log_type: string;
+  title: string | null;
+  notes: string | null;
+  effect: string | null;
+  action_date: string | null;
+  action_time: string | null;
+  mood_score: number | null;
+  energy_score: number | null;
+  intensity_score: number | null;
+  meal_size: string | null;
+  meal_source: string | null;
+  occurred_at: string;
+  water_amount_ml: number | null;
+};
 export const effects = ["helpful", "neutral", "harmful"] as const;
 
 export const mealSizes = ["small", "medium", "large"] as const;

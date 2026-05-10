@@ -11,6 +11,7 @@ export type DailyLog = {
   intensity_score: number | null;
   meal_size: string | null;
   meal_source: string | null;
+  water_amount_ml: number | null;
   occurred_at: string;
 };
 
@@ -67,7 +68,7 @@ export function getTimeBuckets(logs: DailyLog[]): TimeBucket[] {
     { label: "2pm to 6pm", endTime: "18:00", logs: [] },
     { label: "6pm to 10pm", endTime: "22:00", logs: [] },
     { label: "After 10pm", endTime: null, logs: [] },
-    { label: "No time logged", endTime: null, logs: [] },
+    { label: "All day", endTime: null, logs: [] },
   ];
 
   logs.forEach((log) => {
@@ -160,7 +161,9 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
 
   const wokeUp = getFirstLog(logs, ["Woke up"]);
   const wakeMinutes = timeToMinutes(wokeUp?.action_time ?? null);
-
+  function getTotalWaterMl(logs: DailyLog[]) {
+    return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
+  }
   if (!wokeUp) {
     report.push({
       label: "Wake time",
@@ -190,13 +193,28 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       message: "Late wake. No shame spiral, but the day needs structure fast.",
     });
   }
+  const totalWaterMl = getTotalWaterMl(logs);
 
-  if (hasLog(logs, ["Water"])) {
+  if (totalWaterMl >= 1500) {
+    report.push({
+      label: "Water",
+      status: "gold",
+      emoji: "⭐",
+      message: `Water logged: ${totalWaterMl}ml. Hydrated citizen behavior.`,
+    });
+  } else if (totalWaterMl >= 750) {
     report.push({
       label: "Water",
       status: "check",
       emoji: "✅",
-      message: "Water logged. Basic maintenance handled.",
+      message: `Water logged: ${totalWaterMl}ml. Acceptable, but do not get cocky.`,
+    });
+  } else if (totalWaterMl > 0) {
+    report.push({
+      label: "Water",
+      status: "warning",
+      emoji: "👎",
+      message: `Only ${totalWaterMl}ml logged. That is decorative hydration. Drink more.`,
     });
   } else {
     report.push({
@@ -253,7 +271,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       label: "Movement",
       status: "check",
       emoji: "✅",
-      message: "Movement logged. Body got a signal.",
+      message: "Movement logged.",
     });
   } else {
     report.push({

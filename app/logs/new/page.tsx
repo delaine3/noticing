@@ -23,6 +23,7 @@ async function createLog(formData: FormData) {
   const moodScore = formData.get("mood_score");
   const energyScore = formData.get("energy_score");
   const intensityScore = formData.get("intensity_score");
+  const waterAmountMl = formData.get("water_amount_ml");
 
   const { error } = await supabase.from("logs").insert({
     log_type: logType,
@@ -33,6 +34,7 @@ async function createLog(formData: FormData) {
     category: logType,
     effect: effect || null,
     meal_size: mealSize || null,
+    water_amount_ml: waterAmountMl ? Number(waterAmountMl) : null,
     meal_source: mealSource || null,
     mood_score: moodScore ? Number(moodScore) : null,
     energy_score: energyScore ? Number(energyScore) : null,

@@ -14,6 +14,7 @@ type Log = {
   effect: string | null;
   meal_size: string | null;
   meal_source: string | null;
+  water_amount_ml: number | null;
   occurred_at: string;
 };
 
@@ -41,10 +42,7 @@ export default async function LogsPage() {
             </h1>
           </div>
 
-          <Link
-            href="/logs/new"
-            className="rounded-full bg-green-800 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-green-900"
-          >
+          <Link href="/logs/new" className="brand-button">
             New action
           </Link>
         </div>
@@ -109,7 +107,11 @@ export default async function LogsPage() {
                       Source: {log.meal_source}
                     </span>
                   ) : null}
-
+                  {log.water_amount_ml ? (
+                    <span className="rounded-full bg-stone-100 px-3 py-1">
+                      Water: {log.water_amount_ml}ml
+                    </span>
+                  ) : null}
                   {log.mood_score ? (
                     <span className="rounded-full bg-stone-100 px-3 py-1">
                       Mood: {log.mood_score}/10

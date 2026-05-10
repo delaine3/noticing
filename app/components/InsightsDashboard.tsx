@@ -14,22 +14,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-export type InsightLog = {
-  id: number;
-  log_type: string;
-  title: string | null;
-  notes: string | null;
-  effect: string | null;
-  action_date: string | null;
-  action_time: string | null;
-  mood_score: number | null;
-  energy_score: number | null;
-  intensity_score: number | null;
-  meal_size: string | null;
-  meal_source: string | null;
-  occurred_at: string;
-};
+import { InsightLog } from "../lib/log-types";
 
 type InsightsDashboardProps = {
   logs: InsightLog[];
@@ -222,6 +207,9 @@ function getFirstMealStats(logs: InsightLog[]) {
       .length,
   };
 }
+function getTotalWaterMl(logs: InsightLog[]) {
+  return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
+}
 
 function getUsefulTruth(logs: InsightLog[]) {
   const helpfulCount = logs.filter((log) => log.effect === "helpful").length;
@@ -251,7 +239,7 @@ function getUsefulTruth(logs: InsightLog[]) {
   }
 
   if (movementCount === 0) {
-    return "No movement logs. Five minutes counts. The body needs a signal.";
+    return "No movement logs. Do it : Five minutes counts.";
   }
 
   return "The useful pattern is forming: collect evidence, support the body, then decide what the day needs.";
@@ -267,7 +255,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
   const helpfulLogs = logs.filter((log) => log.effect === "helpful").length;
   const harmfulLogs = logs.filter((log) => log.effect === "harmful").length;
   const loggedDays = new Set(logs.map(getDate)).size;
-
+  const totalWaterMl = getTotalWaterMl(logs);
   return (
     <main className="app-bg min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
@@ -416,7 +404,12 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             </div>
           </article>
         </section>
-
+        <article className="glass-card rounded-xl p-5 shadow-sm">
+          <p className="text-sm font-medium text-[var(--ink-soft)]">
+            Water logged
+          </p>
+          <p className="mt-2 text-3xl font-semibold">{totalWaterMl}ml</p>
+        </article>
         <section className="mt-5 glass-card rounded-xl p-5 shadow-sm">
           <div className="mb-5">
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
@@ -542,3 +535,4 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
     </main>
   );
 }
+export type { InsightLog };
