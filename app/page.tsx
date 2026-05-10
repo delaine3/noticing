@@ -1,33 +1,11 @@
 import Link from "next/link";
-
-const baselineItems = [
-  {
-    label: "Drink water",
-    command: "Get a glass. Drink it before negotiating with your brain.",
-  },
-  {
-    label: "Eat something real",
-    command: "Protein or leftovers count. No cooking performance required.",
-  },
-  {
-    label: "Get sunlight",
-    command: "Sit outside or near a bright window for 10 minutes.",
-  },
-  {
-    label: "Move your body",
-    command: "Walk for 5 minutes. Treadmill counts. House pacing counts.",
-  },
-  {
-    label: "Wash up",
-    command:
-      "Shower, bath, face wash, or teeth. Pick the smallest viable option.",
-  },
-  {
-    label: "Do one useful task",
-    command:
-      "One task. Not a life overhaul. Open the app, fix one thing, close it.",
-  },
-];
+import { supabase } from "./lib/supabase";
+import {
+  DailyLog,
+  getDailyReport,
+  getEffectEmoji,
+  getTimeBuckets,
+} from "./lib/daily-rules";
 
 const quickActions = [
   { label: "I woke up", href: "/logs/new?type=Woke%20up" },
@@ -38,7 +16,37 @@ const quickActions = [
   { label: "I’m spiraling", href: "/logs/new?type=Recurring%20thought" },
 ];
 
-export default function Home() {
+function getTodayDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getReportCardStyle(status: string) {
+  if (status === "gold") return "border-amber-200 bg-amber-50";
+  if (status === "check") return "border-emerald-200 bg-emerald-50";
+  if (status === "warning") return "border-orange-200 bg-orange-50";
+  if (status === "code-red") return "border-red-300 bg-red-50";
+  if (status === "demerit") return "border-stone-300 bg-stone-100";
+  return "border-stone-200 bg-white";
+}
+
+export default async function Home() {
+  const today = getTodayDate();
+
+  const { data, error } = await supabase
+    .from("logs")
+    .select("*")
+    .eq("action_date", today)
+    .order("action_time", { ascending: true, nullsFirst: false })
+    .order("occurred_at", { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const logs = (data ?? []) as DailyLog[];
+  const report = getDailyReport(logs);
+  const buckets = getTimeBuckets(logs);
+
   return (
     <main className="min-h-screen bg-stone-50 px-6 py-10 text-stone-950">
       <section className="mx-auto max-w-6xl">
@@ -52,8 +60,8 @@ export default function Home() {
           </h1>
 
           <p className="mt-4 max-w-2xl text-stone-700">
-            This app is here to run the day when your brain starts acting like
-            an unpaid intern with no manager.
+            The day gets judged by evidence. Log the basics, check the report
+            card, and do the next useful thing.
           </p>
         </div>
 
@@ -63,114 +71,129 @@ export default function Home() {
           </p>
 
           <h2 className="mt-3 text-3xl font-semibold tracking-tight">
-            Start with the body. No debates.
+            Start with food, water, light, and movement.
           </h2>
 
           <p className="mt-4 max-w-2xl leading-7 text-emerald-50">
-            Before analyzing your life, check the basics: water, food, sunlight,
-            movement, wash up. If the body is under-maintained, the thoughts are
-            not reliable witnesses.
+            If the organism is under-maintained, the thoughts are unreliable
+            witnesses. Handle the body first. Then reassess.
           </p>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/logs/new"
-              className="rounded-full bg-white px-6 py-3 text-center text-sm font-semibold text-emerald-950 hover:bg-emerald-50"
-            >
-              Log what happened
-            </Link>
-
-            <Link
-              href="/logs"
-              className="rounded-full border border-emerald-200 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-900"
-            >
-              View today’s evidence
-            </Link>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {quickActions.map((action) => (
+              <Link
+                key={action.label}
+                href={action.href}
+                className="rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-emerald-950 hover:bg-emerald-50"
+              >
+                {action.label}
+              </Link>
+            ))}
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-700">
-                  At Least
-                </p>
-
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                  Baseline checklist
-                </h2>
-              </div>
-
-              <p className="text-sm text-stone-600">
-                Do these before spiraling.
+        <section className="mt-6 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-700">
+                Daily report card
               </p>
+
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                The scoreboard does not care about excuses.
+              </h2>
             </div>
 
-            <div className="mt-5 space-y-3">
-              {baselineItems.map((item) => (
-                <article
-                  key={item.label}
-                  className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
-                >
-                  <label className="flex cursor-pointer gap-3">
-                    <input
-                      type="checkbox"
-                      className="mt-1 h-5 w-5 rounded border-stone-300 accent-emerald-800"
-                    />
+            <Link
+              href="/logs/new"
+              className="rounded-full bg-emerald-800 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-900"
+            >
+              Log action
+            </Link>
+          </div>
 
-                    <span>
-                      <span className="block font-semibold text-stone-950">
-                        {item.label}
-                      </span>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {report.map((item) => (
+              <article
+                key={`${item.label}-${item.status}`}
+                className={`rounded-2xl border p-4 ${getReportCardStyle(item.status)}`}
+              >
+                <div className="flex gap-3">
+                  <span className="text-2xl">{item.emoji}</span>
 
-                      <span className="mt-1 block text-sm leading-6 text-stone-600">
-                        {item.command}
-                      </span>
-                    </span>
-                  </label>
-                </article>
-              ))}
-            </div>
-          </section>
+                  <div>
+                    <h3 className="font-semibold text-stone-950">
+                      {item.label}
+                    </h3>
 
-          <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-700">
-              Quick log
-            </p>
-
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Press the button. Keep it moving.
-            </h2>
-
-            <div className="mt-5 grid gap-3">
-              {quickActions.map((action) => (
-                <Link
-                  key={action.label}
-                  href={action.href}
-                  className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm font-semibold text-stone-800 hover:border-emerald-700 hover:bg-emerald-50"
-                >
-                  {action.label}
-                </Link>
-              ))}
-            </div>
-          </section>
-        </div>
+                    <p className="mt-1 text-sm leading-6 text-stone-700">
+                      {item.message}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <section className="mt-6 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-700">
-            Rule
+            Timeline
           </p>
 
           <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            Feelings are data. Maintenance comes first.
+            What happened by checkpoint
           </h2>
 
-          <p className="mt-3 max-w-3xl leading-7 text-stone-700">
-            If the day feels fake, heavy, foggy, or doomed, the first move is
-            not analysis. The first move is body support. Water. Food. Sun.
-            Movement. Wash up. Then reassess.
-          </p>
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            {buckets.map((bucket) => (
+              <section
+                key={bucket.label}
+                className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
+              >
+                <h3 className="font-semibold text-stone-950">{bucket.label}</h3>
+
+                {bucket.logs.length === 0 ? (
+                  <p className="mt-3 text-sm text-stone-500">
+                    Nothing logged here.
+                  </p>
+                ) : (
+                  <div className="mt-3 space-y-3">
+                    {bucket.logs.map((log) => (
+                      <article
+                        key={log.id}
+                        className="rounded-2xl border border-stone-200 bg-white p-4"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="text-sm font-semibold text-emerald-700">
+                              {log.log_type} {getEffectEmoji(log.effect)}
+                            </p>
+
+                            <h4 className="mt-1 font-semibold text-stone-950">
+                              {log.title || "Untitled action"}
+                            </h4>
+                          </div>
+
+                          <p className="text-sm text-stone-500">
+                            {log.action_time
+                              ? log.action_time.slice(0, 5)
+                              : "No time"}
+                          </p>
+                        </div>
+
+                        {log.notes ? (
+                          <p className="mt-3 text-sm leading-6 text-stone-700">
+                            {log.notes}
+                          </p>
+                        ) : null}
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </section>
+            ))}
+          </div>
         </section>
       </section>
     </main>

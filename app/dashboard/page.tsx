@@ -1,5 +1,5 @@
 const careActions = [
-  "Shower",
+  "Wash Up",
   "Sunlight",
   "Water",
   "Food",

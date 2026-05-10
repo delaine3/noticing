@@ -72,7 +72,7 @@ export const actionConfig: Record<string, ActionConfig> = {
     fields: ["effect"],
   },
 
-  Shower: {
+  WashUp: {
     heading: "Washed up. Excellent. System reset.",
     instruction: "Track the reset action.",
     titleLabel: "Wash-up type",
