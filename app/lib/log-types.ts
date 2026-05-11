@@ -1,11 +1,34 @@
+export type DailyLog = {
+  id: number;
+  log_type: string;
+  title: string | null;
+  notes: string | null;
+  effect: string | null;
+  action_date: string | null;
+  action_time: string | null;
+  mood_score: number | null;
+  energy_score: number | null;
+  intensity_score: number | null;
+  meal_size: string | null;
+  meal_source: string | null;
+  water_amount_ml: number | null;
+  occurred_at: string;
+  treadmill_duration_minutes: number | null;
+  treadmill_distance_km: number | null;
+  treadmill_pace_min_per_km: number | null;
+  workout_name: string | null;
+  wash_up: string | null;
+};
 export const actionTypes = [
   "Woke up",
   "First meal",
+  "Cook",
+  "Washed Dishes",
   "Meal",
   "Dessert eaten",
   "Dessert craving",
   "Water",
-  "WashUp",
+  "Wash Up",
   "Sunlight",
   "Movement",
   "Exercise",
@@ -41,8 +64,14 @@ export type InsightLog = {
   treadmill_pace_min_per_km: number | null;
   workout_name: string | null;
 };
-export const effects = ["helpful", "neutral", "harmful"] as const;
-
+export const effects = [
+  "restorative",
+  "helpful",
+  "neutral",
+  "unhelpful",
+  "harmful",
+  "detrimental",
+] as const;
 export const mealSizes = ["small", "medium", "large"] as const;
 
 export const mealSources = [

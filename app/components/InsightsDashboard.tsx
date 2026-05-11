@@ -4,17 +4,20 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Line,
   LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
+  Sector,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { InsightLog } from "../lib/log-types";
+import InsightNotes from "./InsightNotes";
+import { FirstMealAudit } from "./FirstMealAudit";
+import { Treadmill } from "./Treadmill";
 
 type InsightsDashboardProps = {
   logs: InsightLog[];
@@ -36,37 +39,6 @@ const chartColors = {
   gold: "#fbbf24",
   danger: "#d5145198",
 };
-function getTreadmillStats(logs: InsightLog[]) {
-  const treadmillLogs = logs.filter(
-    (log) =>
-      log.log_type === "Treadmill walk" &&
-      log.treadmill_duration_minutes &&
-      log.treadmill_distance_km &&
-      log.treadmill_distance_km > 0,
-  );
-
-  const totalMinutes = treadmillLogs.reduce(
-    (sum, log) => sum + (log.treadmill_duration_minutes ?? 0),
-    0,
-  );
-
-  const totalKm = treadmillLogs.reduce(
-    (sum, log) => sum + (log.treadmill_distance_km ?? 0),
-    0,
-  );
-
-  const averageSpeedKmph =
-    totalMinutes > 0 ? totalKm / (totalMinutes / 60) : null;
-
-  const averagePaceMinPerKm = totalKm > 0 ? totalMinutes / totalKm : null;
-
-  return {
-    totalMinutes,
-    totalKm,
-    averageSpeedKmph,
-    averagePaceMinPerKm,
-  };
-}
 
 function formatSpeed(speed: number | null) {
   if (speed === null) return "No data";
@@ -76,7 +48,84 @@ function formatSpeed(speed: number | null) {
 function formatDistance(distance: number) {
   return `${distance.toFixed(2)} km`;
 }
+export const effectStyles = {
+  restorative: {
+    label: "Restorative",
+    emoji: "⭐",
+    chartColor: "#f7c96b",
+    className: "border-[#f7c96b] bg-[#fff4c7] text-[#101636]",
+  },
+  helpful: {
+    label: "Helpful",
+    emoji: "🌿",
+    chartColor: "#8ee6be",
+    className: "border-[#8ee6be] bg-[#d9f8e8] text-[#101636]",
+  },
+  neutral: {
+    label: "Neutral",
+    emoji: "",
+    chartColor: "#a2ff85",
+    className: "border-[#cdebdc] bg-[#fffaf3] text-[#101636]",
+  },
+  unhelpful: {
+    label: "Unhelpful",
+    emoji: "🫠",
+    chartColor: "#ffd1c8",
+    className: "border-[#ffd1c8] bg-[#fff0e7] text-[#101636]",
+  },
+  harmful: {
+    label: "Harmful",
+    emoji: "⚠️",
+    chartColor: "#ffb199",
+    className: "border-[#ffb199] bg-[#ffe0d6] text-[#8f2f1f]",
+  },
+  detrimental: {
+    label: "Detrimental",
+    emoji: "🚨",
+    chartColor: "#ff7f91",
+    className: "border-[#ff7f91] bg-[#ffd7df] text-[#7a1f35]",
+  },
+} as const;
 
+type EffectKey = keyof typeof effectStyles;
+
+function getEffectStyle(effect: string) {
+  if (effect in effectStyles) {
+    return effectStyles[effect as EffectKey];
+  }
+
+  return effectStyles.neutral;
+}
+type EffectPieShapeProps = {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  fill?: string;
+  payload?: {
+    color?: string;
+  };
+};
+
+function EffectPieShape(props: EffectPieShapeProps) {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, payload } =
+    props;
+
+  return (
+    <Sector
+      cx={cx}
+      cy={cy}
+      innerRadius={innerRadius}
+      outerRadius={outerRadius}
+      startAngle={startAngle}
+      endAngle={endAngle}
+      fill={payload?.color ?? "#cdebdc"}
+    />
+  );
+}
 function formatPace(pace: number | null) {
   if (pace === null) return "No data";
 
@@ -145,14 +194,15 @@ function getActionCounts(logs: InsightLog[]) {
 }
 
 function getEffectCounts(logs: InsightLog[]) {
-  const effects = ["helpful", "neutral", "harmful"];
-
-  return effects.map((effect) => ({
+  return Object.entries(effectStyles).map(([effect, style]) => ({
     name: effect,
+    label: style.label,
+    emoji: style.emoji,
     value: logs.filter((log) => log.effect === effect).length,
+    color: style.chartColor,
+    className: style.className,
   }));
 }
-
 function getScoreTrend(logs: InsightLog[]) {
   const byDate = new Map<
     string,
@@ -329,19 +379,6 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
   const loggedDays = new Set(logs.map(getDate)).size;
   const totalWaterMl = getTotalWaterMl(logs);
 
-  const today = new Date();
-
-  const todayTreadmill = getTreadmillStats(
-    logs.filter((log) => isSameDay(getDate(log), today)),
-  );
-
-  const weekTreadmill = getTreadmillStats(
-    logs.filter((log) => isSameWeek(getDate(log), today)),
-  );
-
-  const monthTreadmill = getTreadmillStats(
-    logs.filter((log) => isSameMonth(getDate(log), today)),
-  );
   return (
     <main className="app-bg min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
@@ -359,7 +396,6 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             feedback.
           </p>
         </div>
-
         <section className="glass-card mt-6 rounded p-5 shadow-sm">
           <p className="text-md font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
             Current read
@@ -373,7 +409,6 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             {usefulTruth}
           </p>
         </section>
-
         <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <article className="glass-card rounded p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
@@ -403,7 +438,6 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             <p className="mt-2 text-3xl font-semibold">{harmfulLogs}</p>
           </article>
         </section>
-
         <section className="mt-5 grid gap-5 lg:grid-cols-2">
           <article className="glass-card rounded p-5 shadow-sm">
             <div className="mb-5">
@@ -464,21 +498,16 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                     <Pie
                       data={effectCounts}
                       dataKey="value"
-                      nameKey="name"
+                      nameKey="label"
                       outerRadius={95}
-                      label
-                    >
-                      {effectCounts.map((entry) => {
-                        const color =
-                          entry.name === "helpful"
-                            ? chartColors.blue
-                            : entry.name === "harmful"
-                              ? chartColors.danger
-                              : chartColors.gray;
+                      shape={<EffectPieShape />}
+                      label={(props) => {
+                        const value = Number(props.value ?? 0);
+                        const name = String(props.name ?? "");
 
-                        return <Cell key={entry.name} fill={color} />;
-                      })}
-                    </Pie>
+                        return value > 0 ? `${name}: ${value}` : "";
+                      }}
+                    />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
@@ -487,6 +516,17 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                   No effect data yet.
                 </p>
               )}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {effectCounts.map((effect) => (
+                  <span
+                    key={effect.name}
+                    className={`rounded border px-3 py-1 text-sm font-semibold ${effect.className}`}
+                  >
+                    {effect.emoji ? `${effect.emoji} ` : ""}
+                    {effect.label}: {effect.value}
+                  </span>
+                ))}
+              </div>
             </div>
           </article>
         </section>
@@ -562,117 +602,10 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             <span>● Intensity</span>
           </div>
         </section>
-
+        <Treadmill logs={logs} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
-              First meal
-            </p>
-
-            <h2 className="mt-2 text-xl font-semibold">Meal timing audit</h2>
-
-            <div className="mt-5 space-y-3 text-md text-[var(--ink-soft)]">
-              <p>
-                Average first meal:{" "}
-                <span className="font-semibold text-[var(--ink)]">
-                  {firstMealStats.average === null
-                    ? "No data"
-                    : formatMinutes(firstMealStats.average)}
-                </span>
-              </p>
-
-              <p>⭐ Before 10am: {firstMealStats.goldCount}</p>
-              <p>✅ Before 2pm: {firstMealStats.checkCount}</p>
-              <p>👎 Before 6pm: {firstMealStats.lateCount}</p>
-              <p>🚨 After 6pm: {firstMealStats.codeRedCount}</p>
-            </div>
-          </article>
-          <section className="mt-5 grid gap-4 sm:grid-cols-3">
-            <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-md font-medium text-[var(--ink-soft)]">
-                Today treadmill
-              </p>
-
-              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
-                {formatSpeed(todayTreadmill.averageSpeedKmph)}
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                {formatDistance(todayTreadmill.totalKm)} ·{" "}
-                {todayTreadmill.totalMinutes.toFixed(0)} min
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                Pace: {formatPace(todayTreadmill.averagePaceMinPerKm)}
-              </p>
-            </article>
-
-            <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-md font-medium text-[var(--ink-soft)]">
-                Week treadmill
-              </p>
-
-              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
-                {formatSpeed(weekTreadmill.averageSpeedKmph)}
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                {formatDistance(weekTreadmill.totalKm)} ·{" "}
-                {weekTreadmill.totalMinutes.toFixed(0)} min
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                Pace: {formatPace(weekTreadmill.averagePaceMinPerKm)}
-              </p>
-            </article>
-
-            <article className="glass-card rounded p-5 shadow-sm">
-              <p className="text-md font-medium text-[var(--ink-soft)]">
-                Month treadmill
-              </p>
-
-              <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">
-                {formatSpeed(monthTreadmill.averageSpeedKmph)}
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                {formatDistance(monthTreadmill.totalKm)} ·{" "}
-                {monthTreadmill.totalMinutes.toFixed(0)} min
-              </p>
-
-              <p className="mt-1 text-md text-[var(--ink-soft)]">
-                Pace: {formatPace(monthTreadmill.averagePaceMinPerKm)}
-              </p>
-            </article>
-          </section>
-          <article className="glass-card rounded p-5 shadow-sm">
-            <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
-              Notes
-            </p>
-
-            <h2 className="mt-2 text-xl font-semibold">
-              How to read this page
-            </h2>
-
-            <div className="mt-4 space-y-3 leading-7 text-[var(--ink-soft)]">
-              <p>
-                The goal is not perfect tracking. The goal is to spot which
-                actions reliably reduce suffering and which ones make the day
-                messy.
-              </p>
-
-              <p>
-                Useful actions should become easier to repeat. Harmful actions
-                should become easier to interrupt. Neutral actions are context.
-              </p>
-
-              <p>
-                Once you have more data, this page can get stricter: best food
-                windows, TikTok cost, sunlight impact, movement effect, and
-                recurring thought triggers.
-              </p>
-            </div>
-          </article>
+          <InsightNotes />
+          <FirstMealAudit firstMealStats={firstMealStats} />
         </section>
       </section>
     </main>

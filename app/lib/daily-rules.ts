@@ -1,30 +1,5 @@
-export type DailyLog = {
-  id: number;
-  log_type: string;
-  title: string | null;
-  notes: string | null;
-  effect: string | null;
-  action_date: string | null;
-  action_time: string | null;
-  mood_score: number | null;
-  energy_score: number | null;
-  intensity_score: number | null;
-  meal_size: string | null;
-  meal_source: string | null;
-  water_amount_ml: number | null;
-  occurred_at: string;
-  treadmill_duration_minutes: number | null;
-  treadmill_distance_km: number | null;
-  treadmill_pace_min_per_km: number | null;
-  workout_name: string | null;
-};
-
-export type ReportItem = {
-  label: string;
-  status: "gold" | "check" | "warning" | "code-red" | "demerit" | "neutral";
-  emoji: string;
-  message: string;
-};
+import { DailyLog } from "./log-types";
+import { ReportItem } from "./report-item";
 
 export type TimeBucket = {
   label: string;
@@ -60,11 +35,13 @@ function getFirstLog(logs: DailyLog[], types: string[]) {
 }
 
 export function getEffectEmoji(effect: string | null) {
+  if (effect === "restorative") return "⭐";
   if (effect === "helpful") return "🌿";
+  if (effect === "unhelpful") return "🫠";
   if (effect === "harmful") return "⚠️";
+  if (effect === "detrimental") return "🚨";
   return "";
 }
-
 export function getTimeBuckets(logs: DailyLog[]): TimeBucket[] {
   const buckets: TimeBucket[] = [
     { label: "Before 10am", endTime: "10:00", logs: [] },
@@ -225,7 +202,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       label: "Water",
       status: "check",
       emoji: "✅",
-      message: `Water logged: ${totalWaterMl}ml. Get in the game!🙄.`,
+      message: `Water logged: ${totalWaterMl}ml. This is not the worst, but don't stop here.`,
     });
   } else if (totalWaterMl > 0) {
     report.push({
@@ -350,6 +327,22 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
     });
   }
 
+  if (hasLog(logs, ["Reading"])) {
+    report.push({
+      label: "Read",
+      status: "gold",
+      emoji: "⭐",
+      message: "You read! Good job!.",
+    });
+  } else if (hasLog(logs, ["Did not read"])) {
+    report.push({
+      label: "Read",
+      status: "warning",
+      emoji: "👎",
+      message: "You need to read bro",
+    });
+  }
+
   const thoughtLoop = getFirstLog(logs, ["Recurring thought"]);
 
   if (thoughtLoop?.intensity_score && thoughtLoop.intensity_score >= 7) {
@@ -372,3 +365,4 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
 
   return report;
 }
+export type { DailyLog, ReportItem };
