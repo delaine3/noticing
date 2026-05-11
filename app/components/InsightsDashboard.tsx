@@ -11,9 +11,9 @@ import {
 } from "recharts";
 import { InsightLog } from "../lib/log-types";
 import InsightNotes from "./InsightNotes";
-import { FirstMealAudit } from "./FirstMealAudit";
+import { FirstMealAudit, getFirstMealStats } from "./FirstMealAudit";
 import { Treadmill } from "./Treadmill";
-import { colors, effectStyles } from "../utils/styles";
+import { colors } from "../utils/styles";
 import { EffectPieChart } from "./effectPieChart";
 import { getTimeMinutes } from "../utils/formatters";
 import { ScoreTrendChart } from "./ScoreTrendChart";
@@ -38,68 +38,6 @@ function getActionCounts(logs: InsightLog[]) {
     .slice(0, 10);
 }
 
-function getFirstMealStats(logs: InsightLog[]) {
-  const byDate = new Map<string, InsightLog[]>();
-
-  logs.forEach((log) => {
-    const date = getDate(log);
-    const current = byDate.get(date) ?? [];
-    current.push(log);
-    byDate.set(date, current);
-  });
-
-  const firstMeals = [...byDate.entries()]
-    .map(([date, dayLogs]) => {
-      const firstMeal = dayLogs
-        .filter((log) => log.log_type === "First meal")
-        .sort((a, b) => {
-          const aMinutes =
-            getTimeMinutes(a.action_time) ?? Number.POSITIVE_INFINITY;
-          const bMinutes =
-            getTimeMinutes(b.action_time) ?? Number.POSITIVE_INFINITY;
-
-          return aMinutes - bMinutes;
-        })[0];
-
-      return {
-        date,
-        minutes: getTimeMinutes(firstMeal?.action_time ?? null),
-      };
-    })
-    .filter((entry) => entry.minutes !== null);
-
-  if (!firstMeals.length) {
-    return {
-      average: null,
-      goldCount: 0,
-      checkCount: 0,
-      lateCount: 0,
-      codeRedCount: 0,
-    };
-  }
-
-  const total = firstMeals.reduce(
-    (sum, entry) => sum + (entry.minutes ?? 0),
-    0,
-  );
-  const average = Math.round(total / firstMeals.length);
-
-  return {
-    average,
-    goldCount: firstMeals.filter((entry) => (entry.minutes ?? 0) < 10 * 60)
-      .length,
-    checkCount: firstMeals.filter(
-      (entry) =>
-        (entry.minutes ?? 0) >= 10 * 60 && (entry.minutes ?? 0) < 14 * 60,
-    ).length,
-    lateCount: firstMeals.filter(
-      (entry) =>
-        (entry.minutes ?? 0) >= 14 * 60 && (entry.minutes ?? 0) < 18 * 60,
-    ).length,
-    codeRedCount: firstMeals.filter((entry) => (entry.minutes ?? 0) >= 18 * 60)
-      .length,
-  };
-}
 function getTotalWaterMl(logs: InsightLog[]) {
   return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
 }
@@ -107,8 +45,9 @@ function getTotalWaterMl(logs: InsightLog[]) {
 function getUsefulTruth(logs: InsightLog[]) {
   const helpfulCount = logs.filter((log) => log.effect === "helpful").length;
   const harmfulCount = logs.filter((log) => log.effect === "harmful").length;
-  const firstMealStats = getFirstMealStats(logs);
   const waterCount = logs.filter((log) => log.log_type === "Water").length;
+  const firstMealStats = getFirstMealStats(logs);
+
   const movementCount = logs.filter((log) =>
     ["Movement", "Exercise", "Treadmill walk", "Strength training"].includes(
       log.log_type,
@@ -140,7 +79,6 @@ function getUsefulTruth(logs: InsightLog[]) {
 
 export function InsightsDashboard({ logs }: InsightsDashboardProps) {
   const actionCounts = getActionCounts(logs);
-  const firstMealStats = getFirstMealStats(logs);
   const usefulTruth = getUsefulTruth(logs);
   const helpfulLogs = logs.filter((log) => log.effect === "helpful").length;
   const harmfulLogs = logs.filter((log) => log.effect === "harmful").length;
@@ -260,7 +198,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         <ScoreTrendChart logs={logs} /> <Treadmill logs={logs} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <InsightNotes />
-          <FirstMealAudit firstMealStats={firstMealStats} />
+          <FirstMealAudit logs={logs} />
         </section>
       </section>
     </main>
