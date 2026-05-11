@@ -44,3 +44,15 @@ export function formatMinutes(minutes: number | null) {
 
   return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
 }
+
+export function getTimeMinutes(time: string | null) {
+  if (!time) return null;
+
+  const [hours, minutes] = time.split(":").map(Number);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return null;
+  }
+
+  return hours * 60 + minutes;
+}
