@@ -35,6 +35,8 @@ function getTotalWaterMl(logs: DailyLog[]) {
 }
 function getNextActionCopy(logs: DailyLog[]) {
   const hasFirstMeal = logs.some((log) => log.log_type === "First meal");
+  const hasRead = logs.some((log) => log.log_type === "Reading");
+
   const totalWaterMl = getTotalWaterMl(logs);
   const hasWater = totalWaterMl > 0;
   const hasSunlight = logs.some((log) => log.log_type === "Sunlight");
@@ -88,7 +90,22 @@ function getNextActionCopy(logs: DailyLog[]) {
       label: "Log movement",
     };
   }
-
+  if (!hasWater) {
+    return {
+      title: "Go drink some water",
+      body: "COffee doesn't really coumt. Try tea or lemon water",
+      href: "/logs/new?type=Water",
+      label: "Log water",
+    };
+  }
+  if (!hasRead) {
+    return {
+      title: "Read a book dude",
+      body: "Even a few pages, just do it",
+      href: "/logs/new?type=Read",
+      label: "Log Read",
+    };
+  }
   return {
     title: "You handled the basics. Pick one useful task.",
     body: "One focused task. App work, reading, or plant care. Keep the day moving.",

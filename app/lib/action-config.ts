@@ -74,7 +74,7 @@ export const actionConfig: Record<string, ActionConfig> = {
     notesPlaceholder: "Optional. Only note what matters.",
     fields: ["water", "effect"],
   },
-  WashUp: {
+  "Wash Up": {
     heading: "Washed up. Excellent. System reset.",
     instruction: "Track the reset action.",
     titleLabel: "Wash-up type",
