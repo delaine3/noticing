@@ -18,6 +18,12 @@ import { InsightLog } from "../lib/log-types";
 import InsightNotes from "./InsightNotes";
 import { FirstMealAudit } from "./FirstMealAudit";
 import { Treadmill } from "./Treadmill";
+<<<<<<< Updated upstream
+=======
+import { colors } from "../utils/styles";
+import { EffectPieChart } from "./effectPieChart";
+import { ScoreTrendChart } from "./ScoreTrendChart";
+>>>>>>> Stashed changes
 
 type InsightsDashboardProps = {
   logs: InsightLog[];
