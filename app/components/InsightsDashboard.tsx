@@ -4,188 +4,30 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
   ResponsiveContainer,
-  Sector,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { InsightLog } from "../lib/log-types";
 import InsightNotes from "./InsightNotes";
-import { FirstMealAudit } from "./FirstMealAudit";
+import { FirstMealAudit, getFirstMealStats } from "./FirstMealAudit";
 import { Treadmill } from "./Treadmill";
-<<<<<<< Updated upstream
-=======
 import { colors } from "../utils/styles";
 import { EffectPieChart } from "./effectPieChart";
 import { ScoreTrendChart } from "./ScoreTrendChart";
->>>>>>> Stashed changes
+import { colors } from "../utils/styles";
+import { EffectPieChart } from "./effectPieChart";
+import { getTimeMinutes } from "../utils/formatters";
+import { ScoreTrendChart } from "./ScoreTrendChart";
 
 type InsightsDashboardProps = {
   logs: InsightLog[];
 };
 
-const chartColors = {
-  coral: "#ffa9b7",
-  blush: "#ffd7df",
-  cream: "#fffaf3",
-  mint: "#c9f5dd",
-  aqua: "#5effe4",
-  leaf: "#3f7f63",
-  ink: "#1f342d",
-  green: "#398b29",
-  softInk: "#4f6f63",
-  gray: "#5d647395",
-  blue: "#18bcbc90",
-  warning: "#f4a261",
-  gold: "#fbbf24",
-  danger: "#d5145198",
-};
-
-function formatSpeed(speed: number | null) {
-  if (speed === null) return "No data";
-  return `${speed.toFixed(2)} km/h`;
-}
-
-function formatDistance(distance: number) {
-  return `${distance.toFixed(2)} km`;
-}
-export const effectStyles = {
-  restorative: {
-    label: "Restorative",
-    emoji: "⭐",
-    chartColor: "#f7c96b",
-    className: "border-[#f7c96b] bg-[#fff4c7] text-[#101636]",
-  },
-  helpful: {
-    label: "Helpful",
-    emoji: "🌿",
-    chartColor: "#8ee6be",
-    className: "border-[#8ee6be] bg-[#d9f8e8] text-[#101636]",
-  },
-  neutral: {
-    label: "Neutral",
-    emoji: "",
-    chartColor: "#a2ff85",
-    className: "border-[#cdebdc] bg-[#fffaf3] text-[#101636]",
-  },
-  unhelpful: {
-    label: "Unhelpful",
-    emoji: "🫠",
-    chartColor: "#ffd1c8",
-    className: "border-[#ffd1c8] bg-[#fff0e7] text-[#101636]",
-  },
-  harmful: {
-    label: "Harmful",
-    emoji: "⚠️",
-    chartColor: "#ffb199",
-    className: "border-[#ffb199] bg-[#ffe0d6] text-[#8f2f1f]",
-  },
-  detrimental: {
-    label: "Detrimental",
-    emoji: "🚨",
-    chartColor: "#ff7f91",
-    className: "border-[#ff7f91] bg-[#ffd7df] text-[#7a1f35]",
-  },
-} as const;
-
-type EffectKey = keyof typeof effectStyles;
-
-function getEffectStyle(effect: string) {
-  if (effect in effectStyles) {
-    return effectStyles[effect as EffectKey];
-  }
-
-  return effectStyles.neutral;
-}
-type EffectPieShapeProps = {
-  cx?: number;
-  cy?: number;
-  midAngle?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  startAngle?: number;
-  endAngle?: number;
-  fill?: string;
-  payload?: {
-    color?: string;
-  };
-};
-
-function EffectPieShape(props: EffectPieShapeProps) {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, payload } =
-    props;
-
-  return (
-    <Sector
-      cx={cx}
-      cy={cy}
-      innerRadius={innerRadius}
-      outerRadius={outerRadius}
-      startAngle={startAngle}
-      endAngle={endAngle}
-      fill={payload?.color ?? "#cdebdc"}
-    />
-  );
-}
-function formatPace(pace: number | null) {
-  if (pace === null) return "No data";
-
-  const minutes = Math.floor(pace);
-  const seconds = Math.round((pace - minutes) * 60);
-
-  return `${minutes}:${String(seconds).padStart(2, "0")} min/km`;
-}
-
-function isSameDay(date: string, target: Date) {
-  return date === target.toISOString().slice(0, 10);
-}
-
-function isSameWeek(date: string, target: Date) {
-  const value = new Date(`${date}T00:00:00`);
-  const diffMs = target.getTime() - value.getTime();
-  const diffDays = diffMs / (1000 * 60 * 60 * 24);
-
-  return diffDays >= 0 && diffDays < 7;
-}
-
-function isSameMonth(date: string, target: Date) {
-  const value = new Date(`${date}T00:00:00`);
-
-  return (
-    value.getFullYear() === target.getFullYear() &&
-    value.getMonth() === target.getMonth()
-  );
-}
-function getDate(log: InsightLog) {
+export function getDate(log: InsightLog) {
   return log.action_date || log.occurred_at.slice(0, 10);
 }
-
-function getTimeMinutes(time: string | null) {
-  if (!time) return null;
-
-  const [hours, minutes] = time.split(":").map(Number);
-
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-    return null;
-  }
-
-  return hours * 60 + minutes;
-}
-
-function formatMinutes(minutes: number | null) {
-  if (minutes === null) return "No time";
-
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-
-  return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-}
-
 function getActionCounts(logs: InsightLog[]) {
   const counts = new Map<string, number>();
 
@@ -199,143 +41,6 @@ function getActionCounts(logs: InsightLog[]) {
     .slice(0, 10);
 }
 
-function getEffectCounts(logs: InsightLog[]) {
-  return Object.entries(effectStyles).map(([effect, style]) => ({
-    name: effect,
-    label: style.label,
-    emoji: style.emoji,
-    value: logs.filter((log) => log.effect === effect).length,
-    color: style.chartColor,
-    className: style.className,
-  }));
-}
-function getScoreTrend(logs: InsightLog[]) {
-  const byDate = new Map<
-    string,
-    {
-      date: string;
-      moodTotal: number;
-      moodCount: number;
-      energyTotal: number;
-      energyCount: number;
-      intensityTotal: number;
-      intensityCount: number;
-    }
-  >();
-
-  logs.forEach((log) => {
-    const date = getDate(log);
-
-    if (!byDate.has(date)) {
-      byDate.set(date, {
-        date,
-        moodTotal: 0,
-        moodCount: 0,
-        energyTotal: 0,
-        energyCount: 0,
-        intensityTotal: 0,
-        intensityCount: 0,
-      });
-    }
-
-    const entry = byDate.get(date);
-
-    if (!entry) return;
-
-    if (log.mood_score !== null) {
-      entry.moodTotal += log.mood_score;
-      entry.moodCount += 1;
-    }
-
-    if (log.energy_score !== null) {
-      entry.energyTotal += log.energy_score;
-      entry.energyCount += 1;
-    }
-
-    if (log.intensity_score !== null) {
-      entry.intensityTotal += log.intensity_score;
-      entry.intensityCount += 1;
-    }
-  });
-
-  return [...byDate.values()]
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .map((entry) => ({
-      date: entry.date.slice(5),
-      mood: entry.moodCount
-        ? Number((entry.moodTotal / entry.moodCount).toFixed(1))
-        : null,
-      energy: entry.energyCount
-        ? Number((entry.energyTotal / entry.energyCount).toFixed(1))
-        : null,
-      intensity: entry.intensityCount
-        ? Number((entry.intensityTotal / entry.intensityCount).toFixed(1))
-        : null,
-    }));
-}
-
-function getFirstMealStats(logs: InsightLog[]) {
-  const byDate = new Map<string, InsightLog[]>();
-
-  logs.forEach((log) => {
-    const date = getDate(log);
-    const current = byDate.get(date) ?? [];
-    current.push(log);
-    byDate.set(date, current);
-  });
-
-  const firstMeals = [...byDate.entries()]
-    .map(([date, dayLogs]) => {
-      const firstMeal = dayLogs
-        .filter((log) => log.log_type === "First meal")
-        .sort((a, b) => {
-          const aMinutes =
-            getTimeMinutes(a.action_time) ?? Number.POSITIVE_INFINITY;
-          const bMinutes =
-            getTimeMinutes(b.action_time) ?? Number.POSITIVE_INFINITY;
-
-          return aMinutes - bMinutes;
-        })[0];
-
-      return {
-        date,
-        minutes: getTimeMinutes(firstMeal?.action_time ?? null),
-      };
-    })
-    .filter((entry) => entry.minutes !== null);
-
-  if (!firstMeals.length) {
-    return {
-      average: null,
-      goldCount: 0,
-      checkCount: 0,
-      lateCount: 0,
-      codeRedCount: 0,
-    };
-  }
-
-  const total = firstMeals.reduce(
-    (sum, entry) => sum + (entry.minutes ?? 0),
-    0,
-  );
-  const average = Math.round(total / firstMeals.length);
-
-  return {
-    average,
-    goldCount: firstMeals.filter((entry) => (entry.minutes ?? 0) < 10 * 60)
-      .length,
-    checkCount: firstMeals.filter(
-      (entry) =>
-        (entry.minutes ?? 0) >= 10 * 60 && (entry.minutes ?? 0) < 14 * 60,
-    ).length,
-    lateCount: firstMeals.filter(
-      (entry) =>
-        (entry.minutes ?? 0) >= 14 * 60 && (entry.minutes ?? 0) < 18 * 60,
-    ).length,
-    codeRedCount: firstMeals.filter((entry) => (entry.minutes ?? 0) >= 18 * 60)
-      .length,
-  };
-}
 function getTotalWaterMl(logs: InsightLog[]) {
   return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
 }
@@ -343,8 +48,9 @@ function getTotalWaterMl(logs: InsightLog[]) {
 function getUsefulTruth(logs: InsightLog[]) {
   const helpfulCount = logs.filter((log) => log.effect === "helpful").length;
   const harmfulCount = logs.filter((log) => log.effect === "harmful").length;
-  const firstMealStats = getFirstMealStats(logs);
   const waterCount = logs.filter((log) => log.log_type === "Water").length;
+  const firstMealStats = getFirstMealStats(logs);
+
   const movementCount = logs.filter((log) =>
     ["Movement", "Exercise", "Treadmill walk", "Strength training"].includes(
       log.log_type,
@@ -376,9 +82,6 @@ function getUsefulTruth(logs: InsightLog[]) {
 
 export function InsightsDashboard({ logs }: InsightsDashboardProps) {
   const actionCounts = getActionCounts(logs);
-  const effectCounts = getEffectCounts(logs);
-  const scoreTrend = getScoreTrend(logs);
-  const firstMealStats = getFirstMealStats(logs);
   const usefulTruth = getUsefulTruth(logs);
   const helpfulLogs = logs.filter((log) => log.effect === "helpful").length;
   const harmfulLogs = logs.filter((log) => log.effect === "harmful").length;
@@ -465,17 +168,17 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                     />
                     <XAxis
                       dataKey="name"
-                      tick={{ fontSize: 11, fill: chartColors.softInk }}
+                      tick={{ fontSize: 11, fill: colors.softInk }}
                     />
                     <YAxis
                       allowDecimals={false}
-                      tick={{ fontSize: 12, fill: chartColors.softInk }}
+                      tick={{ fontSize: 12, fill: colors.softInk }}
                     />
                     <Tooltip />
                     <Bar
                       dataKey="count"
                       radius={[6, 6, 0, 0]}
-                      fill={chartColors.leaf}
+                      fill={colors.leaf}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -487,54 +190,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             </div>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
-            <div className="mb-5">
-              <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
-                Effect
-              </p>
-              <h2 className="mt-2 text-xl font-semibold">
-                Helpful vs neutral vs harmful
-              </h2>
-            </div>
-
-            <div className="h-72">
-              {logs.length ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={effectCounts}
-                      dataKey="value"
-                      nameKey="label"
-                      outerRadius={95}
-                      shape={<EffectPieShape />}
-                      label={(props) => {
-                        const value = Number(props.value ?? 0);
-                        const name = String(props.name ?? "");
-
-                        return value > 0 ? `${name}: ${value}` : "";
-                      }}
-                    />
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-md text-[var(--ink-soft)]">
-                  No effect data yet.
-                </p>
-              )}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {effectCounts.map((effect) => (
-                  <span
-                    key={effect.name}
-                    className={`rounded border px-3 py-1 text-sm font-semibold ${effect.className}`}
-                  >
-                    {effect.emoji ? `${effect.emoji} ` : ""}
-                    {effect.label}: {effect.value}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </article>
+          <EffectPieChart logs={logs} />
         </section>
         <article className="glass-card rounded p-5 shadow-sm">
           <p className="text-md font-medium text-[var(--ink-soft)]">
@@ -542,76 +198,10 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
           <p className="mt-2 text-3xl font-semibold">{totalWaterMl}ml</p>
         </article>
-        <section className="mt-5 glass-card rounded p-5 shadow-sm">
-          <div className="mb-5">
-            <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
-              Scores
-            </p>
-            <h2 className="mt-2 text-xl font-semibold">
-              Mood, energy, and intensity over time
-            </h2>
-          </div>
-
-          <div className="h-80">
-            {scoreTrend.length ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={scoreTrend}>
-                  <CartesianGrid
-                    stroke="rgba(31,52,45,0.12)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 12, fill: chartColors.softInk }}
-                  />
-                  <YAxis
-                    domain={[0, 10]}
-                    tick={{ fontSize: 12, fill: chartColors.softInk }}
-                  />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="mood"
-                    stroke={chartColors.coral}
-                    strokeWidth={3}
-                    dot={{ r: 3 }}
-                    connectNulls
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="energy"
-                    stroke={chartColors.leaf}
-                    strokeWidth={3}
-                    dot={{ r: 3 }}
-                    connectNulls
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="intensity"
-                    stroke={chartColors.aqua}
-                    strokeWidth={3}
-                    dot={{ r: 3 }}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-md text-[var(--ink-soft)]">
-                Add mood, energy, or intensity scores to see trends.
-              </p>
-            )}
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-3 text-md text-[var(--ink-soft)]">
-            <span>● Mood</span>
-            <span>● Energy</span>
-            <span>● Intensity</span>
-          </div>
-        </section>
-        <Treadmill logs={logs} />
+        <ScoreTrendChart logs={logs} /> <Treadmill logs={logs} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <InsightNotes />
-          <FirstMealAudit firstMealStats={firstMealStats} />
+          <FirstMealAudit logs={logs} />
         </section>
       </section>
     </main>
