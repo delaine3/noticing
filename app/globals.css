@@ -77,13 +77,11 @@
 .brand-button {
   background: linear-gradient(
     90deg,
-    #f0fff7,
     #ecfff5,
-    #e4faef,
+    #e2fff0,
     #d1f7f2,
-    #b3f5f7,
-    #93f1f3,
-    #a2f2f9
+    #c9f5dd,
+    #b6ffd7
   );
   color: rgb(0, 0, 0);
   padding: 16px;
@@ -92,18 +90,16 @@
 }
 
 .brand-button:hover {
-  background: #a2f2f9;
+  background: #b6ffd7;
 }
 .muted-button {
   background: linear-gradient(
     90deg,
-    #fffaf3,
-    #fff8ed,
-    #ffe4f6,
-    #ffcbe0,
+    #ffeaf8,
+    #ffeaf8,
+    #ffd3e5,
     #ffbfc0,
-    #ffb9b2,
-    #ffa7a8
+    #ffb9b2
   );
   color: #3f3f3f;
   padding: 16px;
