@@ -228,7 +228,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
       label: "Sunlight",
       status: "demerit",
       emoji: "🚫",
-      message: "No sunlight logged. The mammal protocol was ignored.",
+      message: "No sunlight logged. Do better.",
     });
   } else if (sunlightMinutes !== null && sunlightMinutes < 14 * 60) {
     report.push({

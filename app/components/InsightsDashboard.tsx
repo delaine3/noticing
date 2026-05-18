@@ -15,6 +15,9 @@ import { FirstMealAudit, getFirstMealStats } from "./FirstMealAudit";
 import { Treadmill } from "./Treadmill";
 import { colors } from "../utils/styles";
 import { EffectPieChart } from "./effectPieChart";
+import { ScoreTrendChart } from "./ScoreTrendChart";
+import { colors } from "../utils/styles";
+import { EffectPieChart } from "./effectPieChart";
 import { getTimeMinutes } from "../utils/formatters";
 import { ScoreTrendChart } from "./ScoreTrendChart";
 

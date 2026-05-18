@@ -36,6 +36,9 @@ function getTotalWaterMl(logs: DailyLog[]) {
 function getNextActionCopy(logs: DailyLog[]) {
   const hasFirstMeal = logs.some((log) => log.log_type === "First meal");
   const hasRead = logs.some((log) => log.log_type === "Reading");
+  const hasAppliedToJob = logs.some(
+    (log) => log.log_type === "Job Application",
+  );
 
   const totalWaterMl = getTotalWaterMl(logs);
   const hasWater = totalWaterMl > 0;
@@ -93,7 +96,7 @@ function getNextActionCopy(logs: DailyLog[]) {
   if (!hasWater) {
     return {
       title: "Go drink some water",
-      body: "COffee doesn't really coumt. Try tea or lemon water",
+      body: "COffee doesn't really count. Try tea or lemon water",
       href: "/logs/new?type=Water",
       label: "Log water",
     };
@@ -104,6 +107,14 @@ function getNextActionCopy(logs: DailyLog[]) {
       body: "Even a few pages, just do it",
       href: "/logs/new?type=Read",
       label: "Log Read",
+    };
+  }
+  if (!hasAppliedToJob) {
+    return {
+      title: "Apply to A JOB",
+      body: "Just do it",
+      href: "/logs/new?type=Apply To Job",
+      label: "Log Applied To Job",
     };
   }
   return {
