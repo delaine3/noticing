@@ -27,7 +27,14 @@ export const actionConfig: Record<string, ActionConfig> = {
     notesPlaceholder: "Anything useful about sleep, dreams, body, or mood?",
     fields: ["energy", "mood"],
   },
-
+  "Job application": {
+    heading: "You applied to a job! Nice.",
+    instruction: "Record the job.",
+    titleLabel: "Job application note",
+    titlePlaceholder: "Apllied to be software engineer in Greece",
+    notesPlaceholder: "Anything useful to note?",
+    fields: [],
+  },
   "First meal": {
     heading: "Good. Feed the body.",
     instruction:

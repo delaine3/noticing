@@ -20,11 +20,14 @@ export type DailyLog = {
   wash_up: string | null;
 };
 export const actionTypes = [
-  "Woke up",
   "First meal",
+  "Job application",
+  "Woke up",
   "Cook",
-  "Washed Dishes",
+  "Wash Dishes",
+  "Clean",
   "Meal",
+  "Updated Resume",
   "Dessert eaten",
   "Dessert craving",
   "Water",
