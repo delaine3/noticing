@@ -134,6 +134,11 @@ export default async function LogsPage() {
                     </span>
                   ) : null}
                 </div>
+                <div className="mt-5 flex flex-wrap gap-2 text-md text-stone-700">
+                  <Link href={`/logs/${log.id}/edit`} className="muted-button">
+                    Edit
+                  </Link>
+                </div>
               </article>
             ))}
           </div>

@@ -28,6 +28,7 @@ export const actionTypes = [
   "Clean",
   "Meal",
   "Updated Resume",
+  "Applied to Job",
   "Dessert eaten",
   "Dessert craving",
   "Water",
