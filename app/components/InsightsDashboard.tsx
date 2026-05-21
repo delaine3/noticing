@@ -16,10 +16,6 @@ import { Treadmill } from "./Treadmill";
 import { colors } from "../utils/styles";
 import { EffectPieChart } from "./effectPieChart";
 import { ScoreTrendChart } from "./ScoreTrendChart";
-import { colors } from "../utils/styles";
-import { EffectPieChart } from "./effectPieChart";
-import { getTimeMinutes } from "../utils/formatters";
-import { ScoreTrendChart } from "./ScoreTrendChart";
 
 type InsightsDashboardProps = {
   logs: InsightLog[];
@@ -89,7 +85,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
   const totalWaterMl = getTotalWaterMl(logs);
 
   return (
-    <main className="app-bg min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
+    <main className="min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
         <div>
           <p className="text-md font-medium uppercase tracking-[0.25em] text-[var(--leaf-dark)]">

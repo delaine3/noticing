@@ -109,7 +109,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <main className="min-h-screen app-bg px-6 py-10 text-stone-950">
+    <main className="min-h-screen px-6 py-10 text-black-950">
       <section className="mx-auto max-w-3xl">
         <p className="text-md font-medium uppercase tracking-[0.25em] text-green-700">
           New action
@@ -119,7 +119,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
           Log the thing. Then move.
         </h1>
 
-        <p className="mt-4 text-stone-700">
+        <p className="mt-4 text-black-700">
           Pick the action. The form will stop showing irrelevant nonsense.
         </p>
 

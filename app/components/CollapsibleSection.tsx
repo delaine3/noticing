@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { ReactNode, useState } from "react";
 
 type CollapsibleSectionProps = {
@@ -31,17 +32,17 @@ export function CollapsibleSection({
             {eyebrow}
           </p>
 
-          <h2 className="mt-2 text-xl font-semibold tracking-tight text-stone-950 sm:text-2xl">
+          <h2 className="mt-2 text-xl font-semibold tracking-tight text-black-950 sm:text-2xl">
             {title}
           </h2>
 
           {summary ? (
-            <p className="mt-2 text-md leading-6 text-stone-600">{summary}</p>
+            <p className="mt-2 text-md leading-6 text-black-600">{summary}</p>
           ) : null}
         </div>
 
-        <span className="rounded border border-stone-200 bg-stone-50 px-3 py-1 text-md font-semibold text-stone-700">
-          {isOpen ? "Hide" : "Show"}
+        <span className="rounded border border-black-200 bg-black-50 px-3 py-1 text-md font-semibold text-black-700">
+          {isOpen ? <ChevronUp /> : <ChevronDown />}
         </span>
       </button>
       {isOpen ? <div className="mt-5">{children}</div> : null}

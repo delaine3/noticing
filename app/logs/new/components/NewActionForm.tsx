@@ -50,17 +50,17 @@ export function NewActionForm({
 
       <form
         action={createLog}
-        className="glass-card mt-6 space-y-5 rounded border border-stone-200 p-6 shadow-sm"
+        className="glass-card mt-6 space-y-5 rounded border border-black-200 p-6 shadow-sm"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-md font-medium text-stone-700">Action</span>
+            <span className="text-md font-medium text-black-700">Action</span>
             <select
               name="log_type"
               required
               value={actionType}
               onChange={(event) => setActionType(event.target.value)}
-              className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             >
               {actionTypes.map((type) => (
                 <option key={type} value={type}>
@@ -75,12 +75,12 @@ export function NewActionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-md font-medium text-stone-700">Date</span>
+            <span className="text-md font-medium text-black-700">Date</span>
             <input
               name="action_date"
               type="date"
               defaultValue={today}
-              className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             />
           </label>
 
@@ -88,12 +88,12 @@ export function NewActionForm({
         </div>
 
         <label className="block">
-          <span className="text-md font-medium text-stone-700">
+          <span className="text-md font-medium text-black-700">
             {config.titleLabel}
           </span>
           <input
             name="title"
-            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             placeholder={config.titlePlaceholder}
           />
         </label>
@@ -108,16 +108,16 @@ export function NewActionForm({
         />
 
         <label className="block">
-          <span className="text-md font-medium text-stone-700">Notes</span>
+          <span className="text-md font-medium text-black-700">Notes</span>
           <textarea
             name="notes"
             rows={5}
-            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             placeholder={config.notesPlaceholder}
           />
         </label>
 
-        <button type="submit" className="brand-button">
+        <button type="submit" className="app-button">
           Save action
         </button>
       </form>

@@ -13,7 +13,7 @@ export function AppNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 h-16 border-b border-[rgba(36,81,61,0.14)] bg-[linear-gradient(90deg,_#ffa9b7_0%,_#fffaf3_45%,_#e4faef_75%,_#d1f7f2_100%)] backdrop-blur-xl">
+    <header className="app-bg sticky top-0 z-40 h-16 border-b border-[rgba(36,81,61,0.14)] backdrop-blur-xl">
       <nav className="flex h-full w-full items-stretch justify-between">
         <Link
           href="/"

@@ -1,6 +1,6 @@
 import { supabase } from "./lib/supabase";
 import { DailyLog, getDailyReport, getTimeBuckets } from "./lib/daily-rules";
-import { TodayCommandCenter } from "./components/TodayCommandCenter";
+import { TodayCommandCenter } from "./components/today-command-center/TodayCommandCenter";
 
 function getTodayDate() {
   return new Date().toISOString().slice(0, 10);

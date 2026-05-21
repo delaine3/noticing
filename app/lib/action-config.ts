@@ -27,7 +27,14 @@ export const actionConfig: Record<string, ActionConfig> = {
     notesPlaceholder: "Anything useful about sleep, dreams, body, or mood?",
     fields: ["energy", "mood"],
   },
-
+  "Job application": {
+    heading: "You applied to a job! Nice.",
+    instruction: "Record the job.",
+    titleLabel: "Job application note",
+    titlePlaceholder: "Apllied to be software engineer in Greece",
+    notesPlaceholder: "Anything useful to note?",
+    fields: [],
+  },
   "First meal": {
     heading: "Good. Feed the body.",
     instruction:
@@ -71,6 +78,14 @@ export const actionConfig: Record<string, ActionConfig> = {
     instruction: "Log the amount. The body likes receipts.",
     titleLabel: "Water note",
     titlePlaceholder: "Example: rooibos, one glass, bottle refill",
+    notesPlaceholder: "Optional. Only note what matters.",
+    fields: ["water", "effect"],
+  },
+  Coffee: {
+    heading: "This is kinda water I guess",
+    instruction: "How much was it?",
+    titleLabel: "Coffee note",
+    titlePlaceholder: "What kind of coffee?",
     notesPlaceholder: "Optional. Only note what matters.",
     fields: ["water", "effect"],
   },

@@ -17,13 +17,13 @@ export function ScoreFields({
     <div className="grid gap-4 sm:grid-cols-3">
       {showMood ? (
         <label className="block">
-          <span className="text-md font-medium text-stone-700">Mood</span>
+          <span className="text-md font-medium text-black-700">Mood</span>
           <input
             name="mood_score"
             type="number"
             min="1"
             max="10"
-            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             placeholder="1-10"
           />
         </label>
@@ -31,13 +31,13 @@ export function ScoreFields({
 
       {showEnergy ? (
         <label className="block">
-          <span className="text-md font-medium text-stone-700">Energy</span>
+          <span className="text-md font-medium text-black-700">Energy</span>
           <input
             name="energy_score"
             type="number"
             min="1"
             max="10"
-            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             placeholder="1-10"
           />
         </label>
@@ -45,13 +45,13 @@ export function ScoreFields({
 
       {showIntensity ? (
         <label className="block">
-          <span className="text-md font-medium text-stone-700">Intensity</span>
+          <span className="text-md font-medium text-black-700">Intensity</span>
           <input
             name="intensity_score"
             type="number"
             min="1"
             max="10"
-            className="mt-2 w-full rounded border border-stone-300 bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             placeholder="1-10"
           />
         </label>

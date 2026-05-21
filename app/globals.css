@@ -21,18 +21,9 @@
   --border-soft: #cdebdc;
 }
 .app-bg {
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(255, 159, 152, 0.5),
-      transparent 28rem
-    ),
-    radial-gradient(
-      circle at top right,
-      rgba(153, 239, 229, 0.55),
-      transparent 32rem
-    ),
-    linear-gradient(90deg, #ffa9b7 0%, #fffaf3 45%, #e4faef 75%, #d1f7f2 100%);
+  background-repeat: no-repeat;
+  color: black;
+  background: linear-gradient(to right, #ff81d9, #ffff78, #81e2ff);
 }
 .message-card {
   border: 1px solid rgba(205, 235, 220, 0.9);
@@ -54,68 +45,44 @@
   background: rgba(255, 250, 243, 0.9);
 }
 
-.brand-gradient {
-  background: linear-gradient(
-    90deg,
-    #ffa9b7 0%,
-    #ff9f98 19%,
-    #ff9dc2 28%,
-    #ffe4ea 38%,
-    #c9f5dd 68%,
-    #99efe5 100%
-  );
-}
-
-.brand-text {
+.app-text {
   color: var(--ink);
 }
 
-.brand-muted {
+.app-muted {
   color: var(--ink-soft);
 }
 
-.brand-button {
-  background: linear-gradient(
-    90deg,
-    #ecfff5,
-    #e2fff0,
-    #d1f7f2,
-    #c9f5dd,
-    #b6ffd7
-  );
+.app-button {
+  background: linear-gradient(to right, #ff81d9);
+
   color: rgb(0, 0, 0);
   padding: 16px;
   border-radius: 5px;
   border: 1px solid rgba(146, 146, 146, 0.477);
 }
 
-.brand-button:hover {
+.app-button:hover {
   background: #b6ffd7;
 }
-.muted-button {
-  background: linear-gradient(
-    90deg,
-    #ffeaf8,
-    #ffeaf8,
-    #ffd3e5,
-    #ffbfc0,
-    #ffb9b2
-  );
+.secondary-button {
+  background: linear-gradient(to right, #81e2ff);
+
   color: #3f3f3f;
   padding: 16px;
   border-radius: 3px;
   border: 1px solid rgba(146, 146, 146, 0.477);
 }
 
-.muted-button:hover {
+.secondary-button:hover {
   background: #ffa7a8;
 }
-.brand-pill {
+.app-pill {
   background: rgba(201, 245, 221, 0.55);
   color: var(--leaf-dark);
 }
 
-.brand-pill:hover {
+.app-pill:hover {
   background: rgba(153, 239, 229, 0.55);
 }
 

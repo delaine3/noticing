@@ -3,9 +3,26 @@ import { ReportItem } from "./report-item";
 
 export type TimeBucket = {
   label: string;
-  endTime: string | null;
   logs: DailyLog[];
 };
+
+type NextAction = {
+  title: string;
+  body: string;
+  href: string;
+  label: string;
+};
+
+export const quickActions = [
+  { label: "I woke up", href: "/logs/new?type=Woke%20up" },
+  { label: "I ate", href: "/logs/new?type=First%20meal" },
+  { label: "I drank water", href: "/logs/new?type=Water" },
+  { label: "I got sunlight", href: "/logs/new?type=Sunlight" },
+  { label: "I moved", href: "/logs/new?type=Movement" },
+  { label: "I applied to a job", href: "/logs/new?type=Job%20application" },
+  { label: "I worked on app", href: "/logs/new?type=App%20work" },
+  { label: "I’m spiraling", href: "/logs/new?type=Recurring%20thought" },
+];
 
 function timeToMinutes(time: string | null) {
   if (!time) return null;
@@ -34,22 +51,110 @@ function getFirstLog(logs: DailyLog[], types: string[]) {
     })[0];
 }
 
+export function getTotalWaterMl(logs: DailyLog[]) {
+  return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
+}
+
 export function getEffectEmoji(effect: string | null) {
   if (effect === "restorative") return "⭐";
   if (effect === "helpful") return "🌿";
   if (effect === "unhelpful") return "🫠";
   if (effect === "harmful") return "⚠️";
   if (effect === "detrimental") return "🚨";
+
   return "";
 }
+
+export function getReportCardStyle(status: string) {
+  if (status === "gold") return "border-amber-200 bg-amber-50";
+  if (status === "check") return "border-green-200 bg-green-50";
+  if (status === "warning") return "border-orange-200 bg-orange-50";
+  if (status === "code-red") return "border-red-300 bg-red-50";
+  if (status === "demerit") return "border-black-300 bg-black-100";
+
+  return "border-black-200 bg-white";
+}
+
+export function getNextActionCopy(logs: DailyLog[]): NextAction {
+  const totalWaterMl = getTotalWaterMl(logs);
+
+  if (totalWaterMl === 0) {
+    return {
+      title: "Drink water first.",
+      body: "Get a glass. Drink it. Then come back. No committee meeting.",
+      href: "/logs/new?type=Water",
+      label: "Log water",
+    };
+  }
+
+  if (totalWaterMl < 750) {
+    return {
+      title: "Drink more water.",
+      body: `Only ${totalWaterMl}ml logged today. That is decorative hydration. Add another glass.`,
+      href: "/logs/new?type=Water",
+      label: "Log more water",
+    };
+  }
+
+  if (!hasLog(logs, ["First meal"])) {
+    return {
+      title: "Eat something real.",
+      body: "Protein, leftovers, or assembled food. Feeding the system comes before deep analysis.",
+      href: "/logs/new?type=First%20meal",
+      label: "Log first meal",
+    };
+  }
+
+  if (!hasLog(logs, ["Sunlight"])) {
+    return {
+      title: "Get light on your face.",
+      body: "Ten minutes outside or by a bright window. Mammal protocol.",
+      href: "/logs/new?type=Sunlight",
+      label: "Log sunlight",
+    };
+  }
+
+  if (
+    !hasLog(logs, [
+      "Movement",
+      "Exercise",
+      "Treadmill walk",
+      "Strength training",
+    ])
+  ) {
+    return {
+      title: "Move for five minutes.",
+      body: "Walk, stretch, treadmill, house pacing. Tiny counts.",
+      href: "/logs/new?type=Movement",
+      label: "Log movement",
+    };
+  }
+
+  if (!hasLog(logs, ["Reading"])) {
+    return {
+      title: "Read a few pages.",
+      body: "Even a small reading rep counts. Attention needs training.",
+      href: "/logs/new?type=Reading",
+      label: "Log reading",
+    };
+  }
+
+  return {
+    title: "You handled the basics. Pick one useful task.",
+    body: "One focused task. App work, reading, or plant care. Keep the day moving.",
+    href: "/logs/new?type=App%20work",
+    label: "Log useful task",
+  };
+}
+
 export function getTimeBuckets(logs: DailyLog[]): TimeBucket[] {
   const buckets: TimeBucket[] = [
-    { label: "Before 10am", endTime: "10:00", logs: [] },
-    { label: "10am to 2pm", endTime: "14:00", logs: [] },
-    { label: "2pm to 6pm", endTime: "18:00", logs: [] },
-    { label: "6pm to 10pm", endTime: "22:00", logs: [] },
-    { label: "After 10pm", endTime: null, logs: [] },
-    { label: "All day", endTime: null, logs: [] },
+    { label: "Before 10am", logs: [] },
+    { label: "10am to 2pm", logs: [] },
+    { label: "2pm to 6pm", logs: [] },
+    { label: "6pm to 10pm", logs: [] },
+    { label: "After 10pm", logs: [] },
+    { label: "All day", logs: [] },
   ];
 
   logs.forEach((log) => {
@@ -57,30 +162,17 @@ export function getTimeBuckets(logs: DailyLog[]): TimeBucket[] {
 
     if (minutes === null) {
       buckets[5].logs.push(log);
-      return;
-    }
-
-    if (minutes < 10 * 60) {
+    } else if (minutes < 10 * 60) {
       buckets[0].logs.push(log);
-      return;
-    }
-
-    if (minutes < 14 * 60) {
+    } else if (minutes < 14 * 60) {
       buckets[1].logs.push(log);
-      return;
-    }
-
-    if (minutes < 18 * 60) {
+    } else if (minutes < 18 * 60) {
       buckets[2].logs.push(log);
-      return;
-    }
-
-    if (minutes < 22 * 60) {
+    } else if (minutes < 22 * 60) {
       buckets[3].logs.push(log);
-      return;
+    } else {
+      buckets[4].logs.push(log);
     }
-
-    buckets[4].logs.push(log);
   });
 
   return buckets.map((bucket) => ({
@@ -94,275 +186,305 @@ export function getTimeBuckets(logs: DailyLog[]): TimeBucket[] {
   }));
 }
 
-export function getDailyReport(logs: DailyLog[]): ReportItem[] {
-  const report: ReportItem[] = [];
-
+function getFirstMealReport(logs: DailyLog[]): ReportItem {
   const firstMeal = getFirstLog(logs, ["First meal"]);
-  const firstMealMinutes = timeToMinutes(firstMeal?.action_time ?? null);
+  const minutes = timeToMinutes(firstMeal?.action_time ?? null);
 
   if (!firstMeal) {
-    report.push({
+    return {
       label: "First meal",
       status: "demerit",
       emoji: "🚫",
       message:
         "No first meal logged. The body was left unmanaged. Fix this tomorrow.",
-    });
-  } else if (firstMealMinutes !== null && firstMealMinutes < 10 * 60) {
-    report.push({
+    };
+  }
+
+  if (minutes !== null && minutes < 10 * 60) {
+    return {
       label: "First meal",
       status: "gold",
       emoji: "⭐",
       message: "First meal before 10am. Excellent. Gold star behavior.",
-    });
-  } else if (firstMealMinutes !== null && firstMealMinutes < 14 * 60) {
-    report.push({
+    };
+  }
+
+  if (minutes !== null && minutes < 14 * 60) {
+    return {
       label: "First meal",
       status: "check",
       emoji: "✅",
       message: "First meal before 2pm. Acceptable. Keep this as the minimum.",
-    });
-  } else if (firstMealMinutes !== null && firstMealMinutes < 18 * 60) {
-    report.push({
+    };
+  }
+
+  if (minutes !== null && minutes < 18 * 60) {
+    return {
       label: "First meal",
       status: "warning",
       emoji: "👎",
       message:
         "First meal before 6pm. Too late. You made the day harder than it needed to be.",
-    });
-  } else {
-    report.push({
-      label: "First meal",
-      status: "code-red",
-      emoji: "🚨",
-      message:
-        "First meal after 6pm. Code Red. This is how the day turns feral.",
-    });
+    };
   }
 
+  return {
+    label: "First meal",
+    status: "code-red",
+    emoji: "🚨",
+    message: "First meal after 6pm. Code Red. This is how the day turns feral.",
+  };
+}
+
+function getWakeReport(logs: DailyLog[]): ReportItem {
   const wokeUp = getFirstLog(logs, ["Woke up"]);
-  const wakeMinutes = timeToMinutes(wokeUp?.action_time ?? null);
-  function getTotalWaterMl(logs: DailyLog[]) {
-    return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
-  }
+  const minutes = timeToMinutes(wokeUp?.action_time ?? null);
+
   if (!wokeUp) {
-    report.push({
+    return {
       label: "Wake time",
       status: "neutral",
       emoji: "📝",
       message: "Wake time not logged. Tomorrow, log the starting point first.",
-    });
-  } else if (wakeMinutes !== null && wakeMinutes < 9 * 60) {
-    report.push({
+    };
+  }
+
+  if (minutes !== null && minutes < 9 * 60) {
+    return {
       label: "Wake time",
       status: "gold",
       emoji: "⭐",
       message: "Wake time logged before 9am. Strong start.",
-    });
-  } else if (wakeMinutes !== null && wakeMinutes < 11 * 60) {
-    report.push({
+    };
+  }
+
+  if (minutes !== null && minutes < 11 * 60) {
+    return {
       label: "Wake time",
       status: "check",
       emoji: "✅",
       message: "Wake time logged before 11am. Fine. Keep the day moving.",
-    });
-  } else {
-    report.push({
-      label: "Wake time",
-      status: "warning",
-      emoji: "👎",
-      message: "Late wake. No shame spiral, but the day needs structure fast.",
-    });
+    };
   }
+
+  return {
+    label: "Wake time",
+    status: "warning",
+    emoji: "👎",
+    message: "Late wake. No shame spiral, but the day needs structure fast.",
+  };
+}
+
+function getWaterReport(logs: DailyLog[]): ReportItem {
   const totalWaterMl = getTotalWaterMl(logs);
 
   if (totalWaterMl >= 2500) {
-    report.push({
+    return {
       label: "Water",
       status: "gold",
       emoji: "⭐",
-      message: `Water logged: ${totalWaterMl}ml. Ya get the hydration award today kid!⭐.`,
-    });
-  } else if (totalWaterMl >= 2000) {
-    report.push({
+      message: `Water logged: ${totalWaterMl}ml. Ya get the hydration award today kid!`,
+    };
+  }
+
+  if (totalWaterMl >= 1500) {
+    return {
       label: "Water",
       status: "check",
       emoji: "✅",
-      message: `Water logged: ${totalWaterMl}ml. Acceptable, but do not get cocky🥳`,
-    });
-  } else if (totalWaterMl >= 1500) {
-    report.push({
-      label: "Water",
-      status: "check",
-      emoji: "✅",
-      message: `Water logged: ${totalWaterMl}ml. Keep Going!🤠`,
-    });
-  } else if (totalWaterMl >= 1000) {
-    report.push({
-      label: "Water",
-      status: "check",
-      emoji: "✅",
-      message: `Water logged: ${totalWaterMl}ml. This is not the worst, but don't stop here.`,
-    });
-  } else if (totalWaterMl > 0) {
-    report.push({
+      message: `Water logged: ${totalWaterMl}ml. Keep going.`,
+    };
+  }
+
+  if (totalWaterMl > 0) {
+    return {
       label: "Water",
       status: "warning",
       emoji: "👎",
-      message: `Only ${totalWaterMl}ml logged. That is nothing. Drink more.`,
-    });
-  } else {
-    report.push({
-      label: "Water",
-      status: "demerit",
-      emoji: "🚫",
-      message: "No water logged. Dry goblin management failure.",
-    });
+      message: `Only ${totalWaterMl}ml logged. Drink more.`,
+    };
   }
 
-  const sunlight = getFirstLog(logs, ["Sunlight"]);
-  const sunlightMinutes = timeToMinutes(sunlight?.action_time ?? null);
+  return {
+    label: "Water",
+    status: "demerit",
+    emoji: "🚫",
+    message: "No water logged. Dry goblin management failure.",
+  };
+}
 
-  if (!sunlight) {
-    report.push({
-      label: "Sunlight",
-      status: "demerit",
-      emoji: "🚫",
-      message: "No sunlight logged. Do better.",
-    });
-  } else if (sunlightMinutes !== null && sunlightMinutes < 14 * 60) {
-    report.push({
-      label: "Sunlight",
-      status: "gold",
-      emoji: "⭐",
-      message: "Sunlight before 2pm. Elite body management.",
-    });
-  } else if (sunlightMinutes !== null && sunlightMinutes < 18 * 60) {
-    report.push({
-      label: "Sunlight",
-      status: "check",
-      emoji: "✅",
-      message: "Sunlight before 6pm. Good save.",
-    });
-  } else {
-    report.push({
-      label: "Sunlight",
-      status: "warning",
-      emoji: "👎",
-      message:
-        "Sunlight logged late. Better than nothing, but tomorrow needs earlier light.",
-    });
-  }
+function getSimpleReport(
+  logs: DailyLog[],
+  label: string,
+  types: string[],
+  success: ReportItem,
+  failure: ReportItem,
+): ReportItem {
+  return hasLog(logs, types) ? success : failure;
+}
 
-  if (
-    hasLog(logs, [
-      "Movement",
-      "Exercise",
-      "Treadmill walk",
-      "Strength training",
-    ])
-  ) {
-    report.push({
-      label: "Movement",
-      status: "check",
-      emoji: "✅",
-      message: "Movement logged.",
-    });
-  } else {
-    report.push({
-      label: "Movement",
-      status: "demerit",
-      emoji: "🚫",
-      message:
-        "No movement logged. Do it now: five minutes counts. No speeches.",
-    });
-  }
-
-  if (hasLog(logs, ["Wash Up"])) {
-    report.push({
-      label: "Wash up",
-      status: "check",
-      emoji: "✅",
-      message: "Wash-up logged. System reset achieved.",
-    });
-  } else {
-    report.push({
-      label: "Wash up",
-      status: "neutral",
-      emoji: "📝",
-      message: "No wash-up logged. If the day felt sticky, this may be why.",
-    });
-  }
-
-  if (hasLog(logs, ["App work"])) {
-    report.push({
-      label: "Useful task",
-      status: "check",
-      emoji: "✅",
-      message: "App work logged. Future-you received value.",
-    });
-  } else {
-    report.push({
-      label: "Useful task",
-      status: "neutral",
-      emoji: "📝",
-      message: "No useful task logged. Not a crime, but track the pattern.",
-    });
-  }
-
-  if (hasLog(logs, ["TikTok avoided"])) {
-    report.push({
-      label: "Attention",
-      status: "gold",
-      emoji: "⭐",
-      message: "TikTok avoided. Attention defended. Excellent.",
-    });
-  } else if (hasLog(logs, ["TikTok used"])) {
-    report.push({
-      label: "Attention",
-      status: "warning",
-      emoji: "👎",
-      message:
-        "TikTok used. Check the cost. Did it help, or did it eat the day?",
-    });
-  }
-
-  if (hasLog(logs, ["Reading"])) {
-    report.push({
-      label: "Read",
-      status: "gold",
-      emoji: "⭐",
-      message: "You read! Good job!.",
-    });
-  } else if (hasLog(logs, ["Did not read"])) {
-    report.push({
-      label: "Read",
-      status: "warning",
-      emoji: "👎",
-      message: "You need to read bro",
-    });
-  }
-
+function getThoughtLoopReport(logs: DailyLog[]): ReportItem | null {
   const thoughtLoop = getFirstLog(logs, ["Recurring thought"]);
 
-  if (thoughtLoop?.intensity_score && thoughtLoop.intensity_score >= 7) {
-    report.push({
+  if (!thoughtLoop) return null;
+
+  if (thoughtLoop.intensity_score && thoughtLoop.intensity_score >= 7) {
+    return {
       label: "Thought loop",
       status: "code-red",
       emoji: "🚨",
       message:
         "High-intensity thought loop logged. Do body maintenance before analysis.",
-    });
-  } else if (thoughtLoop) {
-    report.push({
-      label: "Thought loop",
-      status: "warning",
-      emoji: "👎",
-      message:
-        "Thought loop logged. Evidence collected. Do not feed it more attention.",
-    });
+    };
   }
 
-  return report;
+  return {
+    label: "Thought loop",
+    status: "warning",
+    emoji: "👎",
+    message:
+      "Thought loop logged. Evidence collected. Do not feed it more attention.",
+  };
 }
+export function getWaterMessage(totalWaterMl: number) {
+  if (totalWaterMl >= 2500) {
+    return "Hydration award secured. ⭐";
+  }
+
+  if (totalWaterMl >= 2000) {
+    return "Good. Keep the standard.";
+  }
+
+  if (totalWaterMl >= 1500) {
+    return "Close to decent. Add 500ml.";
+  }
+
+  if (totalWaterMl >= 750) {
+    return "Acceptable. Keep going.";
+  }
+
+  if (totalWaterMl > 0) {
+    return "Too low. Add another glass.";
+  }
+
+  return "No water logged yet.";
+}
+export function getDailyReport(logs: DailyLog[]): ReportItem[] {
+  const thoughtLoopReport = getThoughtLoopReport(logs);
+
+  return [
+    getFirstMealReport(logs),
+    getWakeReport(logs),
+    getWaterReport(logs),
+
+    getSimpleReport(
+      logs,
+      "Sunlight",
+      ["Sunlight"],
+      {
+        label: "Sunlight",
+        status: "check",
+        emoji: "✅",
+        message: "Sunlight logged. Good.",
+      },
+      {
+        label: "Sunlight",
+        status: "demerit",
+        emoji: "🚫",
+        message: "No sunlight logged. Do better.",
+      },
+    ),
+    getSimpleReport(
+      logs,
+      "Job application",
+      ["Job application"],
+      {
+        label: "Job application",
+        status: "check",
+        emoji: "✅",
+        message: "Job application logged. Good.",
+      },
+      {
+        label: "Job application",
+        status: "demerit",
+        emoji: "🚫",
+        message: "No Job application logged. Do better.",
+      },
+    ),
+    getSimpleReport(
+      logs,
+      "Movement",
+      ["Movement", "Exercise", "Treadmill walk", "Strength training"],
+      {
+        label: "Movement",
+        status: "check",
+        emoji: "✅",
+        message: "Movement logged.",
+      },
+      {
+        label: "Movement",
+        status: "demerit",
+        emoji: "🚫",
+        message: "No movement logged. Do it now: five minutes counts.",
+      },
+    ),
+
+    getSimpleReport(
+      logs,
+      "Wash up",
+      ["Wash Up"],
+      {
+        label: "Wash up",
+        status: "check",
+        emoji: "✅",
+        message: "Wash-up logged. System reset achieved.",
+      },
+      {
+        label: "Wash up",
+        status: "neutral",
+        emoji: "📝",
+        message: "No wash-up logged. If the day felt sticky, this may be why.",
+      },
+    ),
+
+    getSimpleReport(
+      logs,
+      "Useful task",
+      ["App work", "Wash Dishes", "Clean"],
+      {
+        label: "Useful task",
+        status: "check",
+        emoji: "✅",
+        message: "App work logged. Future-you received value.",
+      },
+      {
+        label: "Useful task",
+        status: "neutral",
+        emoji: "📝",
+        message: "No useful task logged. Not a crime, but track the pattern.",
+      },
+    ),
+
+    getSimpleReport(
+      logs,
+      "Reading",
+      ["Reading"],
+      {
+        label: "Read",
+        status: "gold",
+        emoji: "⭐",
+        message: "You read. Good job.",
+      },
+      {
+        label: "Read",
+        status: "neutral",
+        emoji: "📝",
+        message: "No reading logged.",
+      },
+    ),
+
+    thoughtLoopReport,
+  ].filter((item): item is ReportItem => item !== null);
+}
+
 export type { DailyLog, ReportItem };
