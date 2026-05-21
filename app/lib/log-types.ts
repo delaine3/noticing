@@ -32,6 +32,7 @@ export const actionTypes = [
   "Dessert eaten",
   "Dessert craving",
   "Water",
+  "Coffee",
   "Wash Up",
   "Sunlight",
   "Movement",

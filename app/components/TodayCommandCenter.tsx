@@ -27,8 +27,8 @@ function getReportCardStyle(status: string) {
   if (status === "check") return "border-green-200 bg-green-50";
   if (status === "warning") return "border-orange-200 bg-orange-50";
   if (status === "code-red") return "border-red-300 bg-red-50";
-  if (status === "demerit") return "border-stone-300 bg-stone-100";
-  return "border-stone-200 bg-white";
+  if (status === "demerit") return "border-black-300 bg-black-100";
+  return "border-black-200 bg-white";
 }
 function getTotalWaterMl(logs: DailyLog[]) {
   return logs.reduce((total, log) => total + (log.water_amount_ml ?? 0), 0);
@@ -133,7 +133,7 @@ export function TodayCommandCenter({
   const nextAction = getNextActionCopy(logs);
   const totalWaterMl = getTotalWaterMl(logs);
   return (
-    <main className="min-h-screen app-bg px-4 py-8 text-stone-950 sm:px-6 sm:py-10">
+    <main className="min-h-screen px-4 py-8 text-black-950 sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
         <div className="mb-6">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
@@ -144,7 +144,7 @@ export function TodayCommandCenter({
             Today’s command center
           </h1>
 
-          <p className="mt-4 max-w-2xl text-stone-700">
+          <p className="mt-4 max-w-2xl text-black-700">
             Bossy, but useful. Log the basics, check the report card, and do the
             next useful thing.
           </p>
@@ -155,20 +155,20 @@ export function TodayCommandCenter({
             Next best action
           </p>
 
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-stone-950 sm:text-3xl">
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-black-950 sm:text-3xl">
             {nextAction.title}
           </h2>
 
-          <p className="mt-3 max-w-2xl leading-7 text-stone-700">
+          <p className="mt-3 max-w-2xl leading-7 text-black-700">
             {nextAction.body}
           </p>
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Link href={nextAction.href} className="brand-button">
+            <Link href={nextAction.href} className="app-button">
               {nextAction.label}
             </Link>
 
-            <Link href="/logs/new" className="muted-button">
+            <Link href="/logs/new" className="secondary-button">
               Log something else
             </Link>
           </div>
@@ -218,7 +218,7 @@ export function TodayCommandCenter({
             </p>
           </article>
         </section>
-        <section className="glass-card rounded border border-stone-200 shadow-sm">
+        <section className="glass-card rounded border border-black-200 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
             Quick log
           </p>
@@ -228,7 +228,7 @@ export function TodayCommandCenter({
               <Link
                 key={action.label}
                 href={action.href}
-                className="rounded border border-stone-200 bg-stone-50 px-4 py-3 text-md font-semibold text-stone-800 hover:border-green-400 hover:bg-green-50"
+                className="rounded border border-black-200 bg-black-50 px-4 py-3 text-md font-semibold text-black-800 hover:border-green-400 hover:bg-green-50"
               >
                 {action.label}
               </Link>
@@ -253,11 +253,11 @@ export function TodayCommandCenter({
                     <span className="text-2xl">{item.emoji}</span>
 
                     <div>
-                      <h3 className="font-semibold text-stone-950">
+                      <h3 className="font-semibold text-black-950">
                         {item.label}
                       </h3>
 
-                      <p className="mt-1 text-md leading-6 text-stone-700">
+                      <p className="mt-1 text-md leading-6 text-black-700">
                         {item.message}
                       </p>
                     </div>
@@ -276,14 +276,14 @@ export function TodayCommandCenter({
               {buckets.map((bucket) => (
                 <section
                   key={bucket.label}
-                  className="rounded border border-stone-200 bg-stone-50 p-4"
+                  className="rounded border border-black-200 bg-black-50 p-4"
                 >
-                  <h3 className="font-semibold text-stone-950">
+                  <h3 className="font-semibold text-black-950">
                     {bucket.label}
                   </h3>
 
                   {bucket.logs.length === 0 ? (
-                    <p className="mt-3 text-md text-stone-500">
+                    <p className="mt-3 text-md text-black-500">
                       Nothing logged here.
                     </p>
                   ) : (
@@ -291,7 +291,7 @@ export function TodayCommandCenter({
                       {bucket.logs.map((log) => (
                         <article
                           key={log.id}
-                          className="rounded border border-stone-200 bg-white p-4"
+                          className="rounded border border-black-200 bg-white p-4"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div>
@@ -299,7 +299,7 @@ export function TodayCommandCenter({
                                 {log.log_type} {getEffectEmoji(log.effect)}
                               </p>
 
-                              <h4 className="mt-1 font-semibold text-stone-950">
+                              <h4 className="mt-1 font-semibold text-black-950">
                                 {log.title || "Untitled action"}
                               </h4>
                               {log.treadmill_duration_minutes &&
@@ -324,7 +324,7 @@ export function TodayCommandCenter({
                                 {log.water_amount_ml}ml
                               </p>
                             ) : null}
-                            <p className="text-md text-stone-500">
+                            <p className="text-md text-black-500">
                               {log.action_time
                                 ? log.action_time.slice(0, 5)
                                 : "No time"}
@@ -332,7 +332,7 @@ export function TodayCommandCenter({
                           </div>
 
                           {log.notes ? (
-                            <p className="mt-3 text-md leading-6 text-stone-700">
+                            <p className="mt-3 text-md leading-6 text-black-700">
                               {log.notes}
                             </p>
                           ) : null}

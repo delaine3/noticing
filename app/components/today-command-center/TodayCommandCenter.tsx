@@ -27,7 +27,7 @@ export function TodayCommandCenter({
   const totalWaterMl = getTotalWaterMl(logs);
 
   return (
-    <main className="min-h-screen app-bg px-4 py-8 text-stone-950 sm:px-6 sm:py-10">
+    <main className="min-h-screen px-4 py-8 text-black-950 sm:px-6 sm:py-10">
       <section className="mx-auto max-w-6xl">
         <div className="mb-6">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
@@ -38,7 +38,7 @@ export function TodayCommandCenter({
             Today’s command center
           </h1>
 
-          <p className="mt-4 max-w-2xl text-stone-700">
+          <p className="mt-4 max-w-2xl text-black-700">
             Bossy, but useful. Log the basics, check the report card, and do the
             next useful thing.
           </p>

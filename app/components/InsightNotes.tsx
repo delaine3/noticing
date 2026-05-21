@@ -1,4 +1,4 @@
-export default async function InsightNotes() {
+export default function InsightNotes() {
   return (
     <article className="glass-card rounded p-5 shadow-sm">
       <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">

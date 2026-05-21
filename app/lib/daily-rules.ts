@@ -70,9 +70,9 @@ export function getReportCardStyle(status: string) {
   if (status === "check") return "border-green-200 bg-green-50";
   if (status === "warning") return "border-orange-200 bg-orange-50";
   if (status === "code-red") return "border-red-300 bg-red-50";
-  if (status === "demerit") return "border-stone-300 bg-stone-100";
+  if (status === "demerit") return "border-black-300 bg-black-100";
 
-  return "border-stone-200 bg-white";
+  return "border-black-200 bg-white";
 }
 
 export function getNextActionCopy(logs: DailyLog[]): NextAction {

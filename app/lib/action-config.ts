@@ -81,6 +81,14 @@ export const actionConfig: Record<string, ActionConfig> = {
     notesPlaceholder: "Optional. Only note what matters.",
     fields: ["water", "effect"],
   },
+  Coffee: {
+    heading: "This is kinda water I guess",
+    instruction: "How much was it?",
+    titleLabel: "Coffee note",
+    titlePlaceholder: "What kind of coffee?",
+    notesPlaceholder: "Optional. Only note what matters.",
+    fields: ["water", "effect"],
+  },
   "Wash Up": {
     heading: "Washed up. Excellent. System reset.",
     instruction: "Track the reset action.",

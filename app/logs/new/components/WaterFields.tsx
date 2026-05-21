@@ -5,9 +5,7 @@ export function WaterFields() {
         Water quantity
       </h2>
 
-      <p className="mt-1 text-md text-[var(--ink-soft)]">
-        Estimate is fine. The app needs direction, not courtroom evidence.
-      </p>
+      <p className="mt-1 text-md text-[var(--ink-soft)]">Estimate is fine.</p>
 
       <label className="mt-4 block">
         <span className="text-md font-medium text-[var(--ink-soft)]">
@@ -25,15 +23,15 @@ export function WaterFields() {
       </label>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        <span className="rounded bg-[var(--mint)] px-3 py-1 text-xs font-medium text-[var(--leaf-dark)]">
+        <button className="rounded bg-[var(--mint)] px-3 py-1 text-xs font-medium text-[var(--leaf-dark)]">
           Cup: ~250ml
-        </span>
-        <span className="rounded bg-[var(--mint)] px-3 py-1 text-xs font-medium text-[var(--leaf-dark)]">
+        </button>
+        <button className="rounded bg-[var(--mint)] px-3 py-1 text-xs font-medium text-[var(--leaf-dark)]">
           Big mug: ~500ml
-        </span>
-        <span className="rounded bg-[var(--mint)] px-3 py-1 text-xs font-medium text-[var(--leaf-dark)]">
+        </button>
+        <button className="rounded bg-[var(--mint)] px-3 py-1 text-xs font-medium text-[var(--leaf-dark)]">
           Bottle: ~750ml
-        </span>
+        </button>
       </div>
     </section>
   );

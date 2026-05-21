@@ -12,20 +12,20 @@ export function CommandCard({ nextAction }: CommandCardProps) {
         Next best action
       </p>
 
-      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-stone-950 sm:text-3xl">
+      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-black-950 sm:text-3xl">
         {nextAction.title}
       </h2>
 
-      <p className="mt-3 max-w-2xl leading-7 text-stone-700">
+      <p className="mt-3 max-w-2xl leading-7 text-black-700">
         {nextAction.body}
       </p>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Link href={nextAction.href} className="brand-button">
+        <Link href={nextAction.href} className="app-button">
           {nextAction.label}
         </Link>
 
-        <Link href="/logs/new" className="muted-button">
+        <Link href="/logs/new" className="secondary-button">
           Log something else
         </Link>
       </div>

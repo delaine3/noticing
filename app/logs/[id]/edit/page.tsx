@@ -117,7 +117,7 @@ export default async function EditLogPage({ params }: EditLogPageProps) {
   const washupTypes = editableLog.washup_types ?? [];
 
   return (
-    <main className="app-bg min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
+    <main className="min-h-screen px-4 py-8 text-[var(--ink)] sm:px-6 sm:py-10">
       <section className="mx-auto max-w-3xl">
         <div className="mb-6">
           <p className="eyebrow">Edit log</p>
@@ -406,11 +406,11 @@ export default async function EditLogPage({ params }: EditLogPageProps) {
           </label>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="submit" className="brand-button">
+            <button type="submit" className="app-button">
               Save changes
             </button>
 
-            <Link href="/logs" className="muted-button">
+            <Link href="/logs" className="secondary-button">
               Cancel
             </Link>
           </div>

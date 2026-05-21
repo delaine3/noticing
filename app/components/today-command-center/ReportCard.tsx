@@ -24,9 +24,9 @@ export function ReportCard({ report }: ReportCardProps) {
               <span className="text-2xl">{item.emoji}</span>
 
               <div>
-                <h3 className="font-semibold text-stone-950">{item.label}</h3>
+                <h3 className="font-semibold text-black-950">{item.label}</h3>
 
-                <p className="mt-1 text-md leading-6 text-stone-700">
+                <p className="mt-1 text-md leading-6 text-black-700">
                   {item.message}
                 </p>
               </div>

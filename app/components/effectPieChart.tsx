@@ -93,7 +93,7 @@ export function EffectPieChart({ logs }: EffectPieChartProps) {
                 data={effectCounts}
                 dataKey="value"
                 nameKey="label"
-                outerRadius={95}
+                outerRadius={120}
                 shape={<EffectPieShape />}
                 label={(props) => {
                   const value = Number(props.value ?? 0);

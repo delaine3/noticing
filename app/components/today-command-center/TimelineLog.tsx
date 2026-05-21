@@ -7,14 +7,14 @@ type TimelineLogProps = {
 
 export function TimelineLog({ log }: TimelineLogProps) {
   return (
-    <article className="rounded border border-stone-200 bg-white p-4">
+    <article className="rounded border border-black-200 bg-white p-4">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-md font-semibold text-green-700">
             {log.log_type} {getEffectEmoji(log.effect)}
           </p>
 
-          <h4 className="mt-1 font-semibold text-stone-950">
+          <h4 className="mt-1 font-semibold text-black-950">
             {log.title || "Untitled action"}
           </h4>
 
@@ -35,7 +35,7 @@ export function TimelineLog({ log }: TimelineLogProps) {
           ) : null}
 
           {log.notes ? (
-            <p className="mt-3 text-md leading-6 text-stone-700">{log.notes}</p>
+            <p className="mt-3 text-md leading-6 text-black-700">{log.notes}</p>
           ) : null}
         </div>
 
@@ -46,7 +46,7 @@ export function TimelineLog({ log }: TimelineLogProps) {
             </p>
           ) : null}
 
-          <p className="text-md text-stone-500">
+          <p className="text-md text-black-500">
             {log.action_time ? log.action_time.slice(0, 5) : "No time"}
           </p>
         </div>

@@ -18,12 +18,12 @@ export function TimelineCard({ buckets, totalLogs }: TimelineCardProps) {
         {buckets.map((bucket) => (
           <section
             key={bucket.label}
-            className="rounded border border-stone-200 bg-stone-50 p-4"
+            className="rounded border border-black-200 bg-black-50 p-4"
           >
-            <h3 className="font-semibold text-stone-950">{bucket.label}</h3>
+            <h3 className="font-semibold text-black-950">{bucket.label}</h3>
 
             {bucket.logs.length === 0 ? (
-              <p className="mt-3 text-md text-stone-500">
+              <p className="mt-3 text-md text-black-500">
                 Nothing logged here.
               </p>
             ) : (
