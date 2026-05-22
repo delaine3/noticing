@@ -89,10 +89,17 @@ async function updateLog(formData: FormData) {
 
 export default async function EditLogPage({ params }: EditLogPageProps) {
   const { id } = await params;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
 
   const { data: log, error } = await supabase
     .from("logs")
     .select("*")
+    .eq("user_id", user.id)
+
     .eq("id", Number(id))
     .single();
 

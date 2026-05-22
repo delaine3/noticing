@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabase } from "../lib/supabase";
+import { redirect } from "next/navigation";
 
 type Log = {
   id: number;
@@ -23,9 +24,16 @@ type Log = {
 };
 
 export default async function LogsPage() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
   const { data: logs, error } = await supabase
     .from("logs")
     .select("*")
+    .eq("user_id", user.id)
     .order("occurred_at", { ascending: false });
 
   if (error) {
