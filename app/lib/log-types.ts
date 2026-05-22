@@ -17,7 +17,7 @@ export type DailyLog = {
   treadmill_distance_km: number | null;
   treadmill_pace_min_per_km: number | null;
   workout_name: string | null;
-  wash_up: string | null;
+  hygiene: string | null;
 };
 export const actionTypes = [
   "First meal",
@@ -29,11 +29,12 @@ export const actionTypes = [
   "Meal",
   "Updated Resume",
   "Applied to Job",
+  "Yard Work",
   "Dessert eaten",
   "Dessert craving",
   "Water",
   "Coffee",
-  "Wash Up",
+  "Hygiene",
   "Sunlight",
   "Movement",
   "Exercise",

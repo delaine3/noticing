@@ -18,7 +18,7 @@ export function ReportCard({ report }: ReportCardProps) {
         {report.map((item) => (
           <article
             key={`${item.label}-${item.status}`}
-            className={`rounded border p-4 ${getReportCardStyle(item.status)}`}
+            className={`${getReportCardStyle(item.status)} log-card`}
           >
             <div className="flex gap-3">
               <span className="text-2xl">{item.emoji}</span>

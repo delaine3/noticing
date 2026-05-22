@@ -46,22 +46,19 @@ export default async function LogsPage() {
             </h1>
           </div>
 
-          <Link href="/logs/new" className="app-button">
+          <Link href="/logs/new" className="submit-button">
             New action
           </Link>
         </div>
 
         {!logs?.length ? (
-          <div className="mt-8 rounded border border-dashed border-black-300 bg-white p-8 text-black-600">
+          <div className="glass-card">
             No logs yet. Your future receipts will live here.
           </div>
         ) : (
           <div className="mt-8 space-y-4">
             {(logs as Log[]).map((log) => (
-              <article
-                key={log.id}
-                className="rounded border border-black-200 bg-white p-6 shadow-sm"
-              >
+              <article key={log.id} className="glass-card">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-md font-medium text-green-700">
@@ -95,51 +92,58 @@ export default async function LogsPage() {
 
                 <div className="mt-5 flex flex-wrap gap-2 text-md text-black-700">
                   {log.effect ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Effect: {log.effect}
                     </span>
                   ) : null}
 
                   {log.meal_size ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Size: {log.meal_size}
                     </span>
                   ) : null}
 
                   {log.meal_source ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Source: {log.meal_source}
                     </span>
                   ) : null}
                   {log.water_amount_ml ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Water: {log.water_amount_ml}ml
                     </span>
                   ) : null}
                   {log.mood_score ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Mood: {log.mood_score}/10
                     </span>
                   ) : null}
 
                   {log.energy_score ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Energy: {log.energy_score}/10
                     </span>
                   ) : null}
 
                   {log.intensity_score ? (
-                    <span className="rounded bg-black-100 px-3 py-1">
+                    <span className=" bg-black-100 px-3 py-1">
                       Intensity: {log.intensity_score}/10
                     </span>
                   ) : null}
                 </div>
-                <div className="mt-5 flex flex-wrap gap-2 text-md text-black-700">
+                <div className="flex flex-wrap gap-2">
                   <Link
                     href={`/logs/${log.id}/edit`}
                     className="secondary-button"
                   >
                     Edit
+                  </Link>
+
+                  <Link
+                    href={`/logs/${log.id}/delete`}
+                    className="danger-button"
+                  >
+                    Delete
                   </Link>
                 </div>
               </article>

@@ -37,7 +37,7 @@ export function StrengthFields() {
   }
 
   return (
-    <section className="rounded border border-[var(--border-soft)] bg-white/55 p-4">
+    <section className="bg-white/55 p-4">
       <h2 className="text-md font-semibold text-[var(--ink)]">
         Strength details
       </h2>
@@ -52,17 +52,14 @@ export function StrengthFields() {
         </span>
         <input
           name="workout_name"
-          className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+          className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
           placeholder="Example: triceps day, legs, full body"
         />
       </label>
 
       <div className="mt-4 space-y-3">
         {sets.map((set, index) => (
-          <div
-            key={index}
-            className="rounded border border-[var(--border-soft)] bg-[rgba(255,250,243,0.7)] p-3"
-          >
+          <div key={index} className="bg-[rgba(255,250,243,0.7)] p-3">
             <div className="mb-3 flex items-center justify-between gap-3">
               <p className="text-md font-semibold text-[var(--ink)]">
                 Set {index + 1}
@@ -90,7 +87,7 @@ export function StrengthFields() {
                   onChange={(event) =>
                     updateSet(index, "exerciseName", event.target.value)
                   }
-                  className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full   bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="Tricep pushdown"
                 />
               </label>
@@ -107,7 +104,7 @@ export function StrengthFields() {
                   onChange={(event) =>
                     updateSet(index, "reps", event.target.value)
                   }
-                  className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full   bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="12"
                 />
               </label>
@@ -125,7 +122,7 @@ export function StrengthFields() {
                   onChange={(event) =>
                     updateSet(index, "weightKg", event.target.value)
                   }
-                  className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full   bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="20"
                 />
               </label>
@@ -141,7 +138,7 @@ export function StrengthFields() {
       <button
         type="button"
         onClick={addSet}
-        className="mt-4 rounded bg-[var(--mint)] px-4 py-2 text-md font-semibold text-[var(--leaf-dark)] hover:bg-[var(--aqua)]"
+        className="mt-4  bg-[var(--mint)] px-4 py-2 text-md font-semibold text-[var(--leaf-dark)] hover:bg-[var(--aqua)]"
       >
         Add set
       </button>

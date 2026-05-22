@@ -100,7 +100,7 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
   );
 
   return (
-    <section className="mt-5 glass-card rounded p-5 shadow-sm">
+    <section className="mt-5 glass-card  p-5 shadow-sm">
       <div className="mb-5">
         <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
           Scores
@@ -174,7 +174,6 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
       <div className="mt-4 flex flex-wrap gap-3 text-md text-[var(--ink-soft)]">
         <span style={{ color: colors.coral }}>● Mood</span>
         <span style={{ color: colors.leaf }}>● Energy</span>
-        <span style={{ color: colors.aqua }}>● Intensity</span>
       </div>
     </section>
   );

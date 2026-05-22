@@ -101,7 +101,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
             feedback.
           </p>
         </div>
-        <section className="glass-card mt-6 rounded p-5 shadow-sm">
+        <section className="glass-card mt-6  p-5 shadow-sm">
           <p className="text-md font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
             Current read
           </p>
@@ -115,28 +115,28 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
         </section>
         <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Total logs
             </p>
             <p className="mt-2 text-3xl font-semibold">{logs.length}</p>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Days logged
             </p>
             <p className="mt-2 text-3xl font-semibold">{loggedDays}</p>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Helpful actions
             </p>
             <p className="mt-2 text-3xl font-semibold">{helpfulLogs}</p>
           </article>
 
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
               Harmful actions
             </p>
@@ -144,7 +144,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </article>
         </section>
         <section className="mt-5 grid gap-5 lg:grid-cols-2">
-          <article className="glass-card rounded p-5 shadow-sm">
+          <article className="glass-card  p-5 shadow-sm">
             <div className="mb-5">
               <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
                 Actions
@@ -188,7 +188,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
 
           <EffectPieChart logs={logs} />
         </section>
-        <article className="glass-card rounded p-5 shadow-sm">
+        <article className="glass-card  p-5 shadow-sm">
           <p className="text-md font-medium text-[var(--ink-soft)]">
             Water logged
           </p>

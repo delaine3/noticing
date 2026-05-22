@@ -6,7 +6,8 @@ export type ConditionalField =
   | "treadmill"
   | "strength"
   | "energy"
-  | "intensity";
+  | "intensity"
+  | "hygiene";
 
 export type ActionConfig = {
   heading: string;
@@ -89,7 +90,7 @@ export const actionConfig: Record<string, ActionConfig> = {
     notesPlaceholder: "Optional. Only note what matters.",
     fields: ["water", "effect"],
   },
-  "Wash Up": {
+  Hygiene: {
     heading: "Washed up. Excellent. System reset.",
     instruction: "Track the reset action.",
     titleLabel: "Wash-up type",

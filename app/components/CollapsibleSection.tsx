@@ -21,7 +21,7 @@ export function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <section className="glass-card rounded p-5 shadow-sm sm:p-6">
+    <section className="glass-card  p-5 shadow-sm sm:p-6">
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
@@ -41,7 +41,7 @@ export function CollapsibleSection({
           ) : null}
         </div>
 
-        <span className="rounded border border-black-200 bg-black-50 px-3 py-1 text-md font-semibold text-black-700">
+        <span className="px-3 py-1 text-md font-semibold text-black-700">
           {isOpen ? <ChevronUp /> : <ChevronDown />}
         </span>
       </button>

@@ -12,11 +12,7 @@ export function EffectField() {
     <label className="block">
       <span className="text-md font-medium text-[var(--ink)]">Effect</span>
 
-      <select
-        name="effect"
-        className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-[var(--ink)] outline-none transition focus:border-[var(--leaf)] focus:bg-white"
-        defaultValue=""
-      >
+      <select name="effect" className="" defaultValue="">
         <option value="">Select effect</option>
 
         {effectOptions.map((effect) => (

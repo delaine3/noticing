@@ -7,7 +7,7 @@ type CommandCardProps = {
 
 export function CommandCard({ nextAction }: CommandCardProps) {
   return (
-    <section className="message-card rounded border border-green-200 shadow-sm sm:p-6">
+    <section className="message-card">
       <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-800">
         Next best action
       </p>
@@ -21,7 +21,7 @@ export function CommandCard({ nextAction }: CommandCardProps) {
       </p>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Link href={nextAction.href} className="app-button">
+        <Link href={nextAction.href} className="submit-button">
           {nextAction.label}
         </Link>
 

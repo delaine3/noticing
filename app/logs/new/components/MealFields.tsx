@@ -2,16 +2,12 @@ import { mealSizes, mealSources } from "../../../lib/log-types";
 
 export function MealFields() {
   return (
-    <section className="rounded border border-black-200 bg-black-50 p-4">
+    <section className="bg-black-50 p-4">
       <h2 className="text-md font-semibold text-black-800">Meal details</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="text-md font-medium text-black-700">Meal size</span>
-          <select
-            name="meal_size"
-            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
-            defaultValue=""
-          >
+          <select name="meal_size" className="" defaultValue="">
             <option value="">Select size</option>
             {mealSizes.map((size) => (
               <option key={size} value={size}>
@@ -27,7 +23,7 @@ export function MealFields() {
           </span>
           <select
             name="meal_source"
-            className="mt-2 w-full rounded border border-black-300 bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
+            className="mt-2 w-full bg-white px-4 py-3 text-black-950 outline-none focus:border-green-700"
             defaultValue=""
           >
             <option value="">Select source</option>
