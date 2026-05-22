@@ -7,7 +7,7 @@ type TimelineLogProps = {
 
 export function TimelineLog({ log }: TimelineLogProps) {
   return (
-    <article className="rounded border border-black-200 bg-white p-4">
+    <article className="bg-white p-4">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-md font-semibold text-green-700">

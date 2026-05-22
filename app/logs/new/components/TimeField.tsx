@@ -27,13 +27,13 @@ export function TimeField() {
           type="time"
           value={time}
           onChange={(event) => setTime(event.target.value)}
-          className="w-full rounded border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-[var(--ink)] outline-none transition focus:border-[var(--leaf)] focus:bg-white"
+          className="w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none transition focus:border-[var(--leaf)] focus:bg-white"
         />
 
         <button
           type="button"
           onClick={() => setTime(getCurrentTimeValue())}
-          className="rounded border border-[var(--border-soft)] bg-white/60 px-4 py-3 text-sm font-semibold text-[var(--leaf-dark)] transition hover:bg-white/85"
+          className="bg-white/60 px-4 py-3 text-sm font-semibold text-[var(--leaf-dark)] transition hover:bg-white/85"
         >
           Now
         </button>

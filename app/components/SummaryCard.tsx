@@ -6,7 +6,7 @@ type SummaryCardProps = {
 
 export function SummaryCard({ label, value, message }: SummaryCardProps) {
   return (
-    <article className="glass-card rounded border border-[var(--border-soft)] p-4 shadow-sm">
+    <article className="glass-card  p-4 shadow-sm">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
         {label}
       </p>

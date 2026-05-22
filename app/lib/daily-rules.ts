@@ -66,13 +66,13 @@ export function getEffectEmoji(effect: string | null) {
 }
 
 export function getReportCardStyle(status: string) {
-  if (status === "gold") return "border-amber-200 bg-amber-50";
-  if (status === "check") return "border-green-200 bg-green-50";
-  if (status === "warning") return "border-orange-200 bg-orange-50";
-  if (status === "code-red") return "border-red-300 bg-red-50";
-  if (status === "demerit") return "border-black-300 bg-black-100";
+  if (status === "gold") return "bg-amber-50";
+  if (status === "check") return "bg-green-50";
+  if (status === "warning") return "bg-orange-50";
+  if (status === "code-red") return "bg-red-50";
+  if (status === "demerit") return "bg-black-100";
 
-  return "border-black-200 bg-white";
+  return "bg-white";
 }
 
 export function getNextActionCopy(logs: DailyLog[]): NextAction {
@@ -431,16 +431,16 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
 
     getSimpleReport(
       logs,
-      "Wash up",
-      ["Wash Up"],
+      "Hygiene",
+      ["Hygiene"],
       {
-        label: "Wash up",
+        label: "Hygiene",
         status: "check",
         emoji: "✅",
         message: "Wash-up logged. System reset achieved.",
       },
       {
-        label: "Wash up",
+        label: "Hygiene",
         status: "neutral",
         emoji: "📝",
         message: "No wash-up logged. If the day felt sticky, this may be why.",

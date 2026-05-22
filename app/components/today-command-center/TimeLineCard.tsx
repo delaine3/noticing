@@ -16,10 +16,7 @@ export function TimelineCard({ buckets, totalLogs }: TimelineCardProps) {
     >
       <div className="grid gap-4 lg:grid-cols-2">
         {buckets.map((bucket) => (
-          <section
-            key={bucket.label}
-            className="rounded border border-black-200 bg-black-50 p-4"
-          >
+          <section key={bucket.label} className="bg-black-50 p-4">
             <h3 className="font-semibold text-black-950">{bucket.label}</h3>
 
             {bucket.logs.length === 0 ? (

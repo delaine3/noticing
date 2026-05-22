@@ -69,7 +69,7 @@ export function EffectPieChart({ logs }: EffectPieChartProps) {
   const hasEffectData = effectCounts.some((effect) => effect.value > 0);
 
   return (
-    <article className="glass-card rounded p-5 shadow-sm">
+    <article className="glass-card  p-5 shadow-sm">
       <div className="mb-5">
         <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
           Effect
@@ -115,7 +115,7 @@ export function EffectPieChart({ logs }: EffectPieChartProps) {
         {effectCounts.map((effect) => (
           <span
             key={effect.name}
-            className={`rounded border px-3 py-1 text-sm font-semibold ${effect.className}`}
+            className={`px-3 py-1 text-sm font-semibold ${effect.className}`}
           >
             {effect.emoji ? `${effect.emoji} ` : ""}
             {effect.label}: {effect.value}

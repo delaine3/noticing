@@ -62,7 +62,7 @@ type TreadmillCardProps = {
 
 function TreadmillCard({ title, stats }: TreadmillCardProps) {
   return (
-    <article className="glass-card rounded p-5 shadow-sm">
+    <article className="glass-card  p-5 shadow-sm">
       <p className="text-md font-medium text-[var(--ink-soft)]">{title}</p>
 
       <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">

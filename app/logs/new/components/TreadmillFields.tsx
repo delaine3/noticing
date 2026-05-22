@@ -1,6 +1,6 @@
 export function TreadmillFields() {
   return (
-    <section className="rounded border border-[var(--border-soft)] bg-white/55 p-4">
+    <section className="bg-white/55 p-4">
       <h2 className="text-md font-semibold text-[var(--ink)]">
         Treadmill details
       </h2>
@@ -19,7 +19,7 @@ export function TreadmillFields() {
             type="number"
             min="0"
             step="0.1"
-            className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+            className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
             placeholder="Example: 30"
           />
         </label>
@@ -33,7 +33,7 @@ export function TreadmillFields() {
             type="number"
             min="0"
             step="0.01"
-            className="mt-2 w-full rounded border border-[var(--border-soft)] bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+            className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
             placeholder="Example: 2.4"
           />
         </label>

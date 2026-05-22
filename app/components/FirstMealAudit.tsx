@@ -73,7 +73,7 @@ export function FirstMealAudit({ logs }: FirstMealAuditProps) {
   const firstMealStats = getFirstMealStats(logs);
 
   return (
-    <article className="glass-card rounded p-5 shadow-sm">
+    <article className="glass-card  p-5 shadow-sm">
       <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
         First meal
       </p>

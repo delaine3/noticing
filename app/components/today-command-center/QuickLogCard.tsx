@@ -3,7 +3,7 @@ import { quickActions } from "../../lib/daily-rules";
 
 export function QuickLogCard() {
   return (
-    <section className="glass-card rounded border border-black-200 shadow-sm">
+    <section className="glass-card">
       <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
         Quick log
       </p>
@@ -13,7 +13,7 @@ export function QuickLogCard() {
           <Link
             key={action.label}
             href={action.href}
-            className="rounded border border-black-200 bg-black-50 px-4 py-3 text-md font-semibold text-black-800 hover:border-green-400 hover:bg-green-50"
+            className="quick-log-button"
           >
             {action.label}
           </Link>
