@@ -31,9 +31,17 @@ async function createLog(formData: FormData) {
   const exerciseNames = formData.getAll("exercise_name").map(String);
   const repsList = formData.getAll("reps").map(String);
   const weightKgList = formData.getAll("weight_kg").map(String);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
   const { data: insertedLog, error } = await supabase
     .from("logs")
     .insert({
+      user_id: user.id,
+
       log_type: logType,
       title: title || null,
       notes: notes || null,
@@ -56,6 +64,8 @@ async function createLog(formData: FormData) {
       intensity_score: intensityScore ? Number(intensityScore) : null,
     })
     .select("id")
+    .eq("user_id", user.id)
+
     .single();
 
   if (error) {
@@ -65,6 +75,7 @@ async function createLog(formData: FormData) {
   if (logType === "Strength training" && insertedLog) {
     const strengthSets = exerciseNames
       .map((exerciseName, index) => ({
+        user_id: user.id,
         log_id: insertedLog.id,
         exercise_name: exerciseName.trim(),
         set_number: index + 1,

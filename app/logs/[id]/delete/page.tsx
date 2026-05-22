@@ -42,11 +42,17 @@ export default async function DeleteLogPage({ params }: DeleteLogPageProps) {
   if (!Number.isFinite(logId)) {
     notFound();
   }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
 
   const { data, error } = await supabase
     .from("logs")
     .select("id, log_type, title, action_date, action_time, notes")
     .eq("id", logId)
+    .eq("user_id", user.id)
     .single();
 
   if (error || !data) {
