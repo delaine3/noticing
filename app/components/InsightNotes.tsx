@@ -12,17 +12,6 @@ export default function InsightNotes() {
           The goal is not perfect tracking. The goal is to spot which actions
           reliably reduce suffering and which ones make the day messy.
         </p>
-
-        <p>
-          Useful actions should become easier to repeat. Harmful actions should
-          become easier to interrupt. Neutral actions are context.
-        </p>
-
-        <p>
-          Once you have more data, this page can get stricter: best food
-          windows, TikTok cost, sunlight impact, movement effect, and recurring
-          thought triggers.
-        </p>
       </div>
     </article>
   );

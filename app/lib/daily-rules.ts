@@ -81,7 +81,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
   if (totalWaterMl === 0) {
     return {
       title: "Drink water first.",
-      body: "Get a glass. Drink it. Then come back. No committee meeting.",
+      body: "Get a glass. Drink it. Then come back.",
       href: "/logs/new?type=Water",
       label: "Log water",
     };
@@ -90,7 +90,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
   if (totalWaterMl < 750) {
     return {
       title: "Drink more water.",
-      body: `Only ${totalWaterMl}ml logged today. That is decorative hydration. Add another glass.`,
+      body: `Only ${totalWaterMl}ml logged today. You can do better. Add another glass.`,
       href: "/logs/new?type=Water",
       label: "Log more water",
     };
@@ -99,7 +99,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
   if (!hasLog(logs, ["First meal"])) {
     return {
       title: "Eat something real.",
-      body: "Protein, leftovers, or assembled food. Feeding the system comes before deep analysis.",
+      body: "Protein, leftovers, or whatever food.",
       href: "/logs/new?type=First%20meal",
       label: "Log first meal",
     };
@@ -108,7 +108,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
   if (!hasLog(logs, ["Sunlight"])) {
     return {
       title: "Get light on your face.",
-      body: "Ten minutes outside or by a bright window. Mammal protocol.",
+      body: "Ten minutes outside or by a bright window.",
       href: "/logs/new?type=Sunlight",
       label: "Log sunlight",
     };
@@ -195,8 +195,7 @@ function getFirstMealReport(logs: DailyLog[]): ReportItem {
       label: "First meal",
       status: "demerit",
       emoji: "🚫",
-      message:
-        "No first meal logged. The body was left unmanaged. Fix this tomorrow.",
+      message: "No first meal logged. The body was left unmanaged.",
     };
   }
 
@@ -232,7 +231,7 @@ function getFirstMealReport(logs: DailyLog[]): ReportItem {
     label: "First meal",
     status: "code-red",
     emoji: "🚨",
-    message: "First meal after 6pm. Code Red. This is how the day turns feral.",
+    message: "First meal after 6pm. Code Red.",
   };
 }
 
@@ -245,7 +244,7 @@ function getWakeReport(logs: DailyLog[]): ReportItem {
       label: "Wake time",
       status: "neutral",
       emoji: "📝",
-      message: "Wake time not logged. Tomorrow, log the starting point first.",
+      message: "Wake time not logged.",
     };
   }
 
@@ -309,7 +308,7 @@ function getWaterReport(logs: DailyLog[]): ReportItem {
     label: "Water",
     status: "demerit",
     emoji: "🚫",
-    message: "No water logged. Dry goblin management failure.",
+    message: "No water logged. This is a failure.",
   };
 }
 
@@ -348,7 +347,7 @@ function getThoughtLoopReport(logs: DailyLog[]): ReportItem | null {
 }
 export function getWaterMessage(totalWaterMl: number) {
   if (totalWaterMl >= 2500) {
-    return "Hydration award secured. ⭐";
+    return "Hydration award secured ⭐";
   }
 
   if (totalWaterMl >= 2000) {
@@ -455,7 +454,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
         label: "Useful task",
         status: "check",
         emoji: "✅",
-        message: "App work logged. Future-you received value.",
+        message: "App work logged. GOOD JOB.",
       },
       {
         label: "Useful task",
