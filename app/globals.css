@@ -47,13 +47,14 @@
 }
 .log-card {
   border: 1px solid rgba(205, 235, 220, 0.959);
-  background: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0);
   backdrop-filter: blur(18px);
   box-shadow:
     0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
   border-radius: 15px;
+  padding: 15px;
 }
 .soft-card {
   border: 1px solid var(--border-soft);
@@ -72,13 +73,12 @@
   background: #ffff78a4;
   padding: 0.75rem 1.25rem;
   color: rgb(51, 51, 51);
-  text-shadow: 2px 2px 5px rgb(68, 68, 68);
+  text-shadow: 2px 2px 5px rgb(255, 255, 255);
   box-shadow:
     0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
-  font-size: 0.875rem;
-  font-weight: 200;
+  font-size: 0.975rem;
   transition:
     background 160ms ease,
     transform 160ms ease,
@@ -103,8 +103,7 @@
     0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
-  font-size: 0.875rem;
-  font-weight: 200;
+  font-size: 0.975rem;
   transition:
     background 160ms ease,
     transform 160ms ease,
@@ -135,8 +134,7 @@ h2 {
 
   text-shadow: 2px 2px 5px rgb(68, 68, 68);
 
-  font-size: 0.875rem;
-  font-weight: 200;
+  font-size: 0.975rem;
   transition:
     background 160ms ease,
     transform 160ms ease,
@@ -161,8 +159,7 @@ h2 {
 
   text-shadow: 2px 2px 5px rgb(68, 68, 68);
 
-  font-size: 0.875rem;
-  font-weight: 200;
+  font-size: 0.975rem;
   transition:
     background 160ms ease,
     transform 160ms ease,

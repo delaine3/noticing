@@ -32,8 +32,8 @@ export default function LoginPage() {
     }
 
     setMessage("Logged in!");
+    router.replace("/");
     router.refresh();
-    router.push("/");
   }
 
   return (
