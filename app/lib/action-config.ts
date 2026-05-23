@@ -41,14 +41,14 @@ export const actionConfig: Record<string, ActionConfig> = {
     instruction:
       "Log what you ate, when, how big it was, and where it came from.",
     titleLabel: "What did you eat?",
-    titlePlaceholder: "Example: eggs and toast, leftover pizza, chicken patty",
+    titlePlaceholder: "Example: eggs and toast, leftover pizza, chicken",
     notesPlaceholder: "Did it help? Did it feel like enough?",
     fields: ["meal", "effect", "energy"],
   },
 
   Meal: {
     heading: "Meal logged. Data collected.",
-    instruction: "Track the food without turning it into a whole courtroom.",
+    instruction: "Track the food without turning it into a whole thing.",
     titleLabel: "What did you eat?",
     titlePlaceholder: "Example: rice and chicken, sandwich, fruit and yogurt",
     notesPlaceholder: "Texture, fullness, energy after, anything useful.",
@@ -100,7 +100,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   Sunlight: {
-    heading: "Sunlight logged. Mammal protocol engaged.",
+    heading: "Sunlight logged.",
     instruction: "Track how long and where.",
     titleLabel: "Sunlight type",
     titlePlaceholder: "Example: sat outside, stood by window, walked in sun",
@@ -118,7 +118,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   Exercise: {
-    heading: "Exercise logged. Evidence secured.",
+    heading: "Exercise logged.",
     instruction: "Track what you did and how it affected you.",
     titleLabel: "Exercise type",
     titlePlaceholder: "Example: weights, treadmill, home workout",
@@ -137,7 +137,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Strength training": {
-    heading: "Strength work. Receipts required.",
+    heading: "Strength work.",
     instruction:
       "List the workout, sets, reps, and weight. Volume and records will be calculated.",
     titleLabel: "Workout focus",
@@ -157,7 +157,7 @@ export const actionConfig: Record<string, ActionConfig> = {
 
   "App work": {
     heading: "App work counts as work.",
-    instruction: "Track the task. Keep the receipt.",
+    instruction: "Track the task.",
     titleLabel: "Task completed",
     titlePlaceholder:
       "Example: fixed form fields, added route, debugged Supabase",
@@ -169,7 +169,7 @@ export const actionConfig: Record<string, ActionConfig> = {
     heading: "TikTok used. Log the cost.",
     instruction: "No denial. Record duration, trigger, and effect.",
     titleLabel: "TikTok session",
-    titlePlaceholder: "Example: couples content, scrolling, random feed",
+    titlePlaceholder: "Example: scrolling, random feed",
     notesPlaceholder: "Did it leave you better, neutral, or emptier?",
     fields: ["effect", "intensity", "mood"],
   },
@@ -184,7 +184,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Plant care": {
-    heading: "Plant care logged. The green citizens are handled.",
+    heading: "Plant care logged.",
     instruction: "Track what you did.",
     titleLabel: "Plant care action",
     titlePlaceholder: "Example: changed water, checked roots, repotted Earth",
