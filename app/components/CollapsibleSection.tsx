@@ -28,7 +28,7 @@ export function CollapsibleSection({
         className="flex w-full items-start justify-between gap-4 text-left"
       >
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
+          <p className="font-medium uppercase tracking-[0.22em] text-green-800">
             {eyebrow}
           </p>
 

@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 import { EditLogForm } from "./EditLogForm";
+import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 
 type EditLogPageProps = {
   params: Promise<{
@@ -30,6 +31,7 @@ export type EditableLog = {
 
 async function updateLog(formData: FormData) {
   "use server";
+  const supabase = await createSupabaseServerClient();
 
   const id = Number(formData.get("id"));
   const logType = String(formData.get("log_type") || "");
@@ -98,7 +100,7 @@ export default async function EditLogPage({ params }: EditLogPageProps) {
   const { data: log, error } = await supabase
     .from("logs")
     .select("*")
-    .eq("user_id", user.id)
+    .eq("id", user.id)
 
     .eq("id", Number(id))
     .single();

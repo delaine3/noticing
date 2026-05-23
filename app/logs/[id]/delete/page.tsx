@@ -1,6 +1,6 @@
+import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { supabase } from "../../../lib/supabase";
 
 type DeleteLogPageProps = {
   params: Promise<{
@@ -19,6 +19,7 @@ type DeleteableLog = {
 
 async function deleteLog(formData: FormData) {
   "use server";
+  const supabase = await createSupabaseServerClient();
 
   const id = Number(formData.get("id"));
 
@@ -38,6 +39,7 @@ async function deleteLog(formData: FormData) {
 export default async function DeleteLogPage({ params }: DeleteLogPageProps) {
   const { id } = await params;
   const logId = Number(id);
+  const supabase = await createSupabaseServerClient();
 
   if (!Number.isFinite(logId)) {
     notFound();
@@ -52,7 +54,7 @@ export default async function DeleteLogPage({ params }: DeleteLogPageProps) {
     .from("logs")
     .select("id, log_type, title, action_date, action_time, notes")
     .eq("id", logId)
-    .eq("user_id", user.id)
+    .eq("id", user.id)
     .single();
 
   if (error || !data) {

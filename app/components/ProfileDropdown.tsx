@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LayoutDashboard, LogOut, Newspaper, Plus, Tally5 } from "lucide-react";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import LoadingLink from "./LoadingLink";
 
 type Props = {

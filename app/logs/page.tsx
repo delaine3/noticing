@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { supabase } from "../lib/supabase";
 import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "../lib/supabase-server";
 
 type Log = {
   id: number;
@@ -24,6 +24,8 @@ type Log = {
 };
 
 export default async function LogsPage() {
+  const supabase = await createSupabaseServerClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

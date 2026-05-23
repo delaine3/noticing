@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { supabase } from "../../lib/supabase";
 import { actionTypes } from "../../lib/log-types";
 import { NewActionForm } from "./components/NewActionForm";
+import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 
 type NewLogPageProps = {
   searchParams?: Promise<{
@@ -11,6 +11,7 @@ type NewLogPageProps = {
 
 async function createLog(formData: FormData) {
   "use server";
+  const supabase = await createSupabaseServerClient();
 
   const logType = String(formData.get("log_type") || "");
   const title = String(formData.get("title") || "");
@@ -41,7 +42,6 @@ async function createLog(formData: FormData) {
     .from("logs")
     .insert({
       user_id: user.id,
-
       log_type: logType,
       title: title || null,
       notes: notes || null,
@@ -64,8 +64,6 @@ async function createLog(formData: FormData) {
       intensity_score: intensityScore ? Number(intensityScore) : null,
     })
     .select("id")
-    .eq("user_id", user.id)
-
     .single();
 
   if (error) {

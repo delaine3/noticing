@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LoadingLink from "./LoadingLink";
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
 import ProfileDropdown from "./ProfileDropdown";
 import { useRouter } from "next/navigation";
+import { supabase } from "../lib/supabase";
 
 const navItems = [
   { href: "/", label: "Today" },
@@ -48,7 +48,7 @@ export function AppNav() {
       .from("profiles")
       .select("id, full_name, username, avatar_url")
       .eq("id", user.id)
-      .eq("user_id", user.id)
+      .eq("id", user.id)
       .single();
 
     if (error) {
@@ -92,7 +92,7 @@ export function AppNav() {
           </div>
         </Link>
         {userEmail ? (
-          <div className="flex h-full items-stretch overflow-x-auto border-l border-[rgba(36,81,61,0.14)]">
+          <div className="flex h-full items-stretch border-l border-[rgba(36,81,61,0.14)]">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
