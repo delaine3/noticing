@@ -41,7 +41,7 @@ Noticing is based on what I call **The At Least Method**.
 
 The goal is not perfection.
 
-The goal is to keep the organism supported enough that life does not become unnecessarily harder.
+The goal is to keep the body supported enough that life does not become unnecessarily harder.
 
 That means tracking things like:
 
