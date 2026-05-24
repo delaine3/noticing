@@ -59,8 +59,14 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center page px-4">
       <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
-        <h1 className="title-sm">Login</h1>
-
+        <button
+          type="button"
+          onClick={handleDemoLogin}
+          className="danger-button w-full"
+          disabled={isSubmitting}
+        >
+          Login to demo account
+        </button>
         <input
           type="email"
           placeholder="Email"
@@ -69,7 +75,6 @@ export default function LoginPage() {
           className="w-full rounded border px-4 py-3"
           required
         />
-
         <input
           type="password"
           placeholder="Password"
@@ -78,7 +83,6 @@ export default function LoginPage() {
           className="w-full rounded border px-4 py-3"
           required
         />
-
         <button
           type="submit"
           className="submit-button w-full"
@@ -86,16 +90,6 @@ export default function LoginPage() {
         >
           {isSubmitting ? "Logging in..." : "Login"}
         </button>
-
-        <button
-          type="button"
-          onClick={handleDemoLogin}
-          className="danger-button w-full"
-          disabled={isSubmitting}
-        >
-          Login to demo version
-        </button>
-
         {message ? (
           <p className="text-sm text-[var(--ink-soft)]">{message}</p>
         ) : null}
