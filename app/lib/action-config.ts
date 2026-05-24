@@ -15,6 +15,7 @@ export type ActionConfig = {
   titleLabel: string;
   titlePlaceholder: string;
   notesPlaceholder: string;
+  autoButtons?: String[];
   fields: ConditionalField[];
 };
 
@@ -78,6 +79,7 @@ export const actionConfig: Record<string, ActionConfig> = {
     heading: "Water. Basic maintenance.",
     instruction: "Log the amount. The body likes receipts.",
     titleLabel: "Water note",
+    autoButtons: ["Lemon Water", "Coffee"],
     titlePlaceholder: "Example: rooibos, one glass, bottle refill",
     notesPlaceholder: "Optional. Only note what matters.",
     fields: ["water", "effect"],
@@ -193,7 +195,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Recurring thought": {
-    heading: "Thought loop detected. Do not spiral for free.",
+    heading: "Thought loop detected. Do not spiral.",
     instruction:
       "Log the thought, rate intensity, then return to body maintenance.",
     titleLabel: "Thought label",

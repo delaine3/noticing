@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getNextActionCopy } from "../../lib/daily-rules";
+import LoadingLink from "../LoadingLink";
 
 type CommandCardProps = {
   nextAction: ReturnType<typeof getNextActionCopy>;
@@ -21,13 +22,13 @@ export function CommandCard({ nextAction }: CommandCardProps) {
       </p>
 
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-        <Link href={nextAction.href} className="submit-button">
+        <LoadingLink href={nextAction.href} className="submit-button">
           {nextAction.label}
-        </Link>
+        </LoadingLink>
 
-        <Link href="/logs/new" className="secondary-button">
+        <LoadingLink href="/logs/new" className="secondary-button">
           Log something else
-        </Link>
+        </LoadingLink>
       </div>
     </section>
   );

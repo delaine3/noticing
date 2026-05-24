@@ -74,7 +74,7 @@ export function AppNav() {
   return (
     <header className="app-bg sticky top-0 z-40 h-16 border-b border-[rgba(36,81,61,0.14)] backdrop-blur-xl">
       <nav className="flex h-full w-full items-stretch justify-between">
-        <Link
+        <LoadingLink
           href="/"
           className="flex h-full items-center gap-2 px-4 transition hover:bg-white/30 sm:px-6"
         >
@@ -90,7 +90,7 @@ export function AppNav() {
               run the day
             </span>
           </div>
-        </Link>
+        </LoadingLink>
         {userEmail ? (
           <div className="flex h-full items-stretch border-l border-[rgba(36,81,61,0.14)]">
             {navItems.map((item) => {
@@ -100,7 +100,7 @@ export function AppNav() {
                   : pathname.startsWith(item.href);
 
               return (
-                <Link
+                <LoadingLink
                   key={item.href}
                   href={item.href}
                   className={`flex h-full items-center border-r border-[rgba(36,81,61,0.14)] px-4 text-md font-medium transition sm:px-5 ${
@@ -110,15 +110,15 @@ export function AppNav() {
                   }`}
                 >
                   {item.label}
-                </Link>
+                </LoadingLink>
               );
             })}
-            <Link
+            <LoadingLink
               href="/logs/new"
               className="flex h-full items-center bg-[rgba(63,127,99,0.88)] px-4 text-md font-semibold text-white transition hover:bg-[rgba(36,81,61,0.94)] sm:px-5"
             >
               New log
-            </Link>{" "}
+            </LoadingLink>
             <ProfileDropdown
               displayName={displayName}
               userEmail={userEmail}
