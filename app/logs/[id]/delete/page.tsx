@@ -1,3 +1,4 @@
+import LoadingLink from "@/app/components/LoadingLink";
 import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -112,9 +113,12 @@ export default async function DeleteLogPage({ params }: DeleteLogPageProps) {
               Cancel
             </Link>
 
-            <Link href={`/logs/${log.id}/edit`} className="submit-button">
+            <LoadingLink
+              href={`/logs/${log.id}/edit`}
+              className="submit-button"
+            >
               Edit instead
-            </Link>
+            </LoadingLink>
           </div>
         </div>
       </section>

@@ -15,14 +15,18 @@ type NewActionFormProps = {
   selectedType: string;
   today: string;
   createLog: (formData: FormData) => void | Promise<void>;
+  commonWaterTitles: string[];
 };
 
 export function NewActionForm({
   selectedType,
   today,
   createLog,
+  commonWaterTitles,
 }: NewActionFormProps) {
   const [actionType, setActionType] = useState(selectedType);
+  const [title, setTitle] = useState("");
+  const [waterAmount, setWaterAmount] = useState("");
 
   const config = useMemo(() => getActionConfig(actionType), [actionType]);
 
@@ -34,9 +38,10 @@ export function NewActionForm({
   const showWater = config.fields.includes("water");
   const showTreadmill = config.fields.includes("treadmill");
   const showStrength = config.fields.includes("strength");
+
   return (
     <>
-      <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)] ">
+      <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)]">
         <p className="text-md font-medium uppercase tracking-[0.25em]">
           Command
         </p>
@@ -55,11 +60,16 @@ export function NewActionForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-md font-medium text-stone-700">Action</span>
+
             <select
               name="log_type"
               required
               value={actionType}
-              onChange={(event) => setActionType(event.target.value)}
+              onChange={(event) => {
+                setActionType(event.target.value);
+                setTitle("");
+                setWaterAmount("");
+              }}
               className="mt-2 w-full bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             >
               {actionTypes.map((type) => (
@@ -76,6 +86,7 @@ export function NewActionForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-md font-medium text-stone-700">Date</span>
+
             <input
               name="action_date"
               type="date"
@@ -91,16 +102,30 @@ export function NewActionForm({
           <span className="text-md font-medium text-stone-700">
             {config.titleLabel}
           </span>
+
           <input
             name="title"
             className="mt-2 w-full bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
             placeholder={config.titlePlaceholder}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
           />
         </label>
+
         {showMeal ? <MealFields /> : null}
-        {showWater ? <WaterFields /> : null}
+
+        {showWater ? (
+          <WaterFields
+            commonWaterTitles={commonWaterTitles}
+            waterAmount={waterAmount}
+            setWaterAmount={setWaterAmount}
+            setTitle={setTitle}
+          />
+        ) : null}
+
         {showTreadmill ? <TreadmillFields /> : null}
         {showStrength ? <StrengthFields /> : null}
+
         <ScoreFields
           showMood={showMood}
           showEnergy={showEnergy}
@@ -109,6 +134,7 @@ export function NewActionForm({
 
         <label className="block">
           <span className="text-md font-medium text-stone-700">Notes</span>
+
           <textarea
             name="notes"
             rows={5}
