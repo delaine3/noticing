@@ -48,9 +48,13 @@ function getUsefulTruth(logs: InsightLog[]) {
   const firstMealStats = getFirstMealStats(logs);
 
   const movementCount = logs.filter((log) =>
-    ["Movement", "Exercise", "Treadmill walk", "Strength training"].includes(
-      log.log_type,
-    ),
+    [
+      "Movement",
+      "Exercise",
+      "Treadmill walk",
+      "Strength training",
+      "Yard Work",
+    ].includes(log.log_type),
   ).length;
 
   if (!logs.length) {

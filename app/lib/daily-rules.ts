@@ -105,7 +105,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
     };
   }
 
-  if (!hasLog(logs, ["Sunlight"])) {
+  if (!hasLog(logs, ["Sunlight", "Yard Work"])) {
     return {
       title: "Get light on your face.",
       body: "Ten minutes outside or by a bright window.",
@@ -379,7 +379,7 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
     getSimpleReport(
       logs,
       "Sunlight",
-      ["Sunlight"],
+      ["Sunlight", "Yard Work"],
       {
         label: "Sunlight",
         status: "check",
@@ -413,7 +413,13 @@ export function getDailyReport(logs: DailyLog[]): ReportItem[] {
     getSimpleReport(
       logs,
       "Movement",
-      ["Movement", "Exercise", "Treadmill walk", "Strength training"],
+      [
+        "Movement",
+        "Exercise",
+        "Treadmill walk",
+        "Strength training",
+        "Yard Work",
+      ],
       {
         label: "Movement",
         status: "check",

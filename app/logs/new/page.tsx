@@ -9,8 +9,14 @@ type NewLogPageProps = {
   }>;
 };
 
+type CommonWaterTitleRow = {
+  title: string;
+  use_count: number;
+};
+
 async function createLog(formData: FormData) {
   "use server";
+
   const supabase = await createSupabaseServerClient();
 
   const logType = String(formData.get("log_type") || "");
@@ -32,6 +38,7 @@ async function createLog(formData: FormData) {
   const exerciseNames = formData.getAll("exercise_name").map(String);
   const repsList = formData.getAll("reps").map(String);
   const weightKgList = formData.getAll("weight_kg").map(String);
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -115,6 +122,27 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
     ? (requestedType as ActionType)
     : actionTypes[0];
 
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
+  const { data: commonWaterTitleRows, error: commonWaterTitlesError } =
+    await supabase.rpc("get_common_water_titles");
+
+  if (commonWaterTitlesError) {
+    throw new Error(commonWaterTitlesError.message);
+  }
+
+  const commonWaterTitles = (
+    (commonWaterTitleRows ?? []) as CommonWaterTitleRow[]
+  )
+    .map((item) => item.title)
+    .filter(Boolean);
+
   const today = new Date().toISOString().slice(0, 10);
 
   return (
@@ -136,6 +164,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
           selectedType={selectedType}
           today={today}
           createLog={createLog}
+          commonWaterTitles={commonWaterTitles}
         />
       </section>
     </main>
