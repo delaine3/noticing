@@ -7,7 +7,11 @@ export function MealFields() {
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="text-md font-medium text-black-700">Meal size</span>
-          <select name="meal_size" className="" defaultValue="">
+          <select
+            name="meal_size"
+            className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+            defaultValue=""
+          >
             <option value="">Select size</option>
             {mealSizes.map((size) => (
               <option key={size} value={size}>

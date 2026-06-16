@@ -1,5 +1,5 @@
 export const colors = {
-  coral: "#ffa9b7",
+  coral: "#ff8b9f",
   blush: "#ffd7df",
   cream: "#fffaf3",
   mint: "#c9f5dd",

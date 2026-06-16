@@ -80,8 +80,7 @@ export function EffectPieChart({ logs }: EffectPieChartProps) {
         </h2>
 
         <p className="mt-2 text-md text-[var(--ink-soft)]">
-          See whether your logged actions are helping the day or quietly taxing
-          the system.
+          See whether your logged actions are helping or hurting you.
         </p>
       </div>
 

@@ -52,7 +52,7 @@ export function StrengthFields() {
         </span>
         <input
           name="workout_name"
-          className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+          className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
           placeholder="Example: triceps day, legs, full body"
         />
       </label>
@@ -87,7 +87,7 @@ export function StrengthFields() {
                   onChange={(event) =>
                     updateSet(index, "exerciseName", event.target.value)
                   }
-                  className="mt-2 w-full   bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="Tricep pushdown"
                 />
               </label>
@@ -104,7 +104,7 @@ export function StrengthFields() {
                   onChange={(event) =>
                     updateSet(index, "reps", event.target.value)
                   }
-                  className="mt-2 w-full   bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="12"
                 />
               </label>
@@ -122,7 +122,7 @@ export function StrengthFields() {
                   onChange={(event) =>
                     updateSet(index, "weightKg", event.target.value)
                   }
-                  className="mt-2 w-full   bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/80 px-3 py-2 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="20"
                 />
               </label>

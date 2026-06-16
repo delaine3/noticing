@@ -133,9 +133,7 @@ export default async function LogsPage({ searchParams }: LogsPageProps) {
         </div>
 
         {!typedLogs.length ? (
-          <div className="glass-card mt-8">
-            No logs yet. Your future receipts will live here.
-          </div>
+          <div className="glass-card mt-8">No logs yet.</div>
         ) : (
           <>
             <div className="scroll-card">

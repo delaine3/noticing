@@ -93,8 +93,9 @@ Some days do not need a complete life overhaul. They need the minimum effective 
 - At least wash up.
 - At least log the thought instead of feeding it.
 - At least do one useful thing.
+  The goal is to keep your body supported enough that life does not become unnecessarily harder.
 
-The app reflects that philosophy in its design. It does not only collect data. It tells the user what probably needs attention next.
+  The app reflects that philosophy in its design. It does not only collect data. It tells the user what probably needs attention next.
 
 ---
 

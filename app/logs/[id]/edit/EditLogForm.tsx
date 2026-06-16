@@ -69,13 +69,8 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
           <p className="eyebrow">Edit log</p>
 
           <h1 className="page-title mt-3 text-4xl sm:text-5xl">
-            Fix the receipt.
+            Update details.
           </h1>
-
-          <p className="p mt-4">
-            Update the details. Future-you needs accurate data, not historical
-            fiction.
-          </p>
         </div>
 
         <form
@@ -95,7 +90,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                 required
                 value={actionType}
                 onChange={(event) => setActionType(event.target.value)}
-                className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
               >
                 {actionTypes.map((type) => (
                   <option key={type} value={type}>
@@ -114,7 +109,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                 <select
                   name="effect"
                   defaultValue={editableLog.effect ?? ""}
-                  className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                 >
                   <option value="">Select effect</option>
                   {effects.map((effect) => (
@@ -137,7 +132,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                 name="action_date"
                 type="date"
                 defaultValue={editableLog.action_date ?? ""}
-                className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
               />
             </label>
 
@@ -150,7 +145,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                 name="action_time"
                 type="time"
                 defaultValue={editableLog.action_time?.slice(0, 5) ?? ""}
-                className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
               />
             </label>
           </div>
@@ -163,7 +158,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
             <input
               name="title"
               defaultValue={editableLog.title ?? ""}
-              className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+              className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
               placeholder={config.titlePlaceholder}
             />
           </label>
@@ -183,7 +178,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                   <select
                     name="meal_size"
                     defaultValue={editableLog.meal_size ?? ""}
-                    className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                    className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   >
                     <option value="">Select size</option>
                     {mealSizes.map((size) => (
@@ -202,7 +197,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                   <select
                     name="meal_source"
                     defaultValue={editableLog.meal_source ?? ""}
-                    className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                    className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   >
                     <option value="">Select source</option>
                     {mealSources.map((source) => (
@@ -231,7 +226,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                   min="0"
                   step="50"
                   defaultValue={editableLog.water_amount_ml ?? ""}
-                  className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="Example: 500"
                 />
               </label>
@@ -290,7 +285,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                     min="0"
                     step="0.1"
                     defaultValue={editableLog.treadmill_duration_minutes ?? ""}
-                    className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                    className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   />
                 </label>
 
@@ -305,7 +300,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                     min="0"
                     step="0.01"
                     defaultValue={editableLog.treadmill_distance_km ?? ""}
-                    className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                    className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   />
                 </label>
               </div>
@@ -326,7 +321,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                 <input
                   name="workout_name"
                   defaultValue={editableLog.workout_name ?? ""}
-                  className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                   placeholder="Example: legs, triceps, full body"
                 />
               </label>
@@ -346,7 +341,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                   min="1"
                   max="10"
                   defaultValue={editableLog.mood_score ?? ""}
-                  className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                 />
               </label>
             ) : null}
@@ -363,7 +358,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                   min="1"
                   max="10"
                   defaultValue={editableLog.energy_score ?? ""}
-                  className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                 />
               </label>
             ) : null}
@@ -380,7 +375,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
                   min="1"
                   max="10"
                   defaultValue={editableLog.intensity_score ?? ""}
-                  className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+                  className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
                 />
               </label>
             ) : null}
@@ -393,7 +388,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
               name="notes"
               rows={5}
               defaultValue={editableLog.notes ?? ""}
-              className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+              className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
               placeholder={config.notesPlaceholder}
             />
           </label>

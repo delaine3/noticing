@@ -58,7 +58,7 @@ function getUsefulTruth(logs: InsightLog[]) {
   ).length;
 
   if (!logs.length) {
-    return "No logs yet. The app cannot boss you around without evidence. Feed it data.";
+    return "No logs yet.";
   }
 
   if (firstMealStats.codeRedCount > 0) {
@@ -77,7 +77,7 @@ function getUsefulTruth(logs: InsightLog[]) {
     return "No movement logs. Do it : Five minutes counts.";
   }
 
-  return "The useful pattern is forming: collect evidence, support the body, then decide what the day needs.";
+  return "The useful pattern is forming: collect evidence, support your body, then decide what the day needs.";
 }
 
 export function InsightsDashboard({ logs }: InsightsDashboardProps) {
@@ -101,7 +101,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </h1>
 
           <p className="mt-4 max-w-2xl text-[var(--ink-soft)]">
-            This page turns your logs into patterns, charts, and useful bossy
+            This page turns your logs into patterns, charts, and useful
             feedback.
           </p>
         </div>
