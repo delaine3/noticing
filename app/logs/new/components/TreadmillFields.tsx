@@ -19,7 +19,7 @@ export function TreadmillFields() {
             type="number"
             min="0"
             step="0.1"
-            className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+            className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
             placeholder="Example: 30"
           />
         </label>
@@ -33,7 +33,7 @@ export function TreadmillFields() {
             type="number"
             min="0"
             step="0.01"
-            className="mt-2 w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
+            className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
             placeholder="Example: 2.4"
           />
         </label>

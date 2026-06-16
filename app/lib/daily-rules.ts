@@ -195,7 +195,7 @@ function getFirstMealReport(logs: DailyLog[]): ReportItem {
       label: "First meal",
       status: "demerit",
       emoji: "🚫",
-      message: "No first meal logged. The body was left unmanaged.",
+      message: "No first meal logged. Thet's a problem.",
     };
   }
 

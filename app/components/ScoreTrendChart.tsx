@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { InsightLog } from "../lib/log-types";
 import { colors } from "../utils/styles";
+import { Bold } from "lucide-react";
 
 type ScoreTrendChartProps = {
   logs: InsightLog[];
@@ -111,7 +112,7 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
         </h2>
 
         <p className="mt-2 text-md text-[var(--ink-soft)]">
-          This shows whether the body support is changing the actual state.
+          This shows whether your actions are improving your state.
         </p>
       </div>
 
@@ -137,7 +138,7 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
                 type="monotone"
                 dataKey="mood"
                 name="Mood"
-                stroke={colors.coral}
+                stroke={colors.warning}
                 strokeWidth={3}
                 dot={{ r: 3 }}
                 connectNulls
@@ -157,7 +158,7 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
                 type="monotone"
                 dataKey="intensity"
                 name="Intensity"
-                stroke={colors.aqua}
+                stroke={colors.danger}
                 strokeWidth={3}
                 dot={{ r: 3 }}
                 connectNulls
@@ -171,10 +172,10 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-3 text-md text-[var(--ink-soft)]">
-        <span style={{ color: colors.coral }}>● Mood</span>
+      <div className="mt-4 flex flex-wrap gap-3 font-bold p-2 text-lg text-shadow-md text-shadow-gray-50 text-[var(--ink-soft)]">
+        <span style={{ color: colors.danger }}>● Intensity</span>
+        <span style={{ color: colors.warning }}>● Mood</span>
         <span style={{ color: colors.leaf }}>● Energy</span>
-        <span style={{ color: colors.aqua }}>● Intensity</span>
       </div>
     </section>
   );

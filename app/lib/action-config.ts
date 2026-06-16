@@ -38,13 +38,13 @@ export const actionConfig: Record<string, ActionConfig> = {
     fields: [],
   },
   "First meal": {
-    heading: "Good. Feed the body.",
+    heading: "Good. Feed your body.",
     instruction:
       "Log what you ate, when, how big it was, and where it came from.",
     titleLabel: "What did you eat?",
     titlePlaceholder: "Example: eggs and toast, leftover pizza, chicken",
     notesPlaceholder: "Did it help? Did it feel like enough?",
-    fields: ["meal", "effect", "energy"],
+    fields: ["meal", "effect", "energy", "mood"],
   },
 
   Meal: {
@@ -77,7 +77,7 @@ export const actionConfig: Record<string, ActionConfig> = {
 
   Water: {
     heading: "Water. Basic maintenance.",
-    instruction: "Log the amount. The body likes receipts.",
+    instruction: "Log the amount.",
     titleLabel: "Water note",
     autoButtons: ["Lemon Water", "Coffee"],
     titlePlaceholder: "Example: rooibos, one glass, bottle refill",

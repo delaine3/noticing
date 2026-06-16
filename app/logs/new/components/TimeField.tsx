@@ -27,7 +27,7 @@ export function TimeField() {
           type="time"
           value={time}
           onChange={(event) => setTime(event.target.value)}
-          className="w-full   bg-white/75 px-4 py-3 text-[var(--ink)] outline-none transition focus:border-[var(--leaf)] focus:bg-white"
+          className="w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none transition focus:border-[var(--leaf)] focus:bg-white"
         />
 
         <button
