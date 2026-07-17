@@ -17,7 +17,7 @@ Noticing is built around a simple personal rule:
 ---
 
 ## Live Demo at:
-# https://noticing-six.vercel.app/
+https://noticing-six.vercel.app/
 
 The hosted app is authentication-protected because user logs are private.
 
