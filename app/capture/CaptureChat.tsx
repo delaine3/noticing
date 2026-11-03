@@ -11,8 +11,8 @@ import { actionTypes } from "../lib/log-types";
 import { insightAreas } from "../lib/insight-categories";
 import { saveCaptureDrafts } from "./actions";
 import { extractLocalRecords } from "../lib/free-capture";
-import { analyzeLocal, loadLocalModel } from "../lib/noticing-webllm";
-import { parseLocalCaptureResponse } from "../lib/local-capture-response";
+import { analyzeLocal, loadLocalModel, resetLocalModel } from "../lib/noticing-webllm";
+import { resolveLocalCapture } from "../lib/capture-result";
 
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
@@ -35,6 +35,22 @@ function dateToday() {
 
 function draftFromAI(record: CaptureAnalysis["proposed_records"][number]): CaptureDraft {
   return { ...record, id: crypto.randomUUID(), approved: false };
+}
+
+// Retain earlier unsaved entries when a later local-model reply forgets them.
+function addUniqueDrafts(
+  previous: CaptureDraft[],
+  records: CaptureAnalysis["proposed_records"],
+) {
+  const next = [...previous];
+  for (const record of records) {
+    const fingerprint = (record.evidence || record.title).trim().toLowerCase();
+    const exists = next.some((draft) =>
+      draft.log_type === record.log_type &&
+      (draft.evidence || draft.title).trim().toLowerCase() === fingerprint);
+    if (!exists) next.push(draftFromAI(record));
+  }
+  return next.slice(-10);
 }
 
 export default function CaptureChat() {
@@ -96,29 +112,47 @@ export default function CaptureChat() {
         modelId,
         onProgress: setModelStatus,
       });
-      let payload: CaptureAnalysis;
-      try {
-        payload = parseLocalCaptureResponse(raw, actionTypes);
-      } catch {
-        // Never treat malformed model output as approved or authoritative.
-        // Keep the entire process on-device, and explicitly disclose a
-        // limited offline fallback instead of showing a cryptic JSON error.
-        const basic = extractLocalRecords(text, dateToday());
-        payload = {
-          ...basic,
-          reply: "The local AI returned an unreadable response. " +
-            "I used basic on-device extraction instead. " + basic.reply,
-        };
+      const { analysis: payload, usedBasic } = resolveLocalCapture(
+        raw, text, dateToday(), actionTypes,
+      );
+      if (usedBasic) {
+        setNotice("The small model did not return usable activity data. " +
+          "Review the offline suggestions below. No cloud processing occurred.");
       }
       setMessages([...conversation, { role: "assistant" as const, content: payload.reply }].slice(-10));
       setInput("");
-      // The model returns an updated draft set, not additional records to append indefinitely.
-      // Preserve user corrections only until another analysis is requested.
-      setDrafts(payload.proposed_records.map(draftFromAI));
-      setQuestion(typeof payload.follow_up_question === "string" ? payload.follow_up_question.slice(0, 300) : null);
+      // Keep prior unapproved records and avoid re-adding matching suggestions.
+      setDrafts((previous) => addUniqueDrafts(previous, payload.proposed_records));
+      setQuestion(usedBasic ? null : payload.follow_up_question);
       setSavedCount(0);
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Could not process your message.");
+      // A generation exception may have unloaded the GPU model. Don't keep
+      // showing "Model ready" or ask the user to submit to a broken engine.
+      if (captureMode === "local") {
+        setModelReady(false);
+        setModelStatus("Local model unavailable. Select Load model to restore it from cache.");
+        await resetLocalModel(modelId);
+        const offline = extractLocalRecords(text, dateToday());
+        if (offline.proposed_records.length > 0) {
+          setMessages([...conversation, {
+            role: "assistant" as const,
+            content: "Local AI stopped unexpectedly. I found " +
+              offline.proposed_records.length +
+              " suggested records using offline basic extraction.",
+          }].slice(-10));
+          setDrafts((previous) => addUniqueDrafts(previous, offline.proposed_records));
+          setInput("");
+          setQuestion(null);
+          setNotice("Model generation failed; offline records are available for review. " +
+            "Reload the model to use AI again.");
+        } else {
+          setNotice("Local model generation failed: " +
+            (error instanceof Error ? error.message : "Unknown error") +
+            ". Your message is preserved. Reload the model or use Offline basic.");
+        }
+      } else {
+        setNotice(error instanceof Error ? error.message : "Could not process your message.");
+      }
     } finally {
       setBusy(false);
     }
@@ -195,7 +229,7 @@ export default function CaptureChat() {
           {captureMode === "local" ? (
             <div className="mt-3 space-y-2 rounded-lg bg-white/80 p-3">
               <label className="block text-sm font-medium">Local model
-                <select value={modelId} onChange={(event) => { setModelId(event.target.value); setModelReady(false); }}
+                <select value={modelId} onChange={(event) => { setModelId(event.target.value); setModelReady(false); setModelStatus("Model changed. Load and verify the new model before analyzing."); }}
                   className="mt-1 block w-full rounded-lg border p-2">
                   <option value="SmolLM2-360M-Instruct-q4f16_1-MLC">SmolLM2 360M (lighter, less accurate; ~376 MB graphics memory)</option>
                   <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B (stronger, ~1.8 GB graphics memory)</option>
