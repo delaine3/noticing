@@ -11,7 +11,7 @@ export function TimelineCard({ buckets, totalLogs }: TimelineCardProps) {
   return (
     <CollapsibleSection
       eyebrow="Timeline"
-      title="What happened by checkpoint"
+      title="Entries by time of day"
       summary={`${totalLogs} actions logged today.`}
     >
       <div className="grid gap-4 lg:grid-cols-2">
