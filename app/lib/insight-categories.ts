@@ -23,7 +23,7 @@ export const insightAreas = [
     recordPrompt: "Rate mood, energy and stress, then name one concrete factor.",
     types: [
       "Daily check-in", "Reading", "TikTok used", "TikTok avoided",
-      "Recurring thought",
+      "Recurring thought", "Personal observation",
     ],
   },
   {
@@ -47,7 +47,7 @@ export const insightAreas = [
     recordPrompt: "Record a specific activity and how it affected your day.",
     types: [
       "Cook", "Wash Dishes", "Clean", "Yard Work", "Plant care",
-      "Social interaction", "Family system", "Creative time",
+      "Social interaction", "Family system", "Creative time", "Home improvement",
     ],
   },
 ] as const;
