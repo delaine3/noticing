@@ -12,6 +12,17 @@ import { insightAreas } from "../lib/insight-categories";
 import { saveCaptureDrafts } from "./actions";
 import { extractLocalRecords } from "../lib/free-capture";
 
+type LocalLLMBridge = {
+  loadModel: (id: string, onProgress: (status: string) => void) => Promise<unknown>;
+  analyzeLocal: (args: {
+    messages: CaptureMessage[]; localDate: string; timeZone: string;
+    modelId: string; onProgress: (status: string) => void;
+  }) => Promise<string>;
+};
+declare global {
+  interface Window { __noticingLocalLLM?: LocalLLMBridge; }
+}
+
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
   treadmill_distance_km: "Treadmill distance (km)",
@@ -40,8 +51,10 @@ export default function CaptureChat() {
   const [input, setInput] = useState("");
   const [drafts, setDrafts] = useState<CaptureDraft[]>([]);
   const [question, setQuestion] = useState<string | null>(null);
-  const [consent, setConsent] = useState(false);
-  const [captureMode, setCaptureMode] = useState<"basic" | "gemini">("basic");
+  const [captureMode, setCaptureMode] = useState<"basic" | "local">("basic");
+  const [modelId, setModelId] = useState("SmolLM2-360M-Instruct-q4f16_1-MLC");
+  const [modelReady, setModelReady] = useState(false);
+  const [modelStatus, setModelStatus] = useState("Not loaded. Loading downloads open weights, but does not upload chats.");
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
@@ -53,9 +66,40 @@ export default function CaptureChat() {
     setNotice("");
   }
 
+  async function loadLocalModel() {
+    if (busy) return;
+    setBusy(true);
+    setNotice("");
+    try {
+      if (!("gpu" in navigator)) throw new Error("This browser does not expose WebGPU. Use Offline basic mode.");
+      if (!window.__noticingLocalLLM) {
+        await new Promise<void>((resolve, reject) => {
+          const existing = document.querySelector<HTMLScriptElement>('script[data-noticing-llm="true"]');
+          if (existing) { existing.addEventListener("load", () => resolve(), { once: true }); existing.addEventListener("error", () => reject(new Error("Could not load local model runtime.")), { once: true }); return; }
+          const script = document.createElement("script");
+          script.type = "module";
+          script.src = "/noticing-webllm.mjs";
+          script.dataset.noticingLlm = "true";
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error("Could not download WebLLM runtime. Check internet connection."));
+          document.head.appendChild(script);
+        });
+      }
+      const bridge = window.__noticingLocalLLM;
+      if (!bridge) throw new Error("WebLLM is unavailable. Try Offline basic mode.");
+      await bridge.loadModel(modelId, setModelStatus);
+      setModelReady(true);
+    } catch (error) {
+      setModelReady(false);
+      setModelStatus(error instanceof Error ? error.message : "Could not run the model.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function send() {
     const text = input.trim();
-    if (!text || busy || (captureMode === "gemini" && !consent)) return;
+    if (!text || busy || (captureMode === "local" && !modelReady)) return;
     const conversation = [...messages, { role: "user" as const, content: text }].slice(-10);
     setBusy(true);
     setNotice("");
@@ -70,24 +114,44 @@ export default function CaptureChat() {
         setSavedCount(0);
         return;
       }
-      const response = await fetch("/api/capture/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          consent: true,
-          messages: conversation,
-          localDate: dateToday(),
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
-        }),
+      const bridge = window.__noticingLocalLLM;
+      if (!bridge) throw new Error("Local model is not loaded.");
+      const raw = await bridge.analyzeLocal({
+        messages: conversation,
+        localDate: dateToday(),
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+        modelId,
+        onProgress: setModelStatus,
       });
-      const payload = await response.json() as CaptureAnalysis & { error?: string };
-      if (!response.ok) throw new Error(payload.error || "Could not process message.");
+      const payload = JSON.parse(raw) as CaptureAnalysis;
+      if (!payload || typeof payload.reply !== "string" || !Array.isArray(payload.proposed_records)) {
+        throw new Error("The local model did not return valid proposed records. Try again or use Offline basic.");
+      }
+      // Small open-weight models can produce malformed data. Treat every item as
+      // untrusted and require user review before any server-side save.
+      const clean = payload.proposed_records.slice(0, 6).filter((record) =>
+        record && actionTypes.includes(record.log_type) &&
+        typeof record.title === "string" && typeof record.notes === "string" &&
+        typeof record.action_date === "string" && typeof record.action_time === "string"
+      ).map((record) => {
+        const metrics = Object.fromEntries(optionalFields.map((key) => [
+          key, captureNumberValid(key, record[key]) ? record[key] : null,
+        ])) as Pick<CaptureDraft, typeof optionalFields[number]>;
+        return {
+          ...record, ...metrics,
+          title: record.title.slice(0, 160),
+          notes: record.notes.slice(0, 1500),
+          evidence: String(record.evidence || "").slice(0, 350),
+          uncertainty: String(record.uncertainty || "").slice(0, 300),
+        };
+      });
+      payload.proposed_records = clean;
       setMessages([...conversation, { role: "assistant" as const, content: payload.reply }].slice(-10));
       setInput("");
       // The model returns an updated draft set, not additional records to append indefinitely.
       // Preserve user corrections only until another analysis is requested.
       setDrafts(payload.proposed_records.map(draftFromAI));
-      setQuestion(payload.follow_up_question);
+      setQuestion(typeof payload.follow_up_question === "string" ? payload.follow_up_question.slice(0, 300) : null);
       setSavedCount(0);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not process your message.");
@@ -153,35 +217,42 @@ export default function CaptureChat() {
         </div>
 
         <fieldset className="rounded-lg border border-[var(--border-soft)] bg-white/70 p-3">
-          <legend className="px-1 text-sm font-semibold">How should Noticing process this?</legend>
+          <legend className="px-1 text-sm font-semibold">Processing mode</legend>
           <label className="mt-2 flex items-start gap-2 text-sm">
             <input type="radio" name="capture-mode" value="basic" checked={captureMode === "basic"}
               onChange={() => setCaptureMode("basic")} className="mt-1 accent-[var(--leaf-dark)]" />
-            <span><strong>Offline basic</strong> · No API key, no charge, no message leaves your browser. Recognizes a limited set of explicit activities.</span>
+            <span><strong>Offline basic</strong> · No model download. Limited rules, completely on-device.</span>
           </label>
           <label className="mt-3 flex items-start gap-2 text-sm">
-            <input type="radio" name="capture-mode" value="gemini" checked={captureMode === "gemini"}
-              onChange={() => setCaptureMode("gemini")} className="mt-1 accent-[var(--leaf-dark)]" />
-            <span><strong>Gemini free tier</strong> · Better understanding and follow-up questions, but text is sent to Google. Requires a configured unbilled API project, and usage quotas apply.</span>
+            <input type="radio" name="capture-mode" value="local" checked={captureMode === "local"}
+              onChange={() => setCaptureMode("local")} className="mt-1 accent-[var(--leaf-dark)]" />
+            <span><strong>Open-weight AI on this device</strong> · No API, no training on your conversations, no prompt uploads. Requires browser WebGPU and a model download.</span>
           </label>
+          {captureMode === "local" ? (
+            <div className="mt-3 space-y-2 rounded-lg bg-white/80 p-3">
+              <label className="block text-sm font-medium">Local model
+                <select value={modelId} onChange={(event) => { setModelId(event.target.value); setModelReady(false); }}
+                  className="mt-1 block w-full rounded-lg border p-2">
+                  <option value="SmolLM2-360M-Instruct-q4f16_1-MLC">SmolLM2 360M (lighter, less accurate; ~376 MB graphics memory)</option>
+                  <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B (stronger, ~1.8 GB graphics memory)</option>
+                </select>
+              </label>
+              <button type="button" className="secondary-button" disabled={busy || modelReady}
+                onClick={() => void loadLocalModel()}>{modelReady ? "Model ready" : busy ? "Loading…" : "Download / load model"}</button>
+              <p role="status" className="text-xs text-[var(--ink-soft)]">{modelStatus}</p>
+              <p className="text-xs text-[var(--ink-soft)]">Model files download from public hosts and may use significant internet data. Downloads can reveal your IP to the host but not your chat content. Cached model files may be reused.</p>
+            </div>
+          ) : null}
         </fieldset>
         <label className="block text-sm font-semibold" htmlFor="capture-input">What happened?</label>
         <textarea id="capture-input" rows={4} maxLength={2500} value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="I did..., I noticed..., I finished..."
           className="w-full rounded-lg border border-[var(--border-soft)] bg-white p-3" />
-        {captureMode === "gemini" ? <label className="flex items-start gap-3 text-sm">
-          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)}
-            className="mt-1 h-4 w-4 accent-[var(--leaf-dark)]" />
-          <span>
-            I agree to send the recent messages in this chat to Google's Gemini free-tier API for processing.
-            Google may use free-tier input to improve its services. Do not submit sensitive or third-party private details.
-          </span>
-        </label> : null}
         <div className="flex flex-wrap gap-3">
           <button type="button" className="submit-button disabled:opacity-50"
-            disabled={busy || !input.trim() || (captureMode === "gemini" && !consent)} onClick={() => void send()}>
-            {busy ? "Analyzing…" : captureMode === "basic" ? "Find records offline" : "Ask Gemini"}
+            disabled={busy || !input.trim() || (captureMode === "local" && !modelReady)} onClick={() => void send()}>
+            {busy ? "Analyzing…" : captureMode === "basic" ? "Find records offline" : "Analyze on this device"}
           </button>
           <button type="button" className="secondary-button"
             onClick={() => {
@@ -193,7 +264,7 @@ export default function CaptureChat() {
         </div>
         <p className="text-xs text-[var(--ink-soft)]">
           This is not a live ChatGPT sync. This browser chat is temporary; reloading clears it.
-          Offline basic mode never sends your message to an AI provider. Gemini mode sends recent chat messages only after consent.
+          Both modes process messages on this device; no AI provider receives prompts. Only a deliberate Save sends your edited, approved records to Noticing.
           Only approved records are saved to your account.
         </p>
       </section>
