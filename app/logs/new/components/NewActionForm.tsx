@@ -112,6 +112,16 @@ export function NewActionForm({
           />
         </label>
 
+        {actionType === "Sleep" ? (
+          <label className="block">
+            <span className="text-md font-medium text-stone-700">Hours slept (optional)</span>
+            <input name="sleep_hours" type="number" min="0" max="24" step="0.25"
+              className="mt-2 w-full bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              placeholder="Example: 7.5" />
+            <span className="mt-1 block text-sm text-stone-700">An estimate is fine. Leave empty if unknown.</span>
+          </label>
+        ) : null}
+
         {showMeal ? <MealFields /> : null}
 
         {showWater ? (
@@ -130,6 +140,7 @@ export function NewActionForm({
           showMood={showMood}
           showEnergy={showEnergy}
           showIntensity={showIntensity}
+          intensityLabel={actionType === "Daily check-in" ? "Stress (1–10)" : "Intensity (1–10)"}
         />
 
         <label className="block">
