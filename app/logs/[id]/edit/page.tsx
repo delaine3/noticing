@@ -1,7 +1,8 @@
 import { redirect, notFound } from "next/navigation";
-import { supabase } from "../../../lib/supabase";
 import { EditLogForm } from "./EditLogForm";
 import { createSupabaseServerClient } from "@/app/lib/supabase-server";
+import { mergeLogNotes } from "@/app/lib/log-notes";
+import { revalidatePath } from "next/cache";
 
 type EditLogPageProps = {
   params: Promise<{
@@ -51,9 +52,18 @@ async function updateLog(formData: FormData) {
   const energyScore = formData.get("energy_score");
   const intensityScore = formData.get("intensity_score");
 
-  if (!Number.isFinite(id)) {
-    throw new Error("Invalid log id");
-  }
+  if (!Number.isSafeInteger(id) || id <= 0) notFound();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // Preserve provenance and duplicate-detection tokens when updating notes.
+  const { data: current, error: readError } = await supabase.from("logs")
+    .select("notes")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (readError) throw new Error(readError.message);
+  if (!current) notFound();
 
   const { error } = await supabase
     .from("logs")
@@ -61,7 +71,7 @@ async function updateLog(formData: FormData) {
       log_type: logType,
       category: logType,
       title: title || null,
-      notes: notes || null,
+      notes: mergeLogNotes(notes, current.notes) || null,
       action_date: actionDate || null,
       action_time: actionTime || null,
       effect: effect || null,
@@ -80,34 +90,35 @@ async function updateLog(formData: FormData) {
       energy_score: energyScore ? Number(energyScore) : null,
       intensity_score: intensityScore ? Number(intensityScore) : null,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     throw new Error(error.message);
   }
 
+  revalidatePath("/logs");
+  revalidatePath("/");
+  revalidatePath("/insights");
   redirect("/logs");
 }
 
 export default async function EditLogPage({ params }: EditLogPageProps) {
   const { id } = await params;
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const parsedId = Number(id);
+  if (!/^\d+$/.test(id) || !Number.isSafeInteger(parsedId) || parsedId <= 0) notFound();
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: log, error } = await supabase
-    .from("logs")
+  const { data: log, error } = await supabase.from("logs")
     .select("*")
-    .eq("id", user.id)
+    .eq("id", parsedId)
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-    .eq("id", Number(id))
-    .single();
-
-  if (error || !log) {
-    notFound();
-  }
+  if (error) throw new Error(error.message);
+  if (!log) notFound();
 
   return <EditLogForm editableLog={log as EditableLog} updateLog={updateLog} />;
 }
