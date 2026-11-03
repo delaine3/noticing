@@ -10,10 +10,6 @@ import { Treadmill } from "../../components/Treadmill";
 
 type Props = { params: Promise<{ category: string }> };
 
-export function generateStaticParams() {
-  return insightAreas.map(({ id }) => ({ category: id }));
-}
-
 function describe(log: InsightLog) {
   if (log.log_type === "Treadmill walk" && log.treadmill_distance_km !== null)
     return log.treadmill_distance_km + " km" + (log.treadmill_duration_minutes !== null ? " · " + log.treadmill_duration_minutes + " min" : "");
