@@ -10,6 +10,11 @@ import { Treadmill } from "../../components/Treadmill";
 
 type Props = { params: Promise<{ category: string }> };
 
+function logUrl(href: string, category: string) {
+  const separator = href.includes("?") ? "&" : "?";
+  return href + separator + "returnTo=" + encodeURIComponent("/insights/" + category);
+}
+
 function describe(log: InsightLog) {
   if (log.log_type === "Treadmill walk" && log.treadmill_distance_km !== null)
     return log.treadmill_distance_km + " km" + (log.treadmill_duration_minutes !== null ? " · " + log.treadmill_duration_minutes + " min" : "");
@@ -67,7 +72,7 @@ export default async function InsightCategoryPage({ params }: Props) {
               <article className="glass-card p-5" key={item.title}>
                 <h3 className="text-xl font-bold">{item.title}</h3>
                 <p className="mt-3 text-[var(--ink-soft)]">{item.detail}</p>
-                <Link className="submit-button mt-5 inline-block" href={item.href}>{item.next}</Link>
+                <Link className="submit-button mt-5 inline-block" href={logUrl(item.href, category)}>{item.next}</Link>
               </article>
             ))}
           </div>
@@ -84,7 +89,7 @@ export default async function InsightCategoryPage({ params }: Props) {
         <section className="mt-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-2xl font-bold">Recent records</h2>
-            <Link href={`/logs/new?type=${encodeURIComponent(area.logType)}`} className="secondary-button">Add a record</Link>
+            <Link href={logUrl(`/logs/new?type=${encodeURIComponent(area.logType)}`, category)} className="secondary-button">Add a record</Link>
           </div>
           {recent.length ? (
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
