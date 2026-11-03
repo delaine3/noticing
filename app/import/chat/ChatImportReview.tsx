@@ -25,7 +25,7 @@ function newDraft(item: ImportProposal): Draft {
     approved: false,
     title: item.title,
     notes: item.notes,
-    date: item.reportedDate,
+    date: item.eventDate ?? item.reportedDate,
     type: item.type,
     waterMl: item.waterMl?.toString() ?? "",
     distanceKm: item.distanceKm?.toString() ?? "",
@@ -73,11 +73,11 @@ export default function ChatImportReview() {
     setSelectedConversation("");
     setDrafts({});
     if (file.size > 35 * 1024 * 1024) {
-      setMessage("This file is over 35 MB. Split the export or import a smaller conversations.json file.");
+      setMessage("This file exceeds 35 MB. Use a smaller conversations export or curated Noticing JSON file.");
       return;
     }
     if (!file.name.toLowerCase().endsWith(".json")) {
-      setMessage("Please select conversations.json from your ChatGPT data export. Extract a ZIP locally first.");
+      setMessage("Select a .json file, either ChatGPT conversations.json or Noticing curated-v1 format.");
       return;
     }
     setLoading(true);
@@ -155,8 +155,8 @@ export default function ChatImportReview() {
       <section className="glass-card space-y-4">
         <h2 className="text-xl font-semibold">1. Open your export locally</h2>
         <p className="text-sm text-[var(--ink-soft)]">
-          From your ChatGPT account, export your data and extract the downloaded ZIP on your own device.
-          Select the file named <strong>conversations.json</strong>. This page reads that file in your browser;
+          Select <strong>conversations.json</strong> from a ChatGPT export, or a smaller
+          <strong> Noticing curated JSON file</strong>. This page reads the file in your browser;
           the file and the original messages are never sent to Noticing&apos;s server.
         </p>
         <input type="file" accept=".json,application/json" aria-label="Select ChatGPT conversations.json"
@@ -175,8 +175,8 @@ export default function ChatImportReview() {
       {candidateConversations.length ? (
         <>
           <section className="glass-card space-y-3">
-            <h2 className="text-xl font-semibold">2. Select a conversation</h2>
-            <label className="block text-sm font-medium" htmlFor="conversation-selector">Conversation</label>
+            <h2 className="text-xl font-semibold">2. Select a conversation or life area</h2>
+            <label className="block text-sm font-medium" htmlFor="conversation-selector">Conversation or group</label>
             <select id="conversation-selector" value={selectedConversation}
               onChange={(e) => { setSelectedConversation(e.target.value); setResult(null); }}
               className="w-full rounded-lg border border-[var(--border-soft)] bg-white p-3">
@@ -185,7 +185,7 @@ export default function ChatImportReview() {
               ))}
             </select>
             <p className="text-sm text-[var(--ink-soft)]">
-              This conservative extractor can miss events or misread sentences. Check the original excerpt,
+              Raw chat extraction can miss events or misread sentences. Curated summaries are paraphrases, not original quotes. Check the source summary,
               especially dates, ownership of the activity and numerical values.
             </p>
             <button type="button" className="text-sm font-semibold text-[var(--leaf-dark)] underline"
@@ -208,7 +208,7 @@ export default function ChatImportReview() {
             <div>
               <h2 className="text-2xl font-semibold">3. Verify each proposed record</h2>
               <p className="mt-2 text-sm text-[var(--ink-soft)]">
-                Select only statements you can confirm. Dates initially represent the message date,
+                Select only activities you can confirm. For raw chat exports, dates initially represent the message date,
                 <strong> not necessarily when the event happened</strong>. Correct each date before approval.
                 Avoid importing private details about other people.
               </p>
@@ -225,10 +225,10 @@ export default function ChatImportReview() {
                     Approve this record
                   </label>
                   <div className="rounded-lg border-l-4 border-[var(--leaf)] bg-white/70 p-3 text-sm">
-                    <p className="text-xs font-semibold uppercase tracking-wide">Original user message excerpt</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide">Source excerpt or curated evidence summary</p>
                     <p className="mt-2 break-words whitespace-pre-wrap">{proposal.messageExcerpt}</p>
                     <p className="mt-2 text-xs text-[var(--ink-soft)]">
-                      Message date: {proposal.reportedDate || "unknown"}
+                      Source report date: {proposal.reportedDate || "unknown"}
                     </p>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
