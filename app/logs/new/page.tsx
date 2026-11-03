@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 type NewLogPageProps = {
   searchParams?: Promise<{
     type?: string;
+    returnTo?: string;
   }>;
 };
 
@@ -127,7 +128,12 @@ async function createLog(formData: FormData) {
     }
   }
 
-  redirect("/logs");
+  const returnTo = String(formData.get("return_to") || "");
+  const allowedDestinations = [
+    "/insights", "/insights/weekly", "/insights/body",
+    "/insights/mind", "/insights/work", "/insights/life",
+  ];
+  redirect(allowedDestinations.includes(returnTo) ? returnTo : "/logs");
 }
 
 export default async function NewLogPage({ searchParams }: NewLogPageProps) {
@@ -185,6 +191,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
           today={today}
           createLog={createLog}
           commonWaterTitles={commonWaterTitles}
+          returnTo={params?.returnTo}
         />
       </section>
     </main>
