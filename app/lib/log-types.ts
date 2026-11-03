@@ -26,6 +26,8 @@ export const actionTypes = [
   "Job follow-up",
   "Interview",
   "Creative time",
+  "Home improvement",
+  "Personal observation",
   "First meal",
   "Job application",
   "Woke up",
