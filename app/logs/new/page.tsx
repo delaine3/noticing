@@ -23,15 +23,25 @@ async function createLog(formData: FormData) {
   const title = String(formData.get("title") || "");
   const notesInput = String(formData.get("notes") || "");
   const sleepHoursInput = String(formData.get("sleep_hours") || "").trim();
+  const durationInput = String(formData.get("duration_minutes") || "").trim();
   const parsedSleepHours = Number(sleepHoursInput);
+  const parsedDuration = Number(durationInput);
   if (logType === "Sleep" && sleepHoursInput &&
       (!Number.isFinite(parsedSleepHours) || parsedSleepHours < 0 || parsedSleepHours > 24)) {
     throw new Error("Sleep hours must be between 0 and 24.");
   }
-  // Keep structured sleep duration readable and compatible with the existing schema.
-  const notes = logType === "Sleep" && sleepHoursInput
-    ? `Hours slept: ${parsedSleepHours}\n${notesInput}`.trim()
-    : notesInput;
+  const durationTypes = ["Focused work", "Creative time", "TikTok used", "Movement", "Sunlight"];
+  if (durationTypes.includes(logType) && durationInput &&
+      (!Number.isFinite(parsedDuration) || parsedDuration < 0 ||
+       parsedDuration > 1440 || !Number.isInteger(parsedDuration))) {
+    throw new Error("Duration must be a whole number between 0 and 1440.");
+  }
+  // Plain-text metric prefixes keep the existing schema and editable notes compatible.
+  const metricNotes = [
+    logType === "Sleep" && sleepHoursInput ? `Hours slept: ${parsedSleepHours}` : "",
+    durationTypes.includes(logType) && durationInput ? `Duration minutes: ${parsedDuration}` : "",
+  ].filter(Boolean);
+  const notes = [...metricNotes, notesInput].filter(Boolean).join("\n");
   const actionDate = String(formData.get("action_date") || "");
   const actionTime = String(formData.get("action_time") || "");
   const effect = String(formData.get("effect") || "");
