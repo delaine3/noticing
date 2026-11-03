@@ -42,11 +42,15 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     const meals = logs.filter((log) => ["First meal", "Meal"].includes(log.log_type) && log.action_time);
     const wakeTimes = logs.filter((log) => log.log_type === "Woke up" && log.action_time);
     const sleep = logs.filter((log) => log.log_type === "Sleep");
+    const sleepHours = sleep.map((log) => {
+      const match = log.notes?.match(/(?:^|\\n)Hours slept: (\\d+(?:\\.\\d+)?)(?:\\n|$)/);
+      return match ? Number(match[1]) : null;
+    }).filter((value): value is number => value !== null && Number.isFinite(value));
     metrics.push(
       { label: "Drink volume entered", value: number(drinkMl) + " ml", detail: "From " + drinkEntries.length + " entries, not a fluid target" },
       { label: "Treadmill distance", value: number(distance) + " km", detail: treadmill.length + " recorded sessions" },
       { label: "Meals with time", value: String(meals.length), detail: "Useful for checking meal timing" },
-      { label: "Sleep entries", value: String(sleep.length), detail: "Add hours slept in each entry" },
+      { label: "Average recorded sleep", value: sleepHours.length ? average(sleepHours) + " h" : "—", detail: sleepHours.length + " measured entries; " + sleep.length + " sleep logs" },
     );
     if (meals.length && wakeTimes.length) {
       findings.push(finding("Compare wake and meal times", "You have " + wakeTimes.length + " wake-time entries and " + meals.length + " timed meals. Compare days with both before judging meal timing.", "Record the time of your next meal", "/logs/new?type=First%20meal"));
