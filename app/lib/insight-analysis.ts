@@ -141,7 +141,7 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
       "Record a reply, follow-up or interview", "/logs/new?type=Job%20follow-up"));
     findings.push(finding("Define a finished result", "A session is useful when you can name what changed: a bug fixed, a proposal sent or a page shipped.", "Log a concrete work result", "/logs/new?type=Focused%20work"));
   } else if (id === "life") {
-    const household = count(logs, "Cook", "Wash Dishes", "Clean");
+    const household = count(logs, "Cook", "Wash Dishes", "Clean", "Home improvement");
     const garden = count(logs, "Plant care", "Yard Work");
     const people = count(logs, "Social interaction", "Family system");
     const creative = count(logs, "Creative time");
