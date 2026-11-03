@@ -2,12 +2,14 @@ type ScoreFieldsProps = {
   showMood: boolean;
   showEnergy: boolean;
   showIntensity: boolean;
+  intensityLabel?: string;
 };
 
 export function ScoreFields({
   showMood,
   showEnergy,
   showIntensity,
+  intensityLabel = "Intensity (1–10)",
 }: ScoreFieldsProps) {
   if (!showMood && !showEnergy && !showIntensity) {
     return null;
@@ -45,7 +47,7 @@ export function ScoreFields({
 
       {showIntensity ? (
         <label className="block">
-          <span className="text-md font-medium text-black-700">Intensity</span>
+          <span className="text-md font-medium text-black-700">{intensityLabel}</span>
           <input
             name="intensity_score"
             type="number"
