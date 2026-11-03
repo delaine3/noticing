@@ -201,11 +201,11 @@ export default function CaptureChat() {
           setInput("");
           setQuestion(null);
           setNotice("Model generation failed; offline records are available for review. " +
-            "Reload the model to use AI again.");
+            "Reload this page to use AI again.");
         } else {
           setNotice("Local model generation failed: " +
             (error instanceof Error ? error.message : "Unknown error") +
-            ". Your message is preserved. Reload the model or use Offline basic.");
+            ". Your message is preserved. Reload the page or use Offline basic.");
         }
       } else {
         setNotice(error instanceof Error ? error.message : "Could not process your message.");
@@ -285,7 +285,7 @@ export default function CaptureChat() {
           </label>
           <label className="mt-3 flex items-start gap-2 text-sm">
             <input type="radio" name="capture-mode" value="local" checked={captureMode === "local"}
-              onChange={() => { if (!busy && !requiresReload) setCaptureMode("local"); }} disabled={busy || requiresReload} className="mt-1 accent-[var(--leaf-dark)]" />
+              onChange={() => { if (!busy) setCaptureMode("local"); }} disabled={busy} className="mt-1 accent-[var(--leaf-dark)]" />
             <span><strong>Open-weight AI on this device</strong> · No API, no training on your conversations, no prompt uploads. Requires browser WebGPU and a model download.</span>
           </label>
           {captureMode === "local" ? (
@@ -325,7 +325,14 @@ export default function CaptureChat() {
             {busy ? "Analyzing…" : captureMode === "basic" ? "Find records offline" : "Analyze on this device"}
           </button>
           <button type="button" className="secondary-button"
+            disabled={saving}
             onClick={() => {
+              if (busy) {
+                operationRef.current += 1;
+                setBusy(false);
+                setModelReady(false);
+                setRequiresReload(true);
+              }
               setMessages([]); setInput(""); setDrafts([]); setQuestion(null);
               setNotice(""); setErrors([]); setSavedCount(0); setSaveUncertain(false);
             }}>
