@@ -1,47 +1,47 @@
-# Private, no-API conversational capture
+# Private, zero-API-cost conversational capture
 
-## What is provided
-The authenticated `/capture` page accepts natural-language notes about completed activities and turns them into records **only after individual approval**.
+The authenticated `/capture` page turns natural language into suggested personal records. **Nothing is stored as a Noticing log until the person explicitly approves it.**
 
-Two no-charge processing modes:
-1. **Offline basic:** lightweight rules run in browser JavaScript. No model download, WebGPU or AI API account required.
-2. **Local open-weight AI:** downloads SmolLM2 weights via WebLLM (on explicit user action) and runs text generation through WebGPU in the user's browser. No text inference request is made to Google, OpenAI or any model service.
+## Available modes
+- **Offline basic:** deterministic browser-only extraction. No download or WebGPU required.
+- **Local AI:** SmolLM2 360M or 1.7B through WebLLM running on the user's own WebGPU-capable device. **No text inference API and no remote model training on chat content.**
 
-## Model requirements and data costs
-- SmolLM2 360M quantized: roughly 376 MB video memory requirement, lower quality.
-- SmolLM2 1.7B quantized: roughly 1.8 GB video memory requirement, better reasoning but heavier.
-- Both model variants require WebGPU and shader-f16; some browsers and devices cannot run them.
-- Initial model/runtime downloads consume internet bandwidth. The host sees ordinary download requests, such as your IP address, but no prompts are passed to the download URL by the application.
-- Browser cache can hold model files; clearing browser data may require downloading them again.
-- GPU/CPU/RAM and electricity are still resources, though there is no inference API charge.
+## Privacy and executable dependency controls
+1. `@mlc-ai/web-llm` is installed as a **pinned, npm-locked package** (`0.2.87`). Next.js bundles its JavaScript into Noticing's own domain; there is no run-time `esm.run` or other third-party JavaScript CDN import.
+2. Model repositories are pinned to exact Hugging Face commit hashes in `app/lib/webllm-integrity.json`.
+3. WebLLM's **Subresource Integrity** verifies the model configuration, executable WASM file, and listed tokenizer files against committed SHA-256 hashes. Mismatches fail closed (`onFailure: "error"`). CI recomputes the hashes and rejects unexpected changes.
+4. The `/capture` page has a restrictive `connect-src` policy allowing its own origin, Supabase, and the explicit model distribution hosts. The site has no cloud inference endpoint or fallback.
+5. Browser inference itself never sends the text to Google, OpenAI, Hugging Face or another model inference service. The model weights are not updated during inference.
+6. Raw chat text and draft records are transient in browser memory. A **deliberate Save** sends only edited, approved records to the signed-in user's existing Supabase table.
 
-## Privacy
-- Natural-language chat text and generated drafts stay in browser memory. The local model runs on the user's device.
-- No conversation content is used to train a remote model by Noticing's implementation. Inference with WebLLM does not update the local model's weights.
-- The runtime JavaScript module is loaded from a versioned third-party CDN (esm.run) and open model files from public hosting. Third-party code and model hosting are a supply-chain trust surface. For stronger privacy assurance, bundle/audit the runtime in the app and self-host model assets.
-- The export importer `/import/chat` also processes raw chats in the browser.
-- Only records explicitly approved with the Save button are sent to the logged-in user's Supabase database. Never approve raw passwords, third-party secrets, or intimate details.
-- The current duplicate-key approach stores a UUID marker in notes; it is not a database-enforced unique key.
+### What is *not* entirely local
+- First-time model weights and WASM are still **downloaded from Hugging Face and the MLC GitHub model library repository** (their hosts may see IP address, request time and other normal download metadata). No chat content is included in those download requests.
+- Runtime JavaScript is first-party served but includes a pinned upstream npm dependency. Pinning, integrity checking and network restrictions are not equivalent to a full independent source-code audit.
+- Serving hundreds of megabytes of model weights through Vercel's free project would increase bandwidth use and risk exhausting free hosting limits. We intentionally **do not proxy model files** through Noticing's server.
+- Hosting, login and saving approved records still involve Vercel/Supabase. This is local *AI inference*, not a completely offline application.
+- Model weight shards are bound to immutable Hugging Face Git revisions, but WebLLM's built-in SRI currently verifies configuration, compiled WASM and tokenizer files, **not every individual weight shard**. Additional weight-shard checks or user-managed local model files would improve assurance.
 
-## Process
-1. Open `/capture`.
-2. Enter a statement like "Today I walked 8 km, watered my garden and sent 3 proposals".
-3. Select **Offline basic** or **Open-weight AI on this device**.
-4. For AI, click **Download / load model**. This happens only when requested, not silently on opening the page.
-5. Click **Analyze on this device**. View the proposed records and follow-up question.
-6. Correct dates, categories, measurements and notes, then approve each wanted record.
-7. Click **Save approved records**. Only those summaries are persisted.
+## Using the feature
+1. Visit `/capture`, enter something you actually did, and select Offline basic or Local AI.
+2. In Local AI mode, explicitly click **Download / load model**. The smaller 360M model needs about 376 MB video memory; the 1.7B model about 1.8 GB, plus browser overhead. Both require WebGPU and shader-f16.
+3. Inspect the AI's proposed activities and any follow-up question. Correct dates, measurements, category and details.
+4. Individually approve entries and click **Save approved records**.
 
-## Limitations
-- Small local models frequently make extraction and JSON formatting errors; candidate fields are validated and must be reviewed. The UI never saves automatically.
-- Offline basic uses rules, not a model, and cannot reliably interpret follow-up answers.
-- The UI refreshes the complete proposal list after additional local-model turns; edits made to an unapproved draft can be overwritten by subsequent analysis.
-- There is no live ChatGPT history sync.
-- On a public site, the hosting provider still receives web traffic and account/database requests. "Local AI" applies to the model processing, not all Noticing activity.
-- The WebLLM CDN/runtime has not been independently security audited in this work.
+## Remaining limitations and checks
+- Small models can produce poor or malformed JSON, miss activities or invent facts. All proposals must be reviewed and all numeric fields/date values are validated again on save.
+- Browser WebGPU compatibility, model downloads and successful inference must be manually tested with a real browser, ideally with its Network tab visible. GitHub build/lint checks do **not** test GPU runtime.
+- Check that loading the models downloads only approved model files, that inference performs no prompt POSTs, that incorrect WASM/config/tokenizer hashes are rejected and that the basic mode works without WebGPU.
+- The current approved-record UUID marker in notes prevents routine duplicates but is not a database unique constraint. Do not claim that concurrent duplicates are impossible.
+- Chat data and candidate records are cleared by reloading the page. Previously approved records can be managed in Logs.
+- Avoid sharing credentials or other people's sensitive details in the app regardless of processing mode.
 
-## Engineering verification
-Run `npm ci`, `npm run build`, and `npm run lint`.
-In a compatible WebGPU browser, confirm both listed models actually load (some browsers may lack shader-f16) and yield parseable JSON. Test that the Network tab shows only runtime/weight downloads during inference, with no POST carrying prompts. Confirm the save action sends only approved edited records. Try offline basic without WebGPU, and verify model errors never cause a cloud fallback.
+## Verifying the project
+```
+npm ci
+node scripts/pin-model-integrity.mjs
+git diff --exit-code -- app/lib/webllm-integrity.json
+npm run build
+npm run lint
+```
 
-Potential improvement: use a locally bundled, pinned `@mlc-ai/web-llm` npm build with a locked integrity hash, and host model files on a controlled origin. This would reduce dependence on third-party runtime code.
+A new model version or changed artifact requires deliberate review of the new hashes before updating the committed manifest.
