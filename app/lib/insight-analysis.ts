@@ -25,6 +25,13 @@ function recordedScore(logs: InsightLog[], key: "mood_score" | "energy_score" | 
   return logs.map((log) => log[key]).filter((value): value is number => value !== null && Number.isFinite(value));
 }
 
+function noteMetric(log: InsightLog, metric: "Hours slept" | "Duration minutes") {
+  const line = log.notes?.split("\\n").find((item) => item.startsWith(metric + ": "));
+  if (!line) return null;
+  const value = Number(line.slice(metric.length + 2));
+  return Number.isFinite(value) && value >= 0 ? value : null;
+}
+
 function finding(title: string, detail: string, next: string, href: string): Finding {
   return { title, detail, next, href };
 }
@@ -42,10 +49,8 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     const meals = logs.filter((log) => ["First meal", "Meal"].includes(log.log_type) && log.action_time);
     const wakeTimes = logs.filter((log) => log.log_type === "Woke up" && log.action_time);
     const sleep = logs.filter((log) => log.log_type === "Sleep");
-    const sleepHours = sleep.map((log) => {
-      const match = log.notes?.match(/(?:^|\n)Hours slept: (\d+(?:\.\d+)?)(?:\n|$)/);
-      return match ? Number(match[1]) : null;
-    }).filter((value): value is number => value !== null && Number.isFinite(value));
+    const sleepHours = sleep.map((log) => noteMetric(log, "Hours slept"))
+      .filter((value): value is number => value !== null);
     metrics.push(
       { label: "Drink volume entered", value: number(drinkMl) + " ml", detail: "From " + drinkEntries.length + " entries, not a fluid target" },
       { label: "Treadmill distance", value: number(distance) + " km", detail: treadmill.length + " recorded sessions" },
@@ -76,18 +81,31 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     findings.push(checks < 3
       ? finding("Establish a repeatable check-in", "Mood ratings attached to different events are not equivalent to consistent daily measurements. Use one check-in at roughly the same time on several days.", "Rate mood, energy and stress", "/logs/new?type=Daily%20check-in")
       : finding("Inspect repeat check-ins", checks + " daily check-ins are recorded. Compare the dates and the circumstances in your notes; a change in ratings does not establish a cause.", "Add today's check-in", "/logs/new?type=Daily%20check-in"));
+    const scrollMinutes = logs.filter((log) => log.log_type === "TikTok used")
+      .map((log) => noteMetric(log, "Duration minutes"))
+      .filter((value): value is number => value !== null);
     const scroll = count(logs, "TikTok used");
+    if (scrollMinutes.length) findings.push(finding(
+      "Your recorded scrolling time",
+      number(scrollMinutes.reduce((sum, value) => sum + value, 0)) +
+        " minutes across " + scrollMinutes.length +
+        " measured sessions. This is logged time, not your total device use.",
+      "Record duration and how you felt afterward", "/logs/new?type=TikTok%20used",
+    ));
     if (scroll) findings.push(finding("Measure scrolling rather than judging it", scroll + " sessions recorded. Add duration and how you felt before and after. This can reveal whether a specific pattern is worth changing.", "Record your next session", "/logs/new?type=TikTok%20used"));
   } else if (id === "work") {
     const applications = count(logs, "Job application", "Applied to Job");
     const followups = count(logs, "Job follow-up");
     const interviews = count(logs, "Interview");
     const work = count(logs, "App work", "Focused work");
+    const timedWork = logs.filter((log) => log.log_type === "Focused work")
+      .map((log) => noteMetric(log, "Duration minutes"))
+      .filter((value): value is number => value !== null);
     metrics.push(
       { label: "Applications sent", value: String(applications), detail: "Entries, not confirmed employer responses" },
       { label: "Follow-ups logged", value: String(followups), detail: "Record who you contacted and when" },
       { label: "Interviews", value: String(interviews), detail: "Recorded interview events" },
-      { label: "Work sessions", value: String(work), detail: "Track deliverables, not hours alone" },
+      { label: "Recorded focus time", value: timedWork.length ? number(timedWork.reduce((sum, value) => sum + value, 0)) + " min" : "—", detail: timedWork.length + " measured sessions; " + work + " work logs" },
     );
     findings.push(finding("Track outcomes after applications", applications
       ? "You recorded " + applications + " applications and " + interviews + " interviews. These counts are not a conversion rate unless all outcomes are tracked and the observation period is defined."
