@@ -157,7 +157,7 @@ export default function ChatImportReview() {
         <p className="text-sm text-[var(--ink-soft)]">
           From your ChatGPT account, export your data and extract the downloaded ZIP on your own device.
           Select the file named <strong>conversations.json</strong>. This page reads that file in your browser;
-          the file and the original messages are never sent to Noticing's server.
+          the file and the original messages are never sent to Noticing&apos;s server.
         </p>
         <input type="file" accept=".json,application/json" aria-label="Select ChatGPT conversations.json"
           onChange={(event) => { void loadFile(event.target.files?.[0]); }}
