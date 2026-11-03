@@ -63,7 +63,8 @@ function readJson(raw: string): unknown {
     // only when it can be parsed completely after trimming surrounding text.
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
-    if (start === -1 || end <= start) throw new Error("Local model did not return JSON.");
+    if (start === -1) throw new Error("Local model did not return JSON.");
+    if (end <= start) throw new Error("Local model returned incomplete JSON.");
     try { return JSON.parse(text.slice(start, end + 1)); }
     catch { throw new Error("Local model returned incomplete JSON."); }
   }
