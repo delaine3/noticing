@@ -11,17 +11,7 @@ import { actionTypes } from "../lib/log-types";
 import { insightAreas } from "../lib/insight-categories";
 import { saveCaptureDrafts } from "./actions";
 import { extractLocalRecords } from "../lib/free-capture";
-
-type LocalLLMBridge = {
-  loadModel: (id: string, onProgress: (status: string) => void) => Promise<unknown>;
-  analyzeLocal: (args: {
-    messages: CaptureMessage[]; localDate: string; timeZone: string;
-    modelId: string; onProgress: (status: string) => void;
-  }) => Promise<string>;
-};
-declare global {
-  interface Window { __noticingLocalLLM?: LocalLLMBridge; }
-}
+import { analyzeLocal, loadLocalModel } from "../lib/noticing-webllm";
 
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
@@ -66,32 +56,16 @@ export default function CaptureChat() {
     setNotice("");
   }
 
-  async function loadLocalModel() {
+  async function prepareLocalModel() {
     if (busy) return;
     setBusy(true);
     setNotice("");
     try {
-      if (!("gpu" in navigator)) throw new Error("This browser does not expose WebGPU. Use Offline basic mode.");
-      if (!window.__noticingLocalLLM) {
-        await new Promise<void>((resolve, reject) => {
-          const existing = document.querySelector<HTMLScriptElement>('script[data-noticing-llm="true"]');
-          if (existing) { existing.addEventListener("load", () => resolve(), { once: true }); existing.addEventListener("error", () => reject(new Error("Could not load local model runtime.")), { once: true }); return; }
-          const script = document.createElement("script");
-          script.type = "module";
-          script.src = "/noticing-webllm.mjs";
-          script.dataset.noticingLlm = "true";
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error("Could not download WebLLM runtime. Check internet connection."));
-          document.head.appendChild(script);
-        });
-      }
-      const bridge = window.__noticingLocalLLM;
-      if (!bridge) throw new Error("WebLLM is unavailable. Try Offline basic mode.");
-      await bridge.loadModel(modelId, setModelStatus);
+      await loadLocalModel(modelId, setModelStatus);
       setModelReady(true);
     } catch (error) {
       setModelReady(false);
-      setModelStatus(error instanceof Error ? error.message : "Could not run the model.");
+      setModelStatus(error instanceof Error ? error.message : "Could not load the local model.");
     } finally {
       setBusy(false);
     }
@@ -114,9 +88,7 @@ export default function CaptureChat() {
         setSavedCount(0);
         return;
       }
-      const bridge = window.__noticingLocalLLM;
-      if (!bridge) throw new Error("Local model is not loaded.");
-      const raw = await bridge.analyzeLocal({
+      const raw = await analyzeLocal({
         messages: conversation,
         localDate: dateToday(),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
@@ -238,9 +210,9 @@ export default function CaptureChat() {
                 </select>
               </label>
               <button type="button" className="secondary-button" disabled={busy || modelReady}
-                onClick={() => void loadLocalModel()}>{modelReady ? "Model ready" : busy ? "Loading…" : "Download / load model"}</button>
+                onClick={() => void prepareLocalModel()}>{modelReady ? "Model ready" : busy ? "Loading…" : "Download / load model"}</button>
               <p role="status" className="text-xs text-[var(--ink-soft)]">{modelStatus}</p>
-              <p className="text-xs text-[var(--ink-soft)]">Model files download from public hosts and may use significant internet data. Downloads can reveal your IP to the host but not your chat content. Cached model files may be reused.</p>
+              <p className="text-xs text-[var(--ink-soft)]">WebLLM JavaScript is served by Noticing. Model weights and WASM are still downloaded from their publishers and use bandwidth; those hosts can see download metadata, never your chat text. The app does not send prompts to external inference services.</p>
             </div>
           ) : null}
         </fieldset>
