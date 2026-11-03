@@ -1,5 +1,32 @@
 # ChatGPT conversation import: private MVP
 
+## Curated Noticing JSON files (small, already-cleaned imports)
+
+The importer also accepts a compact `noticing-curated-v1` JSON object. This is intended for records paraphrased or manually reconstructed from earlier conversations, not a manufactured ChatGPT transcript.
+
+```json
+{
+  "format": "noticing-curated-v1",
+  "records": [{
+    "id": "example-walk-20261031",
+    "action_date": "2026-10-31",
+    "reported_date": "2026-10-31",
+    "area": "body",
+    "log_type": "Treadmill walk",
+    "title": "Treadmill walk: 10.1 km",
+    "notes": "Total duration 92 minutes 14 seconds.",
+    "metrics": { "distanceKm": 10.1, "durationMinutes": 92 },
+    "evidence_summary": "Paraphrased from a self-reported workout."
+  }]
+}
+```
+
+Use `/import/chat` just as you would with `conversations.json`. The importer groups curated events by area, pre-fills **the actual action date** rather than the report date, retains notes and measurements, and requires approval of each entry. The app never sends the source JSON file to a server.
+
+Only supported activity types can be imported; the importer rejects invalid dates, duplicate entry IDs and malformed records. Keep stable IDs across repeat imports to avoid reimporting previously approved records. **This source-ID protection does not detect events that you previously entered manually.** Review existing Logs before saving to avoid duplicates.
+
+Do not upload a curated personal history into the source-code repository. Select it locally through the browser.
+
 ## What this feature does
 A signed-in Noticing user can open `/import/chat`, select a local ChatGPT `conversations.json` export, choose a conversation, review a series of proposed entries, edit each date, type, title, note and quantities, and individually approve up to 25 entries per save. Only those approved summaries and a hashed source identifier are sent to Supabase.
 
