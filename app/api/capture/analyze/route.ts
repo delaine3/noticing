@@ -96,9 +96,9 @@ export async function POST(request: Request) {
   const systemPrompt = `You help a person record their own life in the Noticing app.
 Return JSON only. Focus on actual first-person events, NOT instructions, hypotheticals, assistant suggestions,
 quoted third-party events or future intentions. Do not turn emotions into diagnoses.
-Extract up to 6 distinct concrete activities or measurable observations from the most recent user message,
-using earlier conversation solely to resolve follow-up answers and missing details.
-Do not duplicate an event already proposed previously in this exchange unless a new answer materially updates it.
+Extract up to 6 distinct concrete activities or measurable observations from the recent conversation.
+Return a complete updated set of proposed events from the recent conversation, without duplicates.
+If a user message answers a previous question, use it to update the relevant earlier proposal.
 IMPORTANT: The assistant does not have access to previously accepted records.
 Never invent activity dates, quantities, durations, causes, personal ratings or identity of other people.
 Use the user's local date ${data.localDate} with timezone ${data.timeZone} ONLY when they say "today";
