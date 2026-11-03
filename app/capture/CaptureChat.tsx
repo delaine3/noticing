@@ -10,6 +10,7 @@ import {
 import { actionTypes } from "../lib/log-types";
 import { insightAreas } from "../lib/insight-categories";
 import { saveCaptureDrafts } from "./actions";
+import { extractLocalRecords } from "../lib/free-capture";
 
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
@@ -40,6 +41,7 @@ export default function CaptureChat() {
   const [drafts, setDrafts] = useState<CaptureDraft[]>([]);
   const [question, setQuestion] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
+  const [captureMode, setCaptureMode] = useState<"basic" | "gemini">("basic");
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
@@ -53,12 +55,21 @@ export default function CaptureChat() {
 
   async function send() {
     const text = input.trim();
-    if (!text || busy || !consent) return;
+    if (!text || busy || (captureMode === "gemini" && !consent)) return;
     const conversation = [...messages, { role: "user" as const, content: text }].slice(-10);
     setBusy(true);
     setNotice("");
     setErrors([]);
     try {
+      if (captureMode === "basic") {
+        const parsed = extractLocalRecords(text, dateToday());
+        setMessages([...conversation, { role: "assistant" as const, content: parsed.reply }].slice(-10));
+        setDrafts((previous) => [...previous, ...parsed.proposed_records.map(draftFromAI)].slice(0, 10));
+        setQuestion(null);
+        setInput("");
+        setSavedCount(0);
+        return;
+      }
       const response = await fetch("/api/capture/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -141,23 +152,36 @@ export default function CaptureChat() {
           ) : null}
         </div>
 
+        <fieldset className="rounded-lg border border-[var(--border-soft)] bg-white/70 p-3">
+          <legend className="px-1 text-sm font-semibold">How should Noticing process this?</legend>
+          <label className="mt-2 flex items-start gap-2 text-sm">
+            <input type="radio" name="capture-mode" value="basic" checked={captureMode === "basic"}
+              onChange={() => setCaptureMode("basic")} className="mt-1 accent-[var(--leaf-dark)]" />
+            <span><strong>Offline basic</strong> · No API key, no charge, no message leaves your browser. Recognizes a limited set of explicit activities.</span>
+          </label>
+          <label className="mt-3 flex items-start gap-2 text-sm">
+            <input type="radio" name="capture-mode" value="gemini" checked={captureMode === "gemini"}
+              onChange={() => setCaptureMode("gemini")} className="mt-1 accent-[var(--leaf-dark)]" />
+            <span><strong>Gemini free tier</strong> · Better understanding and follow-up questions, but text is sent to Google. Requires a configured unbilled API project, and usage quotas apply.</span>
+          </label>
+        </fieldset>
         <label className="block text-sm font-semibold" htmlFor="capture-input">What happened?</label>
         <textarea id="capture-input" rows={4} maxLength={2500} value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="I did..., I noticed..., I finished..."
           className="w-full rounded-lg border border-[var(--border-soft)] bg-white p-3" />
-        <label className="flex items-start gap-3 text-sm">
+        {captureMode === "gemini" ? <label className="flex items-start gap-3 text-sm">
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)}
             className="mt-1 h-4 w-4 accent-[var(--leaf-dark)]" />
           <span>
-            I agree to send the messages in this chat to OpenAI for processing. They are not saved as Noticing logs.
-            Do not include passwords, private third-party information, or anything you do not want processed.
+            I agree to send the recent messages in this chat to Google's Gemini free-tier API for processing.
+            Google may use free-tier input to improve its services. Do not submit sensitive or third-party private details.
           </span>
-        </label>
+        </label> : null}
         <div className="flex flex-wrap gap-3">
           <button type="button" className="submit-button disabled:opacity-50"
-            disabled={busy || !input.trim() || !consent} onClick={() => void send()}>
-            {busy ? "Analyzing…" : "Analyze message"}
+            disabled={busy || !input.trim() || (captureMode === "gemini" && !consent)} onClick={() => void send()}>
+            {busy ? "Analyzing…" : captureMode === "basic" ? "Find records offline" : "Ask Gemini"}
           </button>
           <button type="button" className="secondary-button"
             onClick={() => {
@@ -169,7 +193,8 @@ export default function CaptureChat() {
         </div>
         <p className="text-xs text-[var(--ink-soft)]">
           This is not a live ChatGPT sync. This browser chat is temporary; reloading clears it.
-          Only approved records are saved to your account. No AI processing occurs until you submit.
+          Offline basic mode never sends your message to an AI provider. Gemini mode sends recent chat messages only after consent.
+          Only approved records are saved to your account.
         </p>
       </section>
 
