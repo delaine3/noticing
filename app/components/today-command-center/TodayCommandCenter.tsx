@@ -35,12 +35,11 @@ export function TodayCommandCenter({
           </p>
 
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-            Today’s command center
+            Today, as recorded
           </h1>
 
           <p className="mt-4 max-w-2xl text-black-700">
-            Bossy, but useful. Log the basics, check the report card, and do the
-            next useful thing.
+            See what you recorded, fill any gaps that matter, and decide what to do next.
           </p>
         </div>
 
@@ -48,21 +47,21 @@ export function TodayCommandCenter({
 
         <section className="mt-5 grid gap-3 sm:grid-cols-3">
           <SummaryCard
-            label="Water"
-            value={`${totalWaterMl}ml`}
+            label="Drinks recorded"
+            value={`${totalWaterMl} ml`}
             message={getWaterMessage(totalWaterMl)}
           />
 
           <SummaryCard
-            label="Actions"
+            label="Entries"
             value={logs.length}
-            message="Logged today."
+            message="Saved today, not a measure of productivity."
           />
 
           <SummaryCard
-            label="Report"
+            label="Categories"
             value={report.length}
-            message="Checks generated."
+            message="Summaries of recorded activity."
           />
         </section>
 
