@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { extractLocalRecords } from "../app/lib/free-capture.ts";
 import { resolveLocalCapture } from "../app/lib/capture-result.ts";
 import { parseLocalCaptureResponse } from "../app/lib/local-capture-response.ts";
-const resolve = (raw, message, day, types) => resolve(raw, message, day, types, parseLocalCaptureResponse, extractLocalRecords);
+const resolve = (raw, message, day, types) => resolveLocalCapture(raw, message, day, types, parseLocalCaptureResponse, extractLocalRecords);
 
 const date = "2026-11-03";
 const types = ["Movement", "Plant care", "Meal"];
