@@ -1,15 +1,18 @@
 "use client";
 
 import type { CaptureMessage } from "./capture-types";
+import pinnedModels from "./webllm-integrity.json";
 
 /**
  * WebLLM is installed from a version-locked npm dependency. Next.js bundles
  * its JavaScript into Noticing's own first-party assets at build time.
  * Import occurs only on deliberate model load, not at page render.
  *
- * The model weights and compiled WASM remain third-party DOWNLOADS for now.
- * These downloads do not receive any chat messages. This is not an audit
- * of all package or model artifacts.
+ * The model weights and compiled WASM remain third-party DOWNLOADS.
+ * Model repositories are pinned to exact revisions. Executable WASM,
+ * configuration, and tokenizer bytes are checked against committed SHA-256
+ * hashes before execution (WebLLM SRI). Downloads never contain chat text.
+ * This does not represent an independent source-code security audit.
  */
 type Runtime = typeof import("@mlc-ai/web-llm");
 let runtimePromise: Promise<Runtime> | null = null;
@@ -51,18 +54,27 @@ export async function loadLocalModel(
     const webllm = await getRuntime();
     const model = webllm.prebuiltAppConfig.model_list.find((record) => record.model_id === modelId);
     if (!model) throw new Error("This version of WebLLM does not support that model.");
-    if (!model.model.startsWith("https://huggingface.co/mlc-ai/") ||
-        !model.model_lib.startsWith("https://")) {
-      throw new Error("Unexpected model download source. Model loading blocked.");
+    const pinned = pinnedModels[modelId];
+    if (!pinned.modelUrl.match(/^https:\/\/huggingface\.co\/mlc-ai\/[\w.-]+\/resolve\/[a-f0-9]{40}$/) ||
+        !pinned.modelLibUrl.startsWith("https://raw.githubusercontent.com/mlc-ai/")) {
+      throw new Error("Unexpected model asset origin or revision. Loading blocked.");
     }
-    onProgress("Downloading model weights and WebGPU library. No chat text is uploaded.");
+    onProgress("Downloading revision-pinned model. Verifying executable WASM and tokenizers.");
     const engine = await webllm.CreateMLCEngine(modelId, {
       initProgressCallback(progress) {
         if (typeof progress.text === "string") onProgress(progress.text);
       },
       appConfig: {
         ...webllm.prebuiltAppConfig,
-        model_list: [model],
+        model_list: [{
+          ...model,
+          model: pinned.modelUrl,
+          model_lib: pinned.modelLibUrl,
+          integrity: {
+            ...pinned.integrity,
+            onFailure: "error",
+          },
+        }],
         cacheBackend: "cache",
       },
     });
