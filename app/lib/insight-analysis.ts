@@ -43,7 +43,7 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     const wakeTimes = logs.filter((log) => log.log_type === "Woke up" && log.action_time);
     const sleep = logs.filter((log) => log.log_type === "Sleep");
     const sleepHours = sleep.map((log) => {
-      const match = log.notes?.match(/(?:^|\\n)Hours slept: (\\d+(?:\\.\\d+)?)(?:\\n|$)/);
+      const match = log.notes?.match(/(?:^|\n)Hours slept: (\d+(?:\.\d+)?)(?:\n|$)/);
       return match ? Number(match[1]) : null;
     }).filter((value): value is number => value !== null && Number.isFinite(value));
     metrics.push(
