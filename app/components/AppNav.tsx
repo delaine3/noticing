@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LoadingLink from "./LoadingLink";
 import { useEffect, useState } from "react";
@@ -63,8 +62,6 @@ export function AppNav() {
   }
 
   useEffect(() => {
-    getUserAndProfile();
-
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
       getUserAndProfile();
     });
