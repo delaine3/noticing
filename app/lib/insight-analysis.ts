@@ -57,7 +57,35 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
       { label: "Meals with time", value: String(meals.length), detail: "Useful for checking meal timing" },
       { label: "Average recorded sleep", value: sleepHours.length ? average(sleepHours) + " h" : "—", detail: sleepHours.length + " measured entries; " + sleep.length + " sleep logs" },
     );
-    if (meals.length && wakeTimes.length) {
+    const wakeByDay = new Map<string, number>();
+    wakeTimes.forEach((log) => {
+      const pieces = log.action_time?.slice(0, 5).split(":").map(Number);
+      if (pieces?.length !== 2 || pieces.some((part) => !Number.isFinite(part))) return;
+      const minutes = pieces[0] * 60 + pieces[1];
+      const date = getLogDate(log);
+      wakeByDay.set(date, Math.min(minutes, wakeByDay.get(date) ?? minutes));
+    });
+    const firstMealByDay = new Map<string, number>();
+    logs.filter((log) => log.log_type === "First meal" && log.action_time)
+      .forEach((log) => {
+        const pieces = log.action_time?.slice(0, 5).split(":").map(Number);
+        if (pieces?.length !== 2 || pieces.some((part) => !Number.isFinite(part))) return;
+        const minutes = pieces[0] * 60 + pieces[1];
+        const date = getLogDate(log);
+        firstMealByDay.set(date, Math.min(minutes, firstMealByDay.get(date) ?? minutes));
+      });
+    const wakeToMeal = [...firstMealByDay.entries()]
+      .map(([date, meal]) => wakeByDay.has(date) ? meal - (wakeByDay.get(date) ?? 0) : null)
+      .filter((minutes): minutes is number => minutes !== null && minutes >= 0 && minutes <= 1440);
+    if (wakeToMeal.length >= 3) {
+      const elapsed = wakeToMeal.reduce((sum, value) => sum + value, 0) / wakeToMeal.length;
+      findings.push(finding(
+        "Time from waking to first meal",
+        "On " + wakeToMeal.length + " days with both times recorded, the average interval was " +
+          number(elapsed / 60) + " hours. Compare this with hunger and energy, not an arbitrary clock-time cutoff.",
+        "Record tomorrow's first meal", "/logs/new?type=First%20meal",
+      ));
+    } else if (meals.length && wakeTimes.length) {
       findings.push(finding("Compare wake and meal times", "You have " + wakeTimes.length + " wake-time entries and " + meals.length + " timed meals. Compare days with both before judging meal timing.", "Record the time of your next meal", "/logs/new?type=First%20meal"));
     } else {
       findings.push(finding("Make meal timing interpretable", "A clock time alone cannot tell you whether a meal was late relative to waking.", "Record wake time and your first meal on the same day", "/logs/new?type=Woke%20up"));
