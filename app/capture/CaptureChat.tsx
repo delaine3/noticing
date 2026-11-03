@@ -12,6 +12,7 @@ import { insightAreas } from "../lib/insight-categories";
 import { saveCaptureDrafts } from "./actions";
 import { extractLocalRecords } from "../lib/free-capture";
 import { analyzeLocal, loadLocalModel } from "../lib/noticing-webllm";
+import { parseLocalCaptureResponse } from "../lib/local-capture-response";
 
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
@@ -95,29 +96,20 @@ export default function CaptureChat() {
         modelId,
         onProgress: setModelStatus,
       });
-      const payload = JSON.parse(raw) as CaptureAnalysis;
-      if (!payload || typeof payload.reply !== "string" || !Array.isArray(payload.proposed_records)) {
-        throw new Error("The local model did not return valid proposed records. Try again or use Offline basic.");
-      }
-      // Small open-weight models can produce malformed data. Treat every item as
-      // untrusted and require user review before any server-side save.
-      const clean = payload.proposed_records.slice(0, 6).filter((record) =>
-        record && actionTypes.includes(record.log_type) &&
-        typeof record.title === "string" && typeof record.notes === "string" &&
-        typeof record.action_date === "string" && typeof record.action_time === "string"
-      ).map((record) => {
-        const metrics = Object.fromEntries(optionalFields.map((key) => [
-          key, captureNumberValid(key, record[key]) ? record[key] : null,
-        ])) as Pick<CaptureDraft, typeof optionalFields[number]>;
-        return {
-          ...record, ...metrics,
-          title: record.title.slice(0, 160),
-          notes: record.notes.slice(0, 1500),
-          evidence: String(record.evidence || "").slice(0, 350),
-          uncertainty: String(record.uncertainty || "").slice(0, 300),
+      let payload: CaptureAnalysis;
+      try {
+        payload = parseLocalCaptureResponse(raw, actionTypes);
+      } catch {
+        // Never treat malformed model output as approved or authoritative.
+        // Keep the entire process on-device, and explicitly disclose a
+        // limited offline fallback instead of showing a cryptic JSON error.
+        const basic = extractLocalRecords(text, dateToday());
+        payload = {
+          ...basic,
+          reply: "The local AI returned an unreadable response. " +
+            "I used basic on-device extraction instead. " + basic.reply,
         };
-      });
-      payload.proposed_records = clean;
+      }
       setMessages([...conversation, { role: "assistant" as const, content: payload.reply }].slice(-10));
       setInput("");
       // The model returns an updated draft set, not additional records to append indefinitely.
