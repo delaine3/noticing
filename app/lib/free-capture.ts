@@ -11,7 +11,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
   const exclude = /\b(?:what if|imagine|hypothetically|if I|if we|I might|I would|I want to|I plan to|I need to|I should|I could|pretend|for example)\b/i;
   if (!text || exclude.test(text)) {
     return {
-      reply: "No completed activity was confidently detected. You can rephrase with what you actually did or switch to free-tier AI.",
+      reply: "No completed activity was confidently detected. You can rephrase with what you actually did or try the on-device model.",
       follow_up_question: null,
       proposed_records: [],
     };
@@ -49,7 +49,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
       add(treadmill ? "Treadmill walk" : "Movement",
         (treadmill ? "Treadmill: " : "Walk/run: ") + km + " km",
         distance[0],
-        treadmill ? { treadmill_distance_km: km } : {});
+        treadmill ? { treadmill_distance_km: km } : { notes: "Distance recorded: " + km + " km." });
     }
   }
   const water = text.match(/\bI\s+(?:drank|had)\s+(\d+(?:\.\d+)?)\s*(ml|l|lit(?:er|re)s?)\s+(?:of\s+)?(water|tea|coffee)\b/i);
@@ -65,7 +65,29 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
     if (hours > 0 && hours <= 24)
       add("Sleep", "Slept " + hours + " hours", slept[0], { sleep_hours: hours });
   }
-  const garden = text.match(/\bI\s+(?:watered|pruned|planted|repotted|mulched)\s+(?:my\s+|the\s+)?(?:garden|roses?|plants?|trees?|avocados?)\b/i);
+  // A reported meal is not automatically the *first* meal of the day.
+  // Keep its explicitly stated time and food description where available.
+  const meal = text.match(/\bI\s+(?:ate|had for (?:breakfast|lunch|dinner))\s+([^.!?;,]{2,90})/i);
+  if (meal) {
+    const timing = meal[1].match(/\bat\s+(1[0-2]|0?[1-9])(?::([0-5]\d))?\s*(a\.?m\.?|p\.?m\.?)\b/i);
+    const food = meal[1].replace(/\bat\s+\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?/i, "")
+      .replace(/\b(?:today|yesterday|this morning|this afternoon|this evening)\b/gi, "")
+      .trim();
+    const cleanFood = food.slice(0, 75);
+    if (cleanFood) {
+      let time = "";
+      if (timing) {
+        const hour = Number(timing[1]) % 12 + (/^p/i.test(timing[3]) ? 12 : 0);
+        time = String(hour).padStart(2, "0") + ":" + String(Number(timing[2] || 0)).padStart(2, "0");
+      }
+      add("Meal", "Ate " + cleanFood, meal[0], {
+        action_time: time,
+        uncertainty: "Confirm the event date and meal details.",
+      });
+    }
+  }
+
+  const garden = text.match(/\b(?:I\s+|and\s+)(?:watered|pruned|planted|repotted|mulched)\s+(?:my\s+|the\s+)?(?:garden|roses?|plants?|trees?|avocados?)\b/i);
   if (garden) add("Plant care", "Garden care", garden[0]);
   const outreach = text.match(/\bI\s+(?:sent|emailed|submitted)\s+(?:(\d+)\s+)?(?:proposals?|outreach emails?|applications?)\b/i);
   if (outreach) add(/application/i.test(outreach[0]) ? "Job application" : "Focused work",
