@@ -1,3 +1,4 @@
+import { LogNotes } from "../../components/LogNotes";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getInsightArea, getInsightAreaLogs, insightAreas, getLogDate, formatLogDate } from "../../lib/insight-categories";
@@ -98,7 +99,7 @@ export default async function InsightCategoryPage({ params }: Props) {
                   <p className="text-sm text-[var(--ink-soft)]">{formatLogDate(getLogDate(log))} · {log.log_type}</p>
                   <h3 className="mt-1 text-lg font-semibold">{log.title || "No title entered"}</h3>
                   {describe(log) ? <p className="mt-2 text-sm font-semibold">{describe(log)}</p> : null}
-                  {log.notes ? <p className="mt-2 whitespace-pre-line break-words text-sm text-[var(--ink-soft)]">{log.notes}</p> : null}
+                  <LogNotes notes={log.notes} className="mt-2 whitespace-pre-wrap break-words text-sm text-[var(--ink-soft)]" />
                   <Link href={`/logs/${log.id}/edit`} className="mt-3 inline-block text-sm font-semibold text-[var(--leaf-dark)] hover:underline">Edit record →</Link>
                 </article>
               ))}
