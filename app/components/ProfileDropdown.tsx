@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LayoutDashboard, LogOut, BookOpen, ChartColumn } from "lucide-react";
+import { LayoutDashboard, LogOut, BookOpen, ChartColumn, MessageSquareText } from "lucide-react";
 import LoadingLink from "./LoadingLink";
 
 type Props = {
@@ -86,6 +86,11 @@ export default function ProfileDropdown({
                 className="flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40">
                 <ChartColumn size={16} />
                 Insights
+              </LoadingLink>
+              <LoadingLink href="/import/chat" onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40">
+                <MessageSquareText size={16} />
+                Import chats
               </LoadingLink>
             </div>
           )}
