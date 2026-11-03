@@ -103,7 +103,7 @@ export function AppNav() {
                 <LoadingLink
                   key={item.href}
                   href={item.href}
-                  className={`flex h-full items-center border-r border-[rgba(36,81,61,0.14)] px-4 text-md font-medium transition sm:px-5 ${
+                  className={`hidden h-full items-center border-r sm:flex border-[rgba(36,81,61,0.14)] px-4 text-md font-medium transition sm:px-5 ${
                     isActive
                       ? "bg-white/40 text-[var(--leaf-dark)]"
                       : "text-[var(--ink-soft)] hover:bg-white/35 hover:text-[var(--ink)]"
