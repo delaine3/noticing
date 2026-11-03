@@ -76,11 +76,11 @@ export function EffectPieChart({ logs }: EffectPieChartProps) {
         </p>
 
         <h2 className="mt-2 text-xl font-semibold">
-          Restorative vs detrimental
+          How you rated activities
         </h2>
 
         <p className="mt-2 text-md text-[var(--ink-soft)]">
-          See whether your logged actions are helping or hurting you.
+          Your own ratings of recorded activities. These are impressions, not proven effects.
         </p>
       </div>
 
