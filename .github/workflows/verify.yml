@@ -26,5 +26,5 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test-key
-      - run: node --experimental-strip-types --test tests/chat-import.test.mjs
+      - run: node --experimental-strip-types --test tests/*.test.mjs
       - run: npm run lint
