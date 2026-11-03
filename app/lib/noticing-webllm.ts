@@ -1,6 +1,7 @@
 "use client";
 
 import type { CaptureMessage } from "./capture-types";
+import { createLocalCompletionRequest } from "./local-capture-response";
 import pinnedModels from "./webllm-integrity.json";
 
 /**
@@ -131,11 +132,13 @@ export async function analyzeLocal({
     "Ask at most ONE question when a missing fact is material.",
     "Do not propose private information about other people.",
     "Output ONLY a JSON object with keys reply, follow_up_question, proposed_records.",
-    "Each proposed record requires ALL of the following fields:",
-    "log_type, title, notes, action_date, action_time, water_amount_ml,",
-    "treadmill_distance_km, treadmill_duration_minutes, sleep_hours,",
-    "duration_minutes, mood_score, energy_score, intensity_score, evidence, uncertainty.",
-    "All unknown measurements are null; all unknown times and dates are empty strings.",
+    "Keep JSON SHORT so it fits in your response. Required per activity: log_type, title, evidence.",
+    "Optionally include notes, action_date, action_time, uncertainty and only explicitly stated measurements.",
+    "Measurement names: water_amount_ml, treadmill_distance_km, treadmill_duration_minutes, sleep_hours,",
+    "duration_minutes, mood_score, energy_score, intensity_score.",
+    "Omit missing measurements entirely. Missing fields will be filled with null in the app.",
+    "Example: {\"reply\":\"Found one walk\",\"follow_up_question\":null,\"proposed_records\":[{\"log_type\":\"Movement\",\"title\":\"Walked 8 km\",\"evidence\":\"I walked 8 km\",\"action_date\":\"\",\"uncertainty\":\"Confirm the date\"}]}",
+    "No markdown, comments, or explanation outside the JSON object.",
     "No completed activity? Output an empty proposed_records array.",
     "Never say anything was saved. A person must review and approve all entries.",
   ].join("\n");
@@ -143,12 +146,12 @@ export async function analyzeLocal({
     role: message.role,
     content: String(message.content ?? "").slice(0, 800),
   }));
-  const response = await engine.chat.completions.create({
-    messages: [{ role: "system", content: prompt }, ...transcript],
-    temperature: 0.1,
-    max_tokens: 1000,
-    response_format: { type: "json_object" },
-  });
+  // WebLLM 0.2.87 can crash its WASM grammar matcher when json_object
+  // has no string schema. Generate plain text instead; the browser validates
+  // the resulting JSON before proposing any record. Nothing is auto-saved.
+  const response = await engine.chat.completions.create(
+    createLocalCompletionRequest(prompt, transcript),
+  );
   const result = response.choices?.[0]?.message?.content;
   if (typeof result !== "string" || !result.trim()) {
     throw new Error("The local model returned no result. Try Offline basic mode.");
