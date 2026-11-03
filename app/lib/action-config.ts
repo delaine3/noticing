@@ -15,7 +15,7 @@ export type ActionConfig = {
   titleLabel: string;
   titlePlaceholder: string;
   notesPlaceholder: string;
-  autoButtons?: String[];
+  autoButtons?: string[];
   fields: ConditionalField[];
 };
 
@@ -30,25 +30,25 @@ export const actionConfig: Record<string, ActionConfig> = {
     fields: ["energy", "mood"],
   },
   "Job application": {
-    heading: "You applied to a job! Nice.",
+    heading: "Record a job application",
     instruction: "Record the job.",
     titleLabel: "Job application note",
-    titlePlaceholder: "Apllied to be software engineer in Greece",
-    notesPlaceholder: "Anything useful to note?",
+    titlePlaceholder: "Example: Software Engineer at Company X",
+    notesPlaceholder: "Application link, follow-up date, or response received?",
     fields: [],
   },
   "First meal": {
-    heading: "Good. Feed your body.",
+    heading: "Record your first meal",
     instruction:
       "Log what you ate, when, how big it was, and where it came from.",
     titleLabel: "What did you eat?",
     titlePlaceholder: "Example: eggs and toast, leftover pizza, chicken",
-    notesPlaceholder: "Did it help? Did it feel like enough?",
+    notesPlaceholder: "What time did you eat? How hungry were you beforehand?",
     fields: ["meal", "effect", "energy", "mood"],
   },
 
   Meal: {
-    heading: "Meal logged. Data collected.",
+    heading: "Record a meal",
     instruction: "Track the food without turning it into a whole thing.",
     titleLabel: "What did you eat?",
     titlePlaceholder: "Example: rice and chicken, sandwich, fruit and yogurt",
@@ -57,7 +57,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Dessert eaten": {
-    heading: "Dessert happened. Log it and move.",
+    heading: "Record what you ate",
     instruction: "No moral drama. Record the facts.",
     titleLabel: "What dessert?",
     titlePlaceholder: "Example: ice cream, cake, chocolate",
@@ -66,17 +66,17 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Dessert craving": {
-    heading: "Craving detected. Do not let it drive the bus.",
+    heading: "Record a craving",
     instruction: "Log intensity and trigger. Then decide with a fed brain.",
     titleLabel: "Craving target",
     titlePlaceholder: "Example: ice cream, cookies, something sweet",
     notesPlaceholder:
-      "What triggered it? Boredom, hunger, sadness, TikTok, fatigue?",
+      "What happened just before the craving? How long did it last?",
     fields: ["intensity", "effect"],
   },
 
   Water: {
-    heading: "Water. Basic maintenance.",
+    heading: "Record a drink",
     instruction: "Log the amount.",
     titleLabel: "Water note",
     autoButtons: ["Lemon Water", "Coffee"],
@@ -85,7 +85,7 @@ export const actionConfig: Record<string, ActionConfig> = {
     fields: ["water", "effect"],
   },
   Coffee: {
-    heading: "This is kinda water I guess",
+    heading: "Record coffee",
     instruction: "How much was it?",
     titleLabel: "Coffee note",
     titlePlaceholder: "What kind of coffee?",
@@ -93,8 +93,8 @@ export const actionConfig: Record<string, ActionConfig> = {
     fields: ["water", "effect"],
   },
   Hygiene: {
-    heading: "Washed up. Excellent. System reset.",
-    instruction: "Track the reset action.",
+    heading: "Record hygiene",
+    instruction: "What did you do?",
     titleLabel: "Wash-up type",
     titlePlaceholder: "Example: shower, bath, face wash, brushed teeth",
     notesPlaceholder: "Did it improve your state?",
@@ -111,8 +111,8 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   Movement: {
-    heading: "Movement counts. Tiny is valid.",
-    instruction: "Track the movement. No fitness theatrics required.",
+    heading: "Record movement",
+    instruction: "What movement did you do, and for how many minutes?",
     titleLabel: "Movement type",
     titlePlaceholder: "Example: paced house, stretched, quick walk",
     notesPlaceholder: "How long? Did it change your state?",
@@ -129,7 +129,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Treadmill walk": {
-    heading: "Treadmill rep. Count it properly.",
+    heading: "Record a treadmill session",
     instruction: "Log time and distance. Pace gets calculated automatically.",
     titleLabel: "Treadmill note",
     titlePlaceholder: "Example: incline walk, easy pace, reading walk",
@@ -149,7 +149,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   Reading: {
-    heading: "Reading counts. Attention reclaimed.",
+    heading: "Record reading",
     instruction: "Log what you read.",
     titleLabel: "Reading note",
     titlePlaceholder: "Example: Kindle, novel, 20 pages",
@@ -158,18 +158,18 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "App work": {
-    heading: "App work counts as work.",
+    heading: "Record app work",
     instruction: "Track the task.",
     titleLabel: "Task completed",
     titlePlaceholder:
       "Example: fixed form fields, added route, debugged Supabase",
-    notesPlaceholder: "What changed? What should future you know?",
+    notesPlaceholder: "What shipped, what is blocked, and what is next?",
     fields: ["effect", "energy"],
   },
 
   "TikTok used": {
-    heading: "TikTok used. Log the cost.",
-    instruction: "No denial. Record duration, trigger, and effect.",
+    heading: "Record a TikTok session",
+    instruction: "How long did you use it, and how did you feel afterward?",
     titleLabel: "TikTok session",
     titlePlaceholder: "Example: scrolling, random feed",
     notesPlaceholder: "Did it leave you better, neutral, or emptier?",
@@ -177,7 +177,7 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "TikTok avoided": {
-    heading: "TikTok avoided. Good. Attention protected.",
+    heading: "Record what you did instead",
     instruction: "Log the win.",
     titleLabel: "Avoidance note",
     titlePlaceholder: "Example: read instead, closed app, didn’t reinstall",
@@ -195,9 +195,9 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   "Recurring thought": {
-    heading: "Thought loop detected. Do not spiral.",
+    heading: "Record a recurring thought",
     instruction:
-      "Log the thought, rate intensity, then return to body maintenance.",
+      "Name the repeated thought, rate its intensity, and write down a concrete next action if one exists.",
     titleLabel: "Thought label",
     titlePlaceholder: "Example: money worry, family worry, future panic",
     notesPlaceholder:
@@ -215,11 +215,11 @@ export const actionConfig: Record<string, ActionConfig> = {
   },
 
   Rest: {
-    heading: "Rest logged. Recovery is not a crime.",
+    heading: "Record a rest break",
     instruction: "Track rest so you stop treating it like missing evidence.",
     titleLabel: "Rest type",
     titlePlaceholder: "Example: nap, lay down, bath, no-phone break",
-    notesPlaceholder: "Did it restore you?",
+    notesPlaceholder: "How long did you rest, and how did you feel afterward?",
     fields: ["effect", "energy", "mood"],
   },
 };
@@ -228,7 +228,7 @@ export function getActionConfig(actionType: string): ActionConfig {
   return (
     actionConfig[actionType] ?? {
       heading: "Log the action.",
-      instruction: "Record what happened and keep moving.",
+      instruction: "Record what happened, when, and a measurable detail if available.",
       titleLabel: "Short label",
       titlePlaceholder: "What happened?",
       notesPlaceholder: "What mattered here?",
