@@ -10,7 +10,7 @@ export function CommandCard({ nextAction }: CommandCardProps) {
   return (
     <section className="message-card">
       <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-800">
-        Next best action
+        An optional next step
       </p>
 
       <h2 className="mt-3 text-2xl font-semibold tracking-tight text-black-950 sm:text-3xl">
