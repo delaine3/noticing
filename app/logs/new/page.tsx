@@ -21,7 +21,17 @@ async function createLog(formData: FormData) {
 
   const logType = String(formData.get("log_type") || "");
   const title = String(formData.get("title") || "");
-  const notes = String(formData.get("notes") || "");
+  const notesInput = String(formData.get("notes") || "");
+  const sleepHoursInput = String(formData.get("sleep_hours") || "").trim();
+  const parsedSleepHours = Number(sleepHoursInput);
+  if (logType === "Sleep" && sleepHoursInput &&
+      (!Number.isFinite(parsedSleepHours) || parsedSleepHours < 0 || parsedSleepHours > 24)) {
+    throw new Error("Sleep hours must be between 0 and 24.");
+  }
+  // Keep structured sleep duration readable and compatible with the existing schema.
+  const notes = logType === "Sleep" && sleepHoursInput
+    ? `Hours slept: ${parsedSleepHours}\n${notesInput}`.trim()
+    : notesInput;
   const actionDate = String(formData.get("action_date") || "");
   const actionTime = String(formData.get("action_time") || "");
   const effect = String(formData.get("effect") || "");
