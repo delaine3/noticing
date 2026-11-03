@@ -172,7 +172,9 @@ export function parseChatExport(input: unknown): ImportConversation[] {
     const foundTopics = new Set<string>();
     for (const message of messages) {
       // Topics indicate what to investigate, not a conclusion about the person.
-      for (const t of topics) if (t.pattern.test(message.text)) foundTopics.add(t.name);
+      if (!sensitive.test(message.text)) {
+        for (const t of topics) if (t.pattern.test(message.text)) foundTopics.add(t.name);
+      }
       proposals.push(...oneMessage(message.text, message.date, id + ":" + message.id, title));
     }
     if (messages.length) {
