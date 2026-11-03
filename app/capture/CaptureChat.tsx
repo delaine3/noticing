@@ -71,7 +71,7 @@ export default function CaptureChat() {
       });
       const payload = await response.json() as CaptureAnalysis & { error?: string };
       if (!response.ok) throw new Error(payload.error || "Could not process message.");
-      setMessages([...conversation, { role: "assistant", content: payload.reply }].slice(-10));
+      setMessages([...conversation, { role: "assistant" as const, content: payload.reply }].slice(-10));
       setInput("");
       // The model returns an updated draft set, not additional records to append indefinitely.
       // Preserve user corrections only until another analysis is requested.
