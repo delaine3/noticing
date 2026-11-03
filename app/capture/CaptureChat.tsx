@@ -231,7 +231,7 @@ export default function CaptureChat() {
           {captureMode === "local" ? (
             <div className="mt-3 space-y-2 rounded-lg bg-white/80 p-3">
               <label className="block text-sm font-medium">Local model
-                <select value={modelId} onChange={(event) => { setModelId(event.target.value); setModelReady(false); setModelStatus("Model changed. Load and verify the new model before analyzing."); }}
+                <select value={modelId} disabled={busy} onChange={(event) => { setModelId(event.target.value); setModelReady(false); setModelStatus("Model changed. Load and verify the new model before analyzing."); }}
                   className="mt-1 block w-full rounded-lg border p-2">
                   <option value="SmolLM2-360M-Instruct-q4f16_1-MLC">SmolLM2 360M (lighter, less accurate; ~376 MB graphics memory)</option>
                   <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B (stronger, ~1.8 GB graphics memory)</option>
