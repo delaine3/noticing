@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "../../../lib/supabase-server";
 import { actionTypes } from "../../../lib/log-types";
-import { optionalFields, captureTypeIsValid, captureNumberValid, type CaptureAnalysis, type CaptureMessage, type CaptureDraft } from "../../../lib/capture-types";
+import { optionalFields, captureTypeIsValid, captureNumberValid, type CaptureAnalysis, type CaptureMessage } from "../../../lib/capture-types";
 
 export const runtime = "nodejs";
 
