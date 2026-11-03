@@ -1,5 +1,6 @@
 import { getEffectEmoji } from "../../lib/daily-rules";
 import { DailyLog } from "../../lib/log-types";
+import { LogNotes } from "../LogNotes";
 
 type TimelineLogProps = {
   log: DailyLog;
@@ -34,9 +35,7 @@ export function TimelineLog({ log }: TimelineLogProps) {
             </p>
           ) : null}
 
-          {log.notes ? (
-            <p className="mt-3 text-md leading-6 text-black-700">{log.notes}</p>
-          ) : null}
+          <LogNotes notes={log.notes} className="mt-3 whitespace-pre-wrap text-md leading-6 text-black-700" />
         </div>
 
         <div className="shrink-0 text-right">
