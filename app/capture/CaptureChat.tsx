@@ -13,6 +13,7 @@ import { saveCaptureDrafts } from "./actions";
 import { extractLocalRecords } from "../lib/free-capture";
 import { analyzeLocal, loadLocalModel, resetLocalModel } from "../lib/noticing-webllm";
 import { resolveLocalCapture } from "../lib/capture-result";
+import { parseLocalCaptureResponse } from "../lib/local-capture-response";
 
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
@@ -114,6 +115,7 @@ export default function CaptureChat() {
       });
       const { analysis: payload, usedBasic } = resolveLocalCapture(
         raw, text, dateToday(), actionTypes,
+        parseLocalCaptureResponse, extractLocalRecords,
       );
       if (usedBasic) {
         setNotice("The small model did not return usable activity data. " +
