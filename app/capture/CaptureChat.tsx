@@ -120,7 +120,11 @@ export default function CaptureChat() {
       if (operationRef.current !== operation) return;
       setModelReady(false);
       const isTimeout = error instanceof OperationTimeoutError;
-      if (isTimeout) setRequiresReload(true);
+      if (isTimeout) {
+        operationRef.current += 1;
+        setRequiresReload(true);
+        setBusy(false);
+      }
       setModelStatus(error instanceof Error ? error.message : "Could not load the local model.");
       setNotice(isTimeout
         ? "Model loading did not finish. Use Offline basic now; reload this page before trying the AI again."
@@ -177,6 +181,10 @@ export default function CaptureChat() {
       // Don't await a reset after a hung GPU operation: that reset could hang
       // behind the same promise and leave the spinner running forever.
       if (captureMode === "local") {
+        if (error instanceof OperationTimeoutError) {
+          operationRef.current += 1;
+          setBusy(false);
+        }
         setModelReady(false);
         setRequiresReload(true);
         setModelStatus("Local AI stopped responding. Reload to reset WebGPU or use Offline basic.");
