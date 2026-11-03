@@ -59,3 +59,37 @@ test("extracts a completed application, not a plan to apply", () => {
   ]));
   assert.equal(conversation.proposals.filter((p) => p.type === "Job application").length, 1);
 });
+
+test("accepts curated Noticing records and preserves actual dates and rich notes", () => {
+  const data = {
+    format: "noticing-curated-v1",
+    records: [{
+      id: "treadmill-20261031",
+      action_date: "2026-10-31",
+      reported_date: "2026-11-01",
+      area: "body",
+      log_type: "Treadmill walk",
+      title: "Walked 10.1 km",
+      notes: "Total duration 92:14. Intermediate 6 km was the same workout.",
+      evidence_summary: "User-reported workout, paraphrased.",
+      metrics: { distanceKm: 10.1, durationMinutes: 92 },
+    }],
+  };
+  const [group] = parseChatExport(data);
+  assert.equal(group.id, "noticing-curated-body");
+  assert.equal(group.proposals[0].eventDate, "2026-10-31");
+  assert.equal(group.proposals[0].reportedDate, "2026-11-01");
+  assert.equal(group.proposals[0].distanceKm, 10.1);
+  assert.match(group.proposals[0].notes, /92:14/);
+  assert.match(group.proposals[0].messageExcerpt, /not an original chat quote/);
+});
+
+test("rejects duplicated identifiers in curated Noticing records", () => {
+  const record = {
+    id: "duplicate", action_date: "2026-10-31", area: "life",
+    log_type: "Plant care", title: "Watered roses", notes: "",
+  };
+  assert.throws(() => parseChatExport({
+    format: "noticing-curated-v1", records: [record, record],
+  }), /Invalid curated Noticing record/);
+});
