@@ -9,9 +9,9 @@ type ReportCardProps = {
 export function ReportCard({ report }: ReportCardProps) {
   return (
     <CollapsibleSection
-      eyebrow="Daily report card"
-      title="Scoreboard"
-      summary={`${report.length} checks. Open when you want the verdict.`}
+      eyebrow="Today's records"
+      title="What is recorded"
+      summary={`${report.length} categories. Missing entries do not mean an activity did not happen.`}
       defaultOpen
     >
       <div className="grid gap-3 md:grid-cols-2">

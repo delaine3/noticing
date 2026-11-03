@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import { InsightLog } from "../lib/log-types";
 import { colors } from "../utils/styles";
-import { Bold } from "lucide-react";
 
 type ScoreTrendChartProps = {
   logs: InsightLog[];
@@ -112,7 +111,7 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
         </h2>
 
         <p className="mt-2 text-md text-[var(--ink-soft)]">
-          This shows whether your actions are improving your state.
+          Daily averages of scores you entered. Changes may have many causes; missing scores are not zero.
         </p>
       </div>
 
@@ -141,7 +140,6 @@ export function ScoreTrendChart({ logs }: ScoreTrendChartProps) {
                 stroke={colors.warning}
                 strokeWidth={3}
                 dot={{ r: 3 }}
-                connectNulls
               />
 
               <Line

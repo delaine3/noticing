@@ -9,8 +9,7 @@ export default function InsightNotes() {
 
       <div className="mt-4 space-y-3 leading-7 text-[var(--ink-soft)]">
         <p>
-          The goal is not perfect tracking. The goal is to spot which actions
-          reliably reduce suffering and which ones make the day messy.
+          Only compare entries you actually recorded. A missing entry does not mean an activity did not happen. Ratings describe your assessment, not a proven effect. For a useful comparison, record the activity, duration, and how you felt before and after on several occasions.
         </p>
       </div>
     </article>

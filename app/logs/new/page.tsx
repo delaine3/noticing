@@ -153,11 +153,11 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-          Log the thing. Then move.
+          Record what happened
         </h1>
 
         <p className="mt-4 text-black-700">
-          Pick the action. The form will stop showing irrelevant nonsense.
+          Select an activity, enter what happened and when, then save. Only relevant fields appear.
         </p>
 
         <NewActionForm
