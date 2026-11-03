@@ -18,6 +18,7 @@ export default async function InsightsPage() {
           <Link href="/insights/weekly" className="submit-button">Review your last 7 recorded days</Link>
           <Link href="/logs/new?type=Daily%20check-in" className="secondary-button">Daily check-in</Link>
           <Link href="/import/chat" className="secondary-button">Import ChatGPT conversations</Link>
+          <Link href="/capture" className="submit-button">Talk to Noticing</Link>
         </div>
 
         <section className="mt-6 grid gap-4 md:grid-cols-2">
