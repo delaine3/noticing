@@ -26,6 +26,7 @@ export type ImportProposal = {
   sourceKey: string;
   conversationTitle: string;
   reportedDate: string;
+  eventDate?: string;
   messageExcerpt: string;
   type: ImportType;
   title: string;
@@ -158,8 +159,82 @@ function readMessages(conversation: Dict) {
   return output;
 }
 
+function parseCuratedRecords(input: Dict): ImportConversation[] {
+  // A compact, explicit, review-first format for hand-curated historical
+  // activities, not a reconstructed or fabricated ChatGPT transcript.
+  const entries = input.records;
+  if (!Array.isArray(entries) || entries.length > 500) {
+    throw new Error("Curated Noticing files need a records array with 500 or fewer entries.");
+  }
+  const allowed = new Set<string>(IMPORT_TYPES.map((type) => type.value));
+  const areas: Record<string, { title: string; proposals: ImportProposal[] }> = {
+    body: { title: "Body & energy · curated records", proposals: [] },
+    mind: { title: "Mind & attention · curated records", proposals: [] },
+    work: { title: "Work & progress · curated records", proposals: [] },
+    life: { title: "Home & people · curated records", proposals: [] },
+  };
+  const used = new Set<string>();
+  for (const [index, raw] of entries.entries()) {
+    const item = obj(raw);
+    if (!item) continue;
+    const type = str(item.log_type);
+    const area = str(item.area);
+    const id = str(item.id);
+    const eventDate = str(item.action_date);
+    const reportedDate = str(item.reported_date);
+    const title = str(item.title);
+    const notes = str(item.notes);
+    const evidence = str(item.evidence_summary);
+    const metrics = obj(item.metrics) ?? {};
+    if (!id || used.has(id) || id.length > 120 || !allowed.has(type) ||
+        !Object.prototype.hasOwnProperty.call(areas, area) ||
+        !/^\\d{4}-\\d{2}-\\d{2}$/.test(eventDate) ||
+        !title.trim() || title.length > 120 ||
+        notes.length > 1500) {
+      throw new Error("Invalid curated Noticing record at position " + (index + 1) + ".");
+    }
+    const date = new Date(eventDate + "T12:00:00Z");
+    if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== eventDate) {
+      throw new Error("Invalid event date in curated record " + (index + 1) + ".");
+    }
+    used.add(id);
+    const measurement = (key: string, limit: number) => {
+      const val = metrics[key];
+      return typeof val === "number" && Number.isFinite(val) && val > 0 && val <= limit ? val : undefined;
+    };
+    areas[area].proposals.push({
+      sourceKey: "noticing-curated:" + id,
+      conversationTitle: areas[area].title,
+      reportedDate: reportedDate || eventDate,
+      eventDate,
+      messageExcerpt: "Curated paraphrase, not an original chat quote. " + evidence.slice(0, 220),
+      type: type as ImportType,
+      title,
+      notes,
+      distanceKm: measurement("distanceKm", 100),
+      durationMinutes: measurement("durationMinutes", 1440),
+      waterMl: measurement("waterMl", 5000),
+      sleepHours: measurement("sleepHours", 24),
+    });
+  }
+  return Object.entries(areas)
+    .filter(([, group]) => group.proposals.length)
+    .map(([area, group]) => ({
+      id: "noticing-curated-" + area,
+      title: group.title,
+      reportedDate: group.proposals[0]?.reportedDate ?? "",
+      messageCount: group.proposals.length,
+      proposals: group.proposals,
+      topicSignals: [],
+    }));
+}
+
 export function parseChatExport(input: unknown): ImportConversation[] {
-  if (!Array.isArray(input)) throw new Error("Expected conversations.json, an array of ChatGPT conversations.");
+  const structured = obj(input);
+  if (structured && structured.format === "noticing-curated-v1") {
+    return parseCuratedRecords(structured);
+  }
+  if (!Array.isArray(input)) throw new Error("Expected a ChatGPT conversations.json array or a Noticing curated-v1 JSON file.");
   if (input.length > 100000) throw new Error("This export is too large for an in-browser preview.");
   const result: ImportConversation[] = [];
   for (const [index, value] of input.entries()) {
