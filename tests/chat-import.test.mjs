@@ -38,8 +38,8 @@ test("does not use assistant messages as personal records", () => {
       content: { parts: ["I slept 8 hours"] },
     },
   };
-  const [conversation] = parseChatExport(input);
-  assert.equal(conversation.proposals.length, 0);
+  const conversations = parseChatExport(input);
+  assert.equal(conversations.length, 0);
 });
 
 test("does not propose sensitive text as records", () => {
