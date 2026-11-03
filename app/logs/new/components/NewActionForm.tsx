@@ -16,6 +16,7 @@ type NewActionFormProps = {
   today: string;
   createLog: (formData: FormData) => void | Promise<void>;
   commonWaterTitles: string[];
+  returnTo?: string;
 };
 
 export function NewActionForm({
@@ -23,6 +24,7 @@ export function NewActionForm({
   today,
   createLog,
   commonWaterTitles,
+  returnTo,
 }: NewActionFormProps) {
   const [actionType, setActionType] = useState(selectedType);
   const [title, setTitle] = useState("");
@@ -57,6 +59,7 @@ export function NewActionForm({
         action={createLog}
         className="glass-card mt-6 space-y-5 p-6 shadow-sm"
       >
+        {returnTo ? <input type="hidden" name="return_to" value={returnTo} /> : null}
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-md font-medium text-stone-700">Action</span>
