@@ -14,7 +14,8 @@ export function TimeField() {
   const [time, setTime] = useState("");
 
   useEffect(() => {
-    setTime(getCurrentTimeValue());
+    const timeout = window.setTimeout(() => setTime(getCurrentTimeValue()), 0);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   return (

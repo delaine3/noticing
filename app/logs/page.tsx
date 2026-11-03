@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "../lib/supabase-server";
 import LoadingLink from "../components/LoadingLink";
 import { PaginationControls } from "../components/PaginationControls";
+import { LogNotes } from "../components/LogNotes";
 
 type LogsPageProps = {
   searchParams?: Promise<{
@@ -181,11 +182,7 @@ export default async function LogsPage({ searchParams }: LogsPageProps) {
                           </div>
                         </div>
 
-                        {log.notes ? (
-                          <p className="mt-4 leading-7 text-black-700">
-                            {log.notes}
-                          </p>
-                        ) : null}
+                        <LogNotes notes={log.notes} className="mt-4 whitespace-pre-wrap leading-7 text-black-700" />
 
                         <div className="mt-5 flex flex-wrap gap-2 text-md text-black-700">
                           {log.effect ? (

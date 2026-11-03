@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LoadingLink from "./LoadingLink";
 import { useEffect, useState } from "react";
@@ -12,6 +11,8 @@ const navItems = [
   { href: "/", label: "Today" },
   { href: "/logs", label: "Logs" },
   { href: "/insights", label: "Insights" },
+  { href: "/capture", label: "Talk to Noticing" },
+  { href: "/import/chat", label: "Import chats" },
 ];
 type UserProfile = {
   id: string;
@@ -61,8 +62,6 @@ export function AppNav() {
   }
 
   useEffect(() => {
-    getUserAndProfile();
-
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
       getUserAndProfile();
     });

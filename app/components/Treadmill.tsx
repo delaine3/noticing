@@ -96,7 +96,7 @@ export function Treadmill({ logs }: TreadmillProps) {
   );
 
   return (
-    <section className="mt-5">
+    <section className="mt-5 glass-card">
       <div className="mb-4">
         <p className="text-md font-medium uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
           Treadmill

@@ -1,0 +1,30 @@
+name: Verify Noticing
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Check pinned model assets are unchanged
+        run: |
+          node scripts/pin-model-integrity.mjs
+          git diff --exit-code -- app/lib/webllm-integrity.json
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: test-key
+      - run: node --experimental-strip-types --test tests/*.test.mjs
+      - run: npm run lint

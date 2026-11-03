@@ -6,7 +6,6 @@ import {
   CSSProperties,
   MouseEvent,
   ReactNode,
-  useEffect,
   useState,
 } from "react";
 import Spinner from "./Spinner";
@@ -32,11 +31,8 @@ export default function LoadingLink({
 }: LoadingLinkProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [pathname]);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const loading = pendingPath === href && pathname !== href;
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     if (
@@ -52,13 +48,13 @@ export default function LoadingLink({
 
     if (href === pathname) {
       onClick?.();
-      setLoading(false);
+      setPendingPath(null);
       return;
     }
 
     event.preventDefault();
     onClick?.();
-    setLoading(true);
+    setPendingPath(href);
     router.push(href);
   }
 
