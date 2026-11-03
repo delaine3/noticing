@@ -78,7 +78,7 @@ export function FirstMealAudit({ logs }: FirstMealAuditProps) {
         First meal
       </p>
 
-      <h2 className="mt-2 text-xl font-semibold">Meal timing audit</h2>
+      <h2 className="mt-2 text-xl font-semibold">Recorded first-meal times</h2>
 
       <div className="mt-5 space-y-3 text-md text-[var(--ink-soft)]">
         <p>
@@ -90,10 +90,11 @@ export function FirstMealAudit({ logs }: FirstMealAuditProps) {
           </span>
         </p>
 
-        <p>⭐ Before 10am: {firstMealStats.goldCount}</p>
-        <p>✅ Before 2pm: {firstMealStats.checkCount}</p>
-        <p>👎 Before 6pm: {firstMealStats.lateCount}</p>
-        <p>🚨 After 6pm: {firstMealStats.codeRedCount}</p>
+        <p>Before 10am: {firstMealStats.goldCount}</p>
+        <p>10am to 2pm: {firstMealStats.checkCount}</p>
+        <p>2pm to 6pm: {firstMealStats.lateCount}</p>
+        <p>After 6pm: {firstMealStats.codeRedCount}</p>
+        <p>Based only on days with a first-meal time recorded. These time bands are descriptive, not medical risk categories.</p>
       </div>
     </article>
   );
