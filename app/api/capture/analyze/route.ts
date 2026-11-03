@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       typeof m.content === "string" && m.content.trim().length > 0 && m.content.length <= 2500) ||
       messages[messages.length - 1].role !== "user" ||
       messages.reduce((sum, m) => sum + m.content.length, 0) > 12000 ||
-      typeof data.localDate !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(data.localDate) ||
+      typeof data.localDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(data.localDate) ||
       typeof data.timeZone !== "string" || data.timeZone.length > 80) {
     return NextResponse.json({ error: "Message too long or invalid." }, { status: 400 });
   }
