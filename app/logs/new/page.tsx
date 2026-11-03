@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 type NewLogPageProps = {
   searchParams?: Promise<{
     type?: string;
+    returnTo?: string;
   }>;
 };
 
@@ -21,7 +22,27 @@ async function createLog(formData: FormData) {
 
   const logType = String(formData.get("log_type") || "");
   const title = String(formData.get("title") || "");
-  const notes = String(formData.get("notes") || "");
+  const notesInput = String(formData.get("notes") || "");
+  const sleepHoursInput = String(formData.get("sleep_hours") || "").trim();
+  const durationInput = String(formData.get("duration_minutes") || "").trim();
+  const parsedSleepHours = Number(sleepHoursInput);
+  const parsedDuration = Number(durationInput);
+  if (logType === "Sleep" && sleepHoursInput &&
+      (!Number.isFinite(parsedSleepHours) || parsedSleepHours < 0 || parsedSleepHours > 24)) {
+    throw new Error("Sleep hours must be between 0 and 24.");
+  }
+  const durationTypes = ["Focused work", "Creative time", "TikTok used", "Movement", "Sunlight"];
+  if (durationTypes.includes(logType) && durationInput &&
+      (!Number.isFinite(parsedDuration) || parsedDuration < 0 ||
+       parsedDuration > 1440 || !Number.isInteger(parsedDuration))) {
+    throw new Error("Duration must be a whole number between 0 and 1440.");
+  }
+  // Plain-text metric prefixes keep the existing schema and editable notes compatible.
+  const metricNotes = [
+    logType === "Sleep" && sleepHoursInput ? `Hours slept: ${parsedSleepHours}` : "",
+    durationTypes.includes(logType) && durationInput ? `Duration minutes: ${parsedDuration}` : "",
+  ].filter(Boolean);
+  const notes = [...metricNotes, notesInput].filter(Boolean).join("\n");
   const actionDate = String(formData.get("action_date") || "");
   const actionTime = String(formData.get("action_time") || "");
   const effect = String(formData.get("effect") || "");
@@ -107,7 +128,12 @@ async function createLog(formData: FormData) {
     }
   }
 
-  redirect("/logs");
+  const returnTo = String(formData.get("return_to") || "");
+  const allowedDestinations = [
+    "/insights", "/insights/weekly", "/insights/body",
+    "/insights/mind", "/insights/work", "/insights/life",
+  ];
+  redirect(allowedDestinations.includes(returnTo) ? returnTo : "/logs");
 }
 
 export default async function NewLogPage({ searchParams }: NewLogPageProps) {
@@ -165,6 +191,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
           today={today}
           createLog={createLog}
           commonWaterTitles={commonWaterTitles}
+          returnTo={params?.returnTo}
         />
       </section>
     </main>

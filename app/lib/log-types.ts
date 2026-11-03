@@ -20,6 +20,12 @@ export type DailyLog = {
   hygiene: string | null;
 };
 export const actionTypes = [
+  "Daily check-in",
+  "Sleep",
+  "Focused work",
+  "Job follow-up",
+  "Interview",
+  "Creative time",
   "First meal",
   "Job application",
   "Woke up",

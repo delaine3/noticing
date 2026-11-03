@@ -20,6 +20,54 @@ export type ActionConfig = {
 };
 
 export const actionConfig: Record<string, ActionConfig> = {
+  "Daily check-in": {
+    heading: "How are you doing today?",
+    instruction: "Rate mood, energy and stress. Add a concrete reason, if known. Try to record at a similar time each day.",
+    titleLabel: "What affected today? (optional)",
+    titlePlaceholder: "Example: slept poorly, completed difficult task, enjoyed garden",
+    notesPlaceholder: "What happened? What might help next? Write observations, not predictions.",
+    fields: ["mood", "energy", "intensity"],
+  },
+  "Sleep": {
+    heading: "Record last night's sleep",
+    instruction: "Enter the hours you actually slept. Add how rested you feel and whether anything interrupted sleep.",
+    titleLabel: "Sleep note",
+    titlePlaceholder: "Example: woke twice, slept through the night",
+    notesPlaceholder: "Bedtime, wake time, interruptions, and how rested you feel.",
+    fields: ["energy", "mood"],
+  },
+  "Focused work": {
+    heading: "Record work with an outcome",
+    instruction: "Describe the result, not just time spent. Add the next action, if any.",
+    titleLabel: "What did you finish or advance?",
+    titlePlaceholder: "Example: fixed login error; sent proposal to Client X",
+    notesPlaceholder: "What was delivered? What is blocked? Next step and follow-up date?",
+    fields: ["effect", "energy"],
+  },
+  "Job follow-up": {
+    heading: "Track an employer response or follow-up",
+    instruction: "Name the company, role, and contact. Record what was sent, received, or agreed.",
+    titleLabel: "Employer and role",
+    titlePlaceholder: "Example: Developer at Company X",
+    notesPlaceholder: "Contact method, response, next step, deadline. Don't include confidential personal data.",
+    fields: [],
+  },
+  "Interview": {
+    heading: "Record an interview",
+    instruction: "Capture the employer, role, date and next steps.",
+    titleLabel: "Employer and role",
+    titlePlaceholder: "Example: Frontend Engineer at Company X",
+    notesPlaceholder: "Interview stage, topics discussed, follow-up date and outcome.",
+    fields: ["effect"],
+  },
+  "Creative time": {
+    heading: "Record time spent making something",
+    instruction: "What did you create, practice or enjoy? Not everything needs to be productive.",
+    titleLabel: "What did you do?",
+    titlePlaceholder: "Example: painted a rose; wrote a short story; sang karaoke",
+    notesPlaceholder: "How long? What was satisfying? Would you do it again?",
+    fields: ["effect", "mood"],
+  },
   "Woke up": {
     heading: "You woke up. Log the start point.",
     instruction: "Record the time. No autobiography required.",

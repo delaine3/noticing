@@ -16,6 +16,7 @@ type NewActionFormProps = {
   today: string;
   createLog: (formData: FormData) => void | Promise<void>;
   commonWaterTitles: string[];
+  returnTo?: string;
 };
 
 export function NewActionForm({
@@ -23,6 +24,7 @@ export function NewActionForm({
   today,
   createLog,
   commonWaterTitles,
+  returnTo,
 }: NewActionFormProps) {
   const [actionType, setActionType] = useState(selectedType);
   const [title, setTitle] = useState("");
@@ -57,6 +59,7 @@ export function NewActionForm({
         action={createLog}
         className="glass-card mt-6 space-y-5 p-6 shadow-sm"
       >
+        {returnTo ? <input type="hidden" name="return_to" value={returnTo} /> : null}
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-md font-medium text-stone-700">Action</span>
@@ -112,6 +115,25 @@ export function NewActionForm({
           />
         </label>
 
+        {actionType === "Sleep" ? (
+          <label className="block">
+            <span className="text-md font-medium text-stone-700">Hours slept (optional)</span>
+            <input name="sleep_hours" type="number" min="0" max="24" step="0.25"
+              className="mt-2 w-full bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              placeholder="Example: 7.5" />
+            <span className="mt-1 block text-sm text-stone-700">An estimate is fine. Leave empty if unknown.</span>
+          </label>
+        ) : null}
+
+        {["Focused work", "Creative time", "TikTok used", "Movement", "Sunlight"].includes(actionType) ? (
+          <label className="block">
+            <span className="text-md font-medium text-stone-700">Duration in minutes (optional)</span>
+            <input name="duration_minutes" type="number" min="0" max="1440" step="1"
+              className="mt-2 w-full bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              placeholder="Example: 25" />
+          </label>
+        ) : null}
+
         {showMeal ? <MealFields /> : null}
 
         {showWater ? (
@@ -130,6 +152,7 @@ export function NewActionForm({
           showMood={showMood}
           showEnergy={showEnergy}
           showIntensity={showIntensity}
+          intensityLabel={actionType === "Daily check-in" ? "Stress (1–10)" : "Intensity (1–10)"}
         />
 
         <label className="block">
