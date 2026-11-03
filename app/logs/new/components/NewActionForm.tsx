@@ -122,6 +122,15 @@ export function NewActionForm({
           </label>
         ) : null}
 
+        {["Focused work", "Creative time", "TikTok used", "Movement", "Sunlight"].includes(actionType) ? (
+          <label className="block">
+            <span className="text-md font-medium text-stone-700">Duration in minutes (optional)</span>
+            <input name="duration_minutes" type="number" min="0" max="1440" step="1"
+              className="mt-2 w-full bg-white px-4 py-3 text-stone-950 outline-none focus:border-green-700"
+              placeholder="Example: 25" />
+          </label>
+        ) : null}
+
         {showMeal ? <MealFields /> : null}
 
         {showWater ? (
