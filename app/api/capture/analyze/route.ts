@@ -69,10 +69,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "AI capture is restricted to explicitly authorized accounts." }, { status: 403 });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return NextResponse.json({
-    error: "Conversational AI is not configured. An administrator must add OPENAI_API_KEY on the server.",
-  }, { status: 503 });
+  // This feature is specifically restricted to manually verified, unbilled free-tier projects.
+  // The flag is operator attestation, NOT proof that Google has disabled billing.
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || process.env.GEMINI_FREE_TIER_CONFIRMED !== "true") {
+    return NextResponse.json({
+      error: "Free-tier Gemini is not configured. Set GEMINI_API_KEY and confirm the project has no billing account.",
+    }, { status: 503 });
+  }
 
   let body: unknown;
   try { body = await request.json(); }
@@ -120,41 +124,48 @@ The reply should summarize what you heard and what is still missing, in 1–2 se
   const abort = new AbortController();
   const timeout = setTimeout(() => abort.abort(), 20000);
   try {
-    const upstream = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      signal: abort.signal,
-      headers: {
-        "Authorization": "Bearer " + apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_CAPTURE_MODEL || "gpt-4o-mini",
-        store: false,
-        max_output_tokens: 1800,
-        input: [
-          { role: "system", content: systemPrompt },
-          ...messages.map((m) => ({ role: m.role, content: m.content })),
-        ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "noticing_capture",
-            strict: true,
-            schema: responseSchema,
-          },
+    const upstream = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent",
+      {
+        method: "POST",
+        signal: abort.signal,
+        headers: {
+          "x-goog-api-key": apiKey,
+          "Content-Type": "application/json",
         },
-      }),
-    });
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt +
+            "\\nOutput exactly one JSON object with keys reply, follow_up_question, proposed_records. " +
+            "Each record must include log_type, title, notes, action_date, action_time, " +
+            optionalFields.join(", ") + ", evidence, uncertainty. " +
+            "All measurement values must be number or null. Return [] for no records." }] },
+          contents: messages.map((m) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          })),
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.1,
+            maxOutputTokens: 2200,
+          },
+        }),
+      }
+    );
+    if (upstream.status === 429) {
+      return NextResponse.json({
+        error: "The Gemini free-tier quota is exhausted. Use Offline basic mode or try another day. Do not add billing.",
+      }, { status: 429 });
+    }
     if (!upstream.ok) {
-      // Do not expose upstream error bodies or any secrets.
-      return NextResponse.json({ error: "AI processing is temporarily unavailable. Try again later." }, { status: 502 });
+      return NextResponse.json({
+        error: "Free-tier AI is unavailable. Try Offline basic mode. No paid model fallback was used.",
+      }, { status: 502 });
     }
     const response = await upstream.json() as {
-      output?: Array<{ content?: Array<{ type?: string; text?: string }> }>;
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
     };
-    const raw = response.output?.flatMap((o) => o.content ?? [])
-      .find((part) => part.type === "output_text")?.text;
-    if (!raw) return NextResponse.json({ error: "AI returned no usable records." }, { status: 502 });
+    const raw = response.candidates?.[0]?.content?.parts?.find((part) => typeof part.text === "string")?.text;
+    if (!raw) return NextResponse.json({ error: "AI returned no usable records. Try Offline basic mode." }, { status: 502 });
     let parsed: unknown;
     try { parsed = JSON.parse(raw); } catch {
       return NextResponse.json({ error: "AI returned an unreadable response." }, { status: 502 });
