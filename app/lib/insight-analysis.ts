@@ -26,7 +26,7 @@ function recordedScore(logs: InsightLog[], key: "mood_score" | "energy_score" | 
 }
 
 function noteMetric(log: InsightLog, metric: "Hours slept" | "Duration minutes") {
-  const line = log.notes?.split("\\n").find((item) => item.startsWith(metric + ": "));
+  const line = log.notes?.split("\n").find((item) => item.startsWith(metric + ": "));
   if (!line) return null;
   const value = Number(line.slice(metric.length + 2));
   return Number.isFinite(value) && value >= 0 ? value : null;
