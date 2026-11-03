@@ -6,48 +6,22 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   verify:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-      - name: Update lockfile for pinned WebLLM dependency
-        run: npm install --package-lock-only --ignore-scripts --no-audit
-      - name: Commit updated npm lockfile to this PR branch
-        if: github.event_name == 'pull_request'
-        run: |
-          if ! git diff --quiet -- package-lock.json; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add package-lock.json
-            git commit -m "Lock bundled WebLLM and dependencies"
-            git push origin "HEAD:${{ github.head_ref }}"
-          fi
       - run: npm ci
-      - name: Pin model artifacts and verify downloadable WASM
-        run: node scripts/pin-model-integrity.mjs
-      - name: Commit model integrity manifest
-        if: github.event_name == 'pull_request'
+      - name: Check pinned model assets are unchanged
         run: |
-          if [ -n "$(git status --porcelain -- app/lib/webllm-integrity.json)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add app/lib/webllm-integrity.json
-            if ! git diff --cached --quiet; then
-              git commit -m "Pin verified WebLLM executable and tokenizer hashes"
-              git push origin "HEAD:${{ github.head_ref }}"
-            fi
-          fi
+          node scripts/pin-model-integrity.mjs
+          git diff --exit-code -- app/lib/webllm-integrity.json
       - run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
