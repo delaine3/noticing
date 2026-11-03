@@ -1,6 +1,4 @@
 import type { CaptureAnalysis } from "./capture-types";
-import { parseLocalCaptureResponse } from "./local-capture-response";
-import { extractLocalRecords } from "./free-capture";
 
 /**
  * A very small local model can return "1", malformed JSON or an empty result
@@ -12,8 +10,10 @@ export function resolveLocalCapture(
   userMessage: string,
   localDate: string,
   allowedTypes: readonly string[],
+  parse: (raw: string, types: readonly string[]) => CaptureAnalysis,
+  extract: (message: string, date: string) => CaptureAnalysis,
 ): { analysis: CaptureAnalysis; usedBasic: boolean } {
-  const basic = extractLocalRecords(userMessage, localDate);
+  const basic = extract(userMessage, localDate);
   const fallBack = (reason: string) => ({
     analysis: {
       ...basic,
@@ -22,7 +22,7 @@ export function resolveLocalCapture(
     usedBasic: true,
   });
   try {
-    const parsed = parseLocalCaptureResponse(raw, allowedTypes);
+    const parsed = parse(raw, allowedTypes);
     if (parsed.proposed_records.length === 0 && basic.proposed_records.length > 0) {
       return fallBack("Local AI missed activities you reported, so basic extraction was used.");
     }
