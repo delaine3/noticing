@@ -64,6 +64,11 @@ export async function POST(request: Request) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) return NextResponse.json({ error: "Sign in to use the conversational logger." }, { status: 401 });
 
+  const allowlist = (process.env.CAPTURE_ALLOWED_USER_IDS || "").split(",").map((id) => id.trim()).filter(Boolean);
+  if (!allowlist.includes(user.id)) {
+    return NextResponse.json({ error: "AI capture is restricted to explicitly authorized accounts." }, { status: 403 });
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return NextResponse.json({
     error: "Conversational AI is not configured. An administrator must add OPENAI_API_KEY on the server.",
