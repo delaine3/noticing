@@ -188,7 +188,7 @@ function parseCuratedRecords(input: Dict): ImportConversation[] {
     const metrics = obj(item.metrics) ?? {};
     if (!id || used.has(id) || id.length > 120 || !allowed.has(type) ||
         !Object.prototype.hasOwnProperty.call(areas, area) ||
-        !/^\\d{4}-\\d{2}-\\d{2}$/.test(eventDate) ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(eventDate) ||
         !title.trim() || title.length > 120 ||
         notes.length > 1500) {
       throw new Error("Invalid curated Noticing record at position " + (index + 1) + ".");
