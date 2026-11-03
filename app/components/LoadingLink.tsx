@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  CSSProperties,
-  MouseEvent,
-  ReactNode,
-  useState,
-} from "react";
-import Spinner from "./Spinner";
+import type { CSSProperties, ReactNode } from "react";
 
 type LoadingLinkProps = {
   href: string;
@@ -16,65 +9,29 @@ type LoadingLinkProps = {
   className?: string;
   contentClassName?: string;
   style?: CSSProperties;
+  // Retained for backwards compatibility with existing callers.
   spinnerLabel?: string;
   onClick?: () => void;
 };
 
+/**
+ * Navigation should remain usable even when a route request is slow,
+ * blocked or rejects. The previous component kept a spinner active until
+ * the destination pathname changed, which may never happen.
+ *
+ * Let Next.js Link manage navigation without app-owned pending state.
+ */
 export default function LoadingLink({
   href,
   children,
   className,
   contentClassName = "inline-flex items-center gap-2",
   style,
-  spinnerLabel = "Opening page",
   onClick,
 }: LoadingLinkProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [pendingPath, setPendingPath] = useState<string | null>(null);
-  const loading = pendingPath === href && pathname !== href;
-
-  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    if (
-      event.defaultPrevented ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey ||
-      event.button !== 0
-    ) {
-      return;
-    }
-
-    if (href === pathname) {
-      onClick?.();
-      setPendingPath(null);
-      return;
-    }
-
-    event.preventDefault();
-    onClick?.();
-    setPendingPath(href);
-    router.push(href);
-  }
-
   return (
-    <Link
-      href={href}
-      onClick={handleClick}
-      aria-busy={loading}
-      className={className}
-      style={style}
-    >
-      <span className={contentClassName}>
-        {loading && (
-          <span className="mb-2 inline-flex items-center gap-2">
-            <Spinner label={spinnerLabel} />
-          </span>
-        )}
-
-        {children}
-      </span>
+    <Link href={href} onClick={onClick} className={className} style={style}>
+      <span className={contentClassName}>{children}</span>
     </Link>
   );
 }

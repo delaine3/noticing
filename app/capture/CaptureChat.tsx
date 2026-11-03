@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   areaForType, captureNumberValid, limits, optionalFields,
@@ -14,6 +14,7 @@ import { extractLocalRecords } from "../lib/free-capture";
 import { analyzeLocal, loadLocalModel, resetLocalModel } from "../lib/noticing-webllm";
 import { resolveLocalCapture } from "../lib/capture-result";
 import { parseLocalCaptureResponse } from "../lib/local-capture-response";
+import { OperationTimeoutError, withOperationTimeout } from "../lib/operation-timeout";
 
 const metricLabels = {
   water_amount_ml: "Drink (ml)",
@@ -62,6 +63,9 @@ export default function CaptureChat() {
   const [captureMode, setCaptureMode] = useState<"basic" | "local">("basic");
   const [modelId, setModelId] = useState("SmolLM2-360M-Instruct-q4f16_1-MLC");
   const [modelReady, setModelReady] = useState(false);
+  const [requiresReload, setRequiresReload] = useState(false);
+  const [saveUncertain, setSaveUncertain] = useState(false);
+  const operationRef = useRef(0);
   const [modelStatus, setModelStatus] = useState("Not loaded. Loading downloads open weights, but does not upload chats.");
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -74,24 +78,66 @@ export default function CaptureChat() {
     setNotice("");
   }
 
+  function useBasicInstead() {
+    if (busy) {
+      // A WebGPU operation cannot necessarily be cancelled. Ignore all late
+      // callbacks and require a page refresh before loading another model.
+      operationRef.current += 1;
+      setRequiresReload(true);
+      setModelStatus("Local operation abandoned. Reload the page to release GPU resources.");
+      setModelReady(false);
+      setBusy(false);
+      setNotice("Offline basic is available. The previous local operation may still be running " +
+        "until you reload this page.");
+    }
+    setCaptureMode("basic");
+  }
+
+  function restartLocalAI() {
+    if ((drafts.length > 0 || input.trim() || messages.length > 0) &&
+        !window.confirm("Reloading clears unsaved chat and proposed records. Continue?")) {
+      return;
+    }
+    window.location.reload();
+  }
+
   async function prepareLocalModel() {
-    if (busy) return;
+    if (busy || requiresReload) return;
+    const operation = ++operationRef.current;
     setBusy(true);
     setNotice("");
     try {
-      await loadLocalModel(modelId, setModelStatus);
+      await withOperationTimeout(
+        loadLocalModel(modelId, (status) => {
+          if (operationRef.current === operation) setModelStatus(status);
+        }),
+        180_000,
+        "Local model initialization stopped responding.",
+      );
+      if (operationRef.current !== operation) return;
       setModelReady(true);
     } catch (error) {
+      if (operationRef.current !== operation) return;
       setModelReady(false);
+      const isTimeout = error instanceof OperationTimeoutError;
+      if (isTimeout) {
+        operationRef.current += 1;
+        setRequiresReload(true);
+        setBusy(false);
+      }
       setModelStatus(error instanceof Error ? error.message : "Could not load the local model.");
+      setNotice(isTimeout
+        ? "Model loading did not finish. Use Offline basic now; reload this page before trying the AI again."
+        : "Could not initialize the local model. You can use Offline basic without a model.");
     } finally {
-      setBusy(false);
+      if (operationRef.current === operation) setBusy(false);
     }
   }
 
   async function send() {
     const text = input.trim();
-    if (!text || busy || (captureMode === "local" && !modelReady)) return;
+    if (!text || busy || (captureMode === "local" && (!modelReady || requiresReload))) return;
+    const operation = ++operationRef.current;
     const conversation = [...messages, { role: "user" as const, content: text }].slice(-10);
     setBusy(true);
     setNotice("");
@@ -106,13 +152,16 @@ export default function CaptureChat() {
         setSavedCount(0);
         return;
       }
-      const raw = await analyzeLocal({
+      const raw = await withOperationTimeout(analyzeLocal({
         messages: conversation,
         localDate: dateToday(),
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
         modelId,
-        onProgress: setModelStatus,
-      });
+        onProgress: (status) => {
+          if (operationRef.current === operation) setModelStatus(status);
+        },
+      }), 90_000, "The local model did not finish analyzing this message.");
+      if (operationRef.current !== operation) return;
       const { analysis: payload, usedBasic } = resolveLocalCapture(
         raw, text, dateToday(), actionTypes,
         parseLocalCaptureResponse, extractLocalRecords,
@@ -128,12 +177,18 @@ export default function CaptureChat() {
       setQuestion(usedBasic ? null : payload.follow_up_question);
       setSavedCount(0);
     } catch (error) {
-      // A generation exception may have unloaded the GPU model. Don't keep
-      // showing "Model ready" or ask the user to submit to a broken engine.
+      if (operationRef.current !== operation) return;
+      // Don't await a reset after a hung GPU operation: that reset could hang
+      // behind the same promise and leave the spinner running forever.
       if (captureMode === "local") {
+        if (error instanceof OperationTimeoutError) {
+          operationRef.current += 1;
+          setBusy(false);
+        }
         setModelReady(false);
-        setModelStatus("Local model unavailable. Select Load model to restore it from cache.");
-        await resetLocalModel(modelId);
+        setRequiresReload(true);
+        setModelStatus("Local AI stopped responding. Reload to reset WebGPU or use Offline basic.");
+        void resetLocalModel(modelId).catch(() => {});
         const offline = extractLocalRecords(text, dateToday());
         if (offline.proposed_records.length > 0) {
           setMessages([...conversation, {
@@ -146,22 +201,22 @@ export default function CaptureChat() {
           setInput("");
           setQuestion(null);
           setNotice("Model generation failed; offline records are available for review. " +
-            "Reload the model to use AI again.");
+            "Reload this page to use AI again.");
         } else {
           setNotice("Local model generation failed: " +
             (error instanceof Error ? error.message : "Unknown error") +
-            ". Your message is preserved. Reload the model or use Offline basic.");
+            ". Your message is preserved. Reload the page or use Offline basic.");
         }
       } else {
         setNotice(error instanceof Error ? error.message : "Could not process your message.");
       }
     } finally {
-      setBusy(false);
+      if (operationRef.current === operation) setBusy(false);
     }
   }
 
   async function save() {
-    if (busy || saving) return;
+    if (busy || saving || saveUncertain) return;
     const selected = drafts.filter((item) => item.approved);
     if (!selected.length) { setNotice("Approve at least one record first."); return; }
     const invalid = selected.map((item, index) => ({ index, error: validCaptureDraft(item) }))
@@ -174,7 +229,11 @@ export default function CaptureChat() {
     setNotice("");
     setErrors([]);
     try {
-      const result = await saveCaptureDrafts(selected);
+      const result = await withOperationTimeout(
+        saveCaptureDrafts(selected),
+        30_000,
+        "The save request did not respond. Check Logs before trying again.",
+      );
       setSavedCount(result.saved);
       setErrors(result.errors);
       setNotice(result.saved + " saved. " + result.duplicates +
@@ -186,6 +245,7 @@ export default function CaptureChat() {
         setMessages([]);
       }
     } catch (error) {
+      if (error instanceof OperationTimeoutError) setSaveUncertain(true);
       setNotice(error instanceof Error ? error.message : "Save failed.");
     } finally {
       setSaving(false);
@@ -220,12 +280,12 @@ export default function CaptureChat() {
           <legend className="px-1 text-sm font-semibold">Processing mode</legend>
           <label className="mt-2 flex items-start gap-2 text-sm">
             <input type="radio" name="capture-mode" value="basic" checked={captureMode === "basic"}
-              onChange={() => setCaptureMode("basic")} className="mt-1 accent-[var(--leaf-dark)]" />
+              onChange={useBasicInstead} className="mt-1 accent-[var(--leaf-dark)]" />
             <span><strong>Offline basic</strong> · No model download. Limited rules, completely on-device.</span>
           </label>
           <label className="mt-3 flex items-start gap-2 text-sm">
             <input type="radio" name="capture-mode" value="local" checked={captureMode === "local"}
-              onChange={() => setCaptureMode("local")} className="mt-1 accent-[var(--leaf-dark)]" />
+              onChange={() => { if (!busy) setCaptureMode("local"); }} disabled={busy} className="mt-1 accent-[var(--leaf-dark)]" />
             <span><strong>Open-weight AI on this device</strong> · No API, no training on your conversations, no prompt uploads. Requires browser WebGPU and a model download.</span>
           </label>
           {captureMode === "local" ? (
@@ -237,9 +297,19 @@ export default function CaptureChat() {
                   <option value="SmolLM2-1.7B-Instruct-q4f16_1-MLC">SmolLM2 1.7B (stronger, ~1.8 GB graphics memory)</option>
                 </select>
               </label>
-              <button type="button" className="secondary-button" disabled={busy || modelReady}
+              <button type="button" className="secondary-button" disabled={busy || modelReady || requiresReload}
                 onClick={() => void prepareLocalModel()}>{modelReady ? "Model ready" : busy ? "Loading…" : "Download / load model"}</button>
               <p role="status" className="text-xs text-[var(--ink-soft)]">{modelStatus}</p>
+              {busy ? (
+                <button type="button" onClick={useBasicInstead} className="secondary-button">
+                  Use Offline basic instead
+                </button>
+              ) : null}
+              {requiresReload ? (
+                <button type="button" onClick={restartLocalAI} className="secondary-button">
+                  Restart local AI (reload page)
+                </button>
+              ) : null}
               <p className="text-xs text-[var(--ink-soft)]">WebLLM JavaScript is served by Noticing. Model weights and WASM are still downloaded from their publishers and use bandwidth; those hosts can see download metadata, never your chat text. The app does not send prompts to external inference services.</p>
             </div>
           ) : null}
@@ -255,9 +325,16 @@ export default function CaptureChat() {
             {busy ? "Analyzing…" : captureMode === "basic" ? "Find records offline" : "Analyze on this device"}
           </button>
           <button type="button" className="secondary-button"
+            disabled={saving}
             onClick={() => {
+              if (busy) {
+                operationRef.current += 1;
+                setBusy(false);
+                setModelReady(false);
+                setRequiresReload(true);
+              }
               setMessages([]); setInput(""); setDrafts([]); setQuestion(null);
-              setNotice(""); setErrors([]); setSavedCount(0);
+              setNotice(""); setErrors([]); setSavedCount(0); setSaveUncertain(false);
             }}>
             Clear this chat
           </button>
@@ -359,9 +436,10 @@ export default function CaptureChat() {
         <div className="glass-card space-y-3 p-5">
           <h2 className="text-lg font-semibold">Save reviewed records</h2>
           <button type="button" className="submit-button disabled:opacity-50"
-            disabled={saving || busy || drafts.every((d) => !d.approved)}
+            disabled={saving || busy || saveUncertain || drafts.every((d) => !d.approved)}
             onClick={() => void save()}>{saving ? "Saving…" : "Save approved records"}</button>
           {notice ? <p role="status" className="rounded-lg bg-white/75 p-3 text-sm">{notice}</p> : null}
+          {saveUncertain ? <p className="text-sm text-amber-900">Saving is temporarily disabled because the previous request may have succeeded. Check <Link href="/logs" className="underline font-semibold">Logs</Link> before attempting another save.</p> : null}
           {errors.length ? <ul className="list-disc pl-5 text-sm text-red-900">{errors.map((error, i) => <li key={i}>{error}</li>)}</ul> : null}
           {savedCount ? <p className="text-sm">
             View <Link href="/logs" className="font-semibold underline">Logs</Link> or
