@@ -10,6 +10,8 @@ import {
 } from "../../../lib/log-types";
 import { getActionConfig } from "../../../lib/action-config";
 import { EditableLog } from "./page";
+import { splitLogNotes } from "../../../lib/log-notes";
+import { ImportInfo } from "../../../components/LogNotes";
 
 type EditLogFormProps = {
   editableLog: EditableLog;
@@ -30,6 +32,7 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
   );
 
   const config = useMemo(() => getActionConfig(actionType), [actionType]);
+  const noteParts = splitLogNotes(editableLog.notes);
 
   const showEffect = config.fields.includes("effect");
   const showMeal = config.fields.includes("meal");
@@ -387,11 +390,12 @@ export function EditLogForm({ editableLog, updateLog }: EditLogFormProps) {
             <textarea
               name="notes"
               rows={5}
-              defaultValue={editableLog.notes ?? ""}
+              defaultValue={noteParts.displayNotes}
               className="mt-2 w-full bg-white/75 px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--leaf)]"
               placeholder={config.notesPlaceholder}
             />
           </label>
+          <ImportInfo metadata={noteParts.metadata} />
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <button type="submit" className="submit-button">
