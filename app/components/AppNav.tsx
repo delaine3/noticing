@@ -12,6 +12,7 @@ const navItems = [
   { href: "/", label: "Today" },
   { href: "/logs", label: "Logs" },
   { href: "/insights", label: "Insights" },
+  { href: "/import/chat", label: "Import chats" },
 ];
 type UserProfile = {
   id: string;
