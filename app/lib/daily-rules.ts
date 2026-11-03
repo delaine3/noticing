@@ -14,13 +14,16 @@ type NextAction = {
 };
 
 export const quickActions = [
+  { label: "Daily check-in", href: "/logs/new?type=Daily%20check-in" },
+  { label: "I slept", href: "/logs/new?type=Sleep" },
   { label: "I woke up", href: "/logs/new?type=Woke%20up" },
   { label: "I ate", href: "/logs/new?type=First%20meal" },
   { label: "I had a drink", href: "/logs/new?type=Water" },
   { label: "I went outside", href: "/logs/new?type=Sunlight" },
   { label: "I moved", href: "/logs/new?type=Movement" },
   { label: "I applied to a job", href: "/logs/new?type=Job%20application" },
-  { label: "I worked on my app", href: "/logs/new?type=App%20work" },
+  { label: "I followed up", href: "/logs/new?type=Job%20follow-up" },
+  { label: "I finished some work", href: "/logs/new?type=Focused%20work" },
   { label: "I had a recurring thought", href: "/logs/new?type=Recurring%20thought" },
 ];
 
@@ -73,6 +76,15 @@ export function getReportCardStyle(status: string) {
 }
 
 export function getNextActionCopy(logs: DailyLog[]): NextAction {
+  if (logs.length > 0 && !hasLog(logs, ["Daily check-in"])) {
+    return {
+      title: "A check-in could help",
+      body: "Record your mood, energy and stress today. This becomes useful when measured consistently over several days.",
+      href: "/logs/new?type=Daily%20check-in",
+      label: "Record a check-in",
+    };
+  }
+
   if (!hasLog(logs, ["Water", "Coffee"])) {
     return {
       title: "No drinks recorded yet",
