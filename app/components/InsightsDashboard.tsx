@@ -42,42 +42,29 @@ function getTotalWaterMl(logs: InsightLog[]) {
 }
 
 function getUsefulTruth(logs: InsightLog[]) {
-  const helpfulCount = logs.filter((log) => log.effect === "helpful").length;
-  const harmfulCount = logs.filter((log) => log.effect === "harmful").length;
-  const waterCount = logs.filter((log) => log.log_type === "Water").length;
-  const firstMealStats = getFirstMealStats(logs);
-
-  const movementCount = logs.filter((log) =>
-    [
-      "Movement",
-      "Exercise",
-      "Treadmill walk",
-      "Strength training",
-      "Yard Work",
-    ].includes(log.log_type),
-  ).length;
-
   if (!logs.length) {
-    return "No logs yet.";
+    return "No entries yet. Record an activity with a time or quantity to start.";
   }
 
-  if (firstMealStats.codeRedCount > 0) {
-    return "First meal is going feral on some days. Eat earlier. This is a major suffering multiplier.";
+  const firstMealStats = getFirstMealStats(logs);
+  const firstMealsWithTimes = firstMealStats.goldCount + firstMealStats.checkCount +
+    firstMealStats.lateCount + firstMealStats.codeRedCount;
+  const rated = logs.filter((log) => log.effect !== null).length;
+  const withNotes = logs.filter((log) => Boolean(log.notes?.trim())).length;
+
+  if (firstMealsWithTimes >= 3) {
+    const average = firstMealStats.average;
+    return "You recorded first-meal times on " + firstMealsWithTimes +
+      " days. The average was " +
+      (average === null ? "unavailable" :
+        String(Math.floor(average / 60)).padStart(2, "0") + ":" +
+        String(average % 60).padStart(2, "0")) +
+      ". Compare this with wake times and energy scores before drawing conclusions.";
   }
 
-  if (harmfulCount > helpfulCount) {
-    return "Harmful actions are outnumbering helpful ones. Shrink the day back to basics: water, food, sunlight, movement.";
-  }
-
-  if (waterCount === 0) {
-    return "No water logs. Start there. Hydration before existential analysis.";
-  }
-
-  if (movementCount === 0) {
-    return "No movement logs. Do it : Five minutes counts.";
-  }
-
-  return "The useful pattern is forming: collect evidence, support your body, then decide what the day needs.";
+  return "You have " + logs.length + " entries, " + rated +
+    " self-rated effects, and " + withNotes +
+    " notes. To investigate a pattern, log the same activity and a measurable result several times.";
 }
 
 export function InsightsDashboard({ logs }: InsightsDashboardProps) {
@@ -97,21 +84,20 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
 
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-            Pattern evidence
+            Your recorded patterns
           </h1>
 
           <p className="mt-4 max-w-2xl text-[var(--ink-soft)]">
-            This page turns your logs into patterns, charts, and useful
-            feedback.
+            Review recorded quantities, ratings, and timing. Look for repeated observations before changing a routine.
           </p>
         </div>
         <section className="glass-card mt-6  p-5 shadow-sm">
           <p className="text-md font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
-            Current read
+            What is measurable
           </p>
 
           <h2 className="mt-2 text-2xl font-semibold">
-            What the evidence says
+            What your entries show
           </h2>
 
           <p className="mt-3 max-w-3xl leading-7 text-[var(--ink-soft)]">
@@ -135,14 +121,14 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
 
           <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
-              Helpful actions
+              Rated helpful
             </p>
             <p className="mt-2 text-3xl font-semibold">{helpfulLogs}</p>
           </article>
 
           <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
-              Harmful actions
+              Rated harmful
             </p>
             <p className="mt-2 text-3xl font-semibold">{harmfulLogs}</p>
           </article>
@@ -194,10 +180,11 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
         <article className="glass-card  p-5 shadow-sm">
           <p className="text-md font-medium text-[var(--ink-soft)]">
-            Water logged
+            Drink volume recorded
           </p>
-          <p className="mt-2 text-3xl font-semibold">{totalWaterMl}ml</p>
+          <p className="mt-2 text-3xl font-semibold">{totalWaterMl} ml</p>
         </article>
+        <p className="mt-3 text-sm text-[var(--ink-soft)]">Includes any logged drink with a quantity, including coffee. Not a daily hydration assessment.</p>
         <ScoreTrendChart logs={logs} /> <Treadmill logs={logs} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <InsightNotes />
