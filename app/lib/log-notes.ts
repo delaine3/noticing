@@ -20,16 +20,15 @@ export function splitLogNotes(notes: string | null | undefined): LogNoteParts {
   const metadata: string[] = [];
   const clean = text.split(/\r?\n/).map((line) => {
     const result = line
-      .replace(IMPORT_MARKER, (match) => {
-        metadata.push(match);
-        return "";
-      })
       .replace(IMPORT_LABEL, (match) => {
         metadata.push(match);
         return "";
       })
-      .trim();
-    return result;
+      .replace(IMPORT_MARKER, (match) => {
+        metadata.push(match);
+        return "";
+      })
+      .trim();    return result;
   }).filter(Boolean).join("\n").trim();
 
   return { displayNotes: clean, metadata, isImported: metadata.length > 0 };
