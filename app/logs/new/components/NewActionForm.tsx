@@ -43,7 +43,7 @@ export function NewActionForm({
     <>
       <div className="glass-card text-[var(--ink)] text-[var(--leaf-dark)]">
         <p className="text-md font-medium uppercase tracking-[0.25em]">
-          Command
+          What to record
         </p>
 
         <h2 className="mt-2 text-2xl font-semibold tracking-tight">
@@ -133,7 +133,7 @@ export function NewActionForm({
         />
 
         <label className="block">
-          <span className="text-md font-medium text-stone-700">Notes</span>
+          <span className="text-md font-medium text-stone-700">Details or next step (optional)</span>
 
           <textarea
             name="notes"
@@ -144,7 +144,7 @@ export function NewActionForm({
         </label>
 
         <button type="submit" className="submit-button">
-          Save action
+          Save entry
         </button>
       </form>
     </>
