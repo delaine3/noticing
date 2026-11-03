@@ -28,7 +28,8 @@ export function splitLogNotes(notes: string | null | undefined): LogNoteParts {
         metadata.push(match);
         return "";
       })
-      .trim();    return result;
+      .trim();
+    return result;
   }).filter(Boolean).join("\n").trim();
 
   return { displayNotes: clean, metadata, isImported: metadata.length > 0 };
