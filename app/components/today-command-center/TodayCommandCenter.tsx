@@ -69,6 +69,7 @@ export function TodayCommandCenter({
         <div className="mt-5 flex flex-wrap gap-3">
           <Link href="/insights" className="secondary-button">Explore insights by life area</Link>
           <Link href="/insights/weekly" className="secondary-button">Review recent days</Link>
+          <Link href="/import/chat" className="secondary-button">Import conversations</Link>
         </div>
 
         <QuickLogCard />
