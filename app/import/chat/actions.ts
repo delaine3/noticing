@@ -78,7 +78,7 @@ export async function saveApprovedConversationItems(items: ApprovedItem[]): Prom
       item.durationMinutes !== undefined && item.logType !== "Treadmill walk"
         ? "Duration minutes: " + item.durationMinutes : null,
     ].filter(Boolean);
-    const notes = [...metrics, item.notes.trim(), "Approved from ChatGPT export.", marker]
+    const notes = [...metrics, item.notes.trim(), "Approved from reviewed import.", marker]
       .filter(Boolean).join("\n");
 
     const { error } = await supabase.from("logs").insert({
