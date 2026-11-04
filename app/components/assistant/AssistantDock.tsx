@@ -72,7 +72,10 @@ export function AssistantDock() {
   const logBottom = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.location.search.includes("assistant=open")) setOpen(true);
+    const id = window.setTimeout(() => {
+      if (window.location.search.includes("assistant=open")) setOpen(true);
+    }, 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
   useEffect(() => {
     logBottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
