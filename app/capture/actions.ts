@@ -1,6 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "../lib/supabase-server";
+import { revalidatePath } from "next/cache";
 import { type CaptureDraft, validCaptureDraft } from "../lib/capture-types";
 
 type SaveResult = { saved: number; duplicates: number; errors: string[] };
@@ -67,5 +68,10 @@ export async function saveCaptureDrafts(items: CaptureDraft[]): Promise<SaveResu
     else saved++;
   }
 
+  if (saved) {
+    revalidatePath("/");
+    revalidatePath("/logs");
+    revalidatePath("/insights");
+  }
   return { saved, duplicates, errors };
 }
