@@ -57,7 +57,7 @@ export function SleepCompanion({ events }: Props) {
       </p>
       {state.pendingBedtime ? (
         <>
-          <h2 className="mt-2 text-xl font-semibold">Good morning, whenever you're ready.</h2>
+          <h2 className="mt-2 text-xl font-semibold">Good morning, whenever you&apos;re ready.</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             You recorded bedtime {state.pendingBedtime.action_date}
             {state.pendingBedtime.action_time ? " at " + state.pendingBedtime.action_time.slice(0, 5) : ""}.
@@ -73,7 +73,7 @@ export function SleepCompanion({ events }: Props) {
           <h2 className="mt-2 text-xl font-semibold">Ready to wind down?</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             {sleepBenefitForDate(parts.date)} There is no obligation to go to bed at 9 PM.
-            Record when you're actually getting into bed.
+            Record when you&apos;re actually getting into bed.
           </p>
           <button type="button" className="submit-button mt-4 disabled:opacity-50"
             disabled={busy} onClick={() => void save("Bedtime")}>
@@ -82,7 +82,7 @@ export function SleepCompanion({ events }: Props) {
         </>
       ) : recentWake && state.lastNight ? (
         <>
-          <h2 className="mt-2 text-xl font-semibold">Last night's rest window</h2>
+          <h2 className="mt-2 text-xl font-semibold">Last night&apos;s rest window</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             {formatTimeInBed(state.lastNight.timeInBedMinutes)} between recorded bedtime and wake-up.
             This is <strong>time in bed</strong>, not measured sleep duration.
