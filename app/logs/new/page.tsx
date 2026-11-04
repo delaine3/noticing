@@ -3,6 +3,8 @@ import { actionTypes } from "../../lib/log-types";
 import { NewActionForm } from "./components/NewActionForm";
 import { createSupabaseServerClient } from "@/app/lib/supabase-server";
 import { getLogDisplayTitle } from "@/app/lib/log-title";
+import { cookies } from "next/headers";
+import { dayInTimeZone } from "@/app/lib/local-day";
 
 type NewLogPageProps = {
   searchParams?: Promise<{
@@ -170,7 +172,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
     .map((item) => item.title)
     .filter(Boolean);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = dayInTimeZone((await cookies()).get("noticing_timezone")?.value);
 
   return (
     <main className="min-h-screen px-6 py-10 text-black-950">
