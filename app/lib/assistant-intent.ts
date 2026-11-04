@@ -5,6 +5,7 @@ export type AssistantPending = {
   records: Proposed[];
   phase: "detail" | "confirm";
   requestedField: "water_amount_ml" | null;
+  requestedIndex?: number;
 };
 
 function localDate(date: Date) {
@@ -106,8 +107,8 @@ export function applyDetailReply(pending: AssistantPending, reply: string) {
   const value = extractVolume(reply) ??
     (/^\d+(?:\.\d+)?$/.test(reply.trim()) ? Number(reply.trim()) : null);
   if (value === null || value <= 0 || value > 5000) return null;
-  const records = pending.records.map((item) =>
-    (item.log_type === "Coffee" || item.log_type === "Water") && item.water_amount_ml === null
+  const records = pending.records.map((item, index) =>
+    index === (pending.requestedIndex ?? 0)
       ? { ...item, water_amount_ml: value }
       : item);
   return { records, phase: "confirm" as const, requestedField: null };
