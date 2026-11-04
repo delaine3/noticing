@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppNav } from "./components/AppNav";
 import { AssistantDock } from "./components/assistant/AssistantDock";
+import { TimezoneSync } from "./components/TimezoneSync";
 
 export const metadata: Metadata = {
   title: "Noticing",
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="app-bg">
+        <TimezoneSync />
         <AppNav />
         {children}
         <AssistantDock />
