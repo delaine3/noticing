@@ -50,3 +50,16 @@ test("clock parser recognizes midnight and noon", () => {
   assert.equal(interpretClock("at 12am"), "00:00");
   assert.equal(interpretClock("at 12pm"), "12:00");
 });
+
+test("a wake-up without time asks a useful follow-up and accepts plain 6am", () => {
+  const [wake] = understandActivity("I woke up today", now, fallback);
+  assert.equal(wake.action_time, "");
+  const q = nextQuestion([wake]);
+  assert.equal(q.field, "action_time");
+  const pending = {
+    records: [wake], phase: "detail", requestedField: q.field, requestedIndex: q.index,
+  };
+  const updated = applyDetailReply(pending, "6am");
+  assert.equal(updated.records[0].action_time, "06:00");
+  assert.equal(updated.phase, "confirm");
+});
