@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppNav } from "./components/AppNav";
+import { AssistantDock } from "./components/assistant/AssistantDock";
 
 export const metadata: Metadata = {
   title: "Noticing",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body className="app-bg">
         <AppNav />
         {children}
+        <AssistantDock />
       </body>
     </html>
   );
