@@ -53,7 +53,7 @@ export function understandActivity(
   const time = interpretClock(text);
   const result: Proposed[] = [];
 
-  if (/\b(?:i(?:'m| am)\s+(?:about to |going to |getting ready to )?(?:go to bed|sleep now|turn in)|i'm turning in|heading to bed)\b/i.test(text)) {
+  if (/\b(?:i(?:'m| am)\s+(?:about to |going to |getting ready to )?(?:go to bed|bed|sleep(?: now)?|turn in)|i'm turning in|heading to bed)\b/i.test(text)) {
     result.push(record("Bedtime", "Getting ready for bed", day, time || localTime(now), text));
   }
   if (/\bi\s+(?:just\s+)?(?:woke up|got out of bed|got up)\b/i.test(text)) {
