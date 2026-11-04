@@ -25,7 +25,7 @@ export function SleepCompanion({ events }: Props) {
 
   if (!now) return null;
   const parts = localClockParts(now);
-  const afterNine = now.getHours() >= 21;
+  const afterNine = now.getHours() >= 21 || now.getHours() < 3;
   const lastWake = state.lastNight?.wake;
   const lastWakeStamp = lastWake?.action_date && lastWake?.action_time
     ? Date.parse(lastWake.action_date + "T" + lastWake.action_time.slice(0, 5) + ":00")
