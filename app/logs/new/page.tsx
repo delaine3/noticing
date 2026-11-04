@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { actionTypes } from "../../lib/log-types";
 import { NewActionForm } from "./components/NewActionForm";
 import { createSupabaseServerClient } from "@/app/lib/supabase-server";
+import { getLogDisplayTitle } from "@/app/lib/log-title";
 
 type NewLogPageProps = {
   searchParams?: Promise<{
@@ -71,7 +72,7 @@ async function createLog(formData: FormData) {
     .insert({
       user_id: user.id,
       log_type: logType,
-      title: title || null,
+      title: getLogDisplayTitle({ log_type: logType, title, action_time: actionTime, water_amount_ml: waterAmountMl ? Number(waterAmountMl) : null, treadmill_distance_km: treadmillDistanceKm ? Number(treadmillDistanceKm) : null, workout_name: workoutName }),
       notes: notes || null,
       action_date: actionDate || new Date().toISOString().slice(0, 10),
       action_time: actionTime || null,
