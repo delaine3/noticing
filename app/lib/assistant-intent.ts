@@ -4,7 +4,7 @@ export type Proposed = CaptureAnalysis["proposed_records"][number];
 export type AssistantPending = {
   records: Proposed[];
   phase: "detail" | "confirm";
-  requestedField: "water_amount_ml" | null;
+  requestedField: "water_amount_ml" | "action_time" | null;
   requestedIndex?: number;
 };
 
@@ -96,10 +96,27 @@ export function nextQuestion(records: Proposed[]) {
       ? "About how much coffee was it, in ml? You can say “skip” if you're unsure."
       : "About how much water was it, in ml? You can say “skip” if you're unsure.",
   };
+  const wake = records.findIndex((item) => item.log_type === "Woke up" && !item.action_time);
+  if (wake >= 0) return {
+    field: "action_time" as const,
+    index: wake,
+    text: "What time did you wake up? You can say “6am”, “06:00”, or “skip”.",
+  };
   return null;
 }
 
 export function applyDetailReply(pending: AssistantPending, reply: string) {
+  if (pending.requestedField === "action_time") {
+    if (/^(?:skip|not sure|unknown|unsure)$/i.test(reply.trim())) {
+      return { ...pending, phase: "confirm" as const, requestedField: null };
+    }
+    const timed = interpretClock("at " + reply.trim()) ||
+      (/^(?:[01]\\d|2[0-3]):[0-5]\\d$/.test(reply.trim()) ? reply.trim() : "");
+    if (!timed) return null;
+    const records = pending.records.map((item, index) => index === (pending.requestedIndex ?? 0)
+      ? { ...item, action_time: timed } : item);
+    return { ...pending, records, phase: "confirm" as const, requestedField: null };
+  }
   if (pending.requestedField !== "water_amount_ml") return null;
   if (/^(?:skip|not sure|i don't know|unknown|no idea|unsure)$/i.test(reply.trim())) {
     return { ...pending, phase: "confirm" as const, requestedField: null };
