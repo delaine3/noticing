@@ -200,7 +200,9 @@ export function AssistantDock() {
         if (pending.phase === "detail") {
           const updated = applyDetailReply(pending, text);
           if (!updated) {
-            reply("Could you give an amount in ml, such as “250 ml”, or say “skip”?");
+            reply(pending.requestedField === "action_time"
+              ? "What time was that? Try “6am”, “06:00”, or “skip”."
+              : "Could you give an amount in ml, such as “250 ml”, or say “skip”?");
             return;
           }
           const next: Pending = { ...pending, ...updated };
