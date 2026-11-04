@@ -22,6 +22,7 @@ export type DailyLog = {
 export const actionTypes = [
   "Daily check-in",
   "Sleep",
+  "Bedtime",
   "Focused work",
   "Job follow-up",
   "Interview",
