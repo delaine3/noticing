@@ -11,11 +11,12 @@ type NextAction = {
   body: string;
   href: string;
   label: string;
+  benefit: string;
 };
 
 export const quickActions = [
   { label: "Daily check-in", href: "/logs/new?type=Daily%20check-in" },
-  { label: "I slept", href: "/logs/new?type=Sleep" },
+  { label: "Record sleep", href: "/logs/new?type=Sleep" },
   { label: "I woke up", href: "/logs/new?type=Woke%20up" },
   { label: "I ate", href: "/logs/new?type=First%20meal" },
   { label: "I had a drink", href: "/logs/new?type=Water" },
@@ -82,6 +83,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
       body: "Record your mood, energy and stress today. This becomes useful when measured consistently over several days.",
       href: "/logs/new?type=Daily%20check-in",
       label: "Record a check-in",
+      benefit: "Comparable daily scores can reveal changes worth investigating over time; one score alone does not establish a cause.",
     };
   }
 
@@ -91,6 +93,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
       body: "Already had a drink? Record its amount. Otherwise, get a drink when you need one and log it.",
       href: "/logs/new?type=Water",
       label: "Record a drink",
+      benefit: "Fluid intake supports circulation and temperature regulation. Recording amounts helps you see what you actually drank.",
     };
   }
 
@@ -100,6 +103,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
       body: "If you've eaten, log what and when. If not, plan your next meal based on your day.",
       href: "/logs/new?type=First%20meal",
       label: "Record a meal",
+      benefit: "Meal timing can help you examine patterns in appetite and energy without making food a moral score.",
     };
   }
 
@@ -109,6 +113,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
       body: "If you moved, record the activity and duration. Otherwise, a short walk or stretch is an option.",
       href: "/logs/new?type=Movement",
       label: "Record movement",
+      benefit: "A brief walk or stretch can reduce stiffness after sitting and gives you a practical break.",
     };
   }
 
@@ -117,6 +122,7 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
     body: "Write what you completed, how long it took, and what the next step is. You can also stop logging for now.",
     href: "/logs/new?type=App%20work",
     label: "Record a task",
+    benefit: "An explicit result and next step make follow-ups easier and reduce the effort of remembering unfinished work.",
   };
 }
 

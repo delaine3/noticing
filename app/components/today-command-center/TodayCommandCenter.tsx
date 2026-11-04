@@ -12,17 +12,21 @@ import { QuickLogCard } from "./QuickLogCard";
 import { ReportCard } from "./ReportCard";
 import { SummaryCard } from "../SummaryCard";
 import { TimelineCard } from "./TimeLineCard";
+import { SleepCompanion } from "../sleep/SleepCompanion";
+import type { SleepMoment } from "../../lib/sleep-utils";
 
 type TodayCommandCenterProps = {
   logs: DailyLog[];
   report: ReportItem[];
   buckets: TimeBucket[];
+  sleepEvents: SleepMoment[];
 };
 
 export function TodayCommandCenter({
   logs,
   report,
   buckets,
+  sleepEvents,
 }: TodayCommandCenterProps) {
   const nextAction = getNextActionCopy(logs);
   const totalWaterMl = getTotalWaterMl(logs);
@@ -44,6 +48,7 @@ export function TodayCommandCenter({
           </p>
         </div>
 
+        <SleepCompanion events={sleepEvents} />
         <CommandCard nextAction={nextAction} />
 
         <section className="mt-5 grid gap-3 sm:grid-cols-3">

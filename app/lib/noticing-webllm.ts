@@ -101,7 +101,7 @@ export async function resetLocalModel(modelId?: string) {
 }
 
 const logTypes = [
-  "Daily check-in", "Sleep", "Focused work", "Job follow-up", "Interview",
+  "Daily check-in", "Sleep", "Bedtime", "Focused work", "Job follow-up", "Interview",
   "Creative time", "Home improvement", "Personal observation", "First meal",
   "Job application", "Woke up", "Cook", "Wash Dishes", "Clean", "Meal",
   "Updated Resume", "Applied to Job", "Yard Work", "Dessert eaten",

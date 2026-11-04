@@ -2,13 +2,13 @@ import { DailyLog, getDailyReport, getTimeBuckets } from "./lib/daily-rules";
 import { TodayCommandCenter } from "./components/today-command-center/TodayCommandCenter";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "./lib/supabase-server";
-
-function getTodayDate() {
-  return new Date().toISOString().slice(0, 10);
-}
+import type { SleepMoment } from "./lib/sleep-utils";
+import { cookies } from "next/headers";
+import { dayInTimeZone } from "./lib/local-day";
 
 export default async function Home() {
-  const today = getTodayDate();
+  const zone = (await cookies()).get("noticing_timezone")?.value;
+  const today = dayInTimeZone(zone);
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -31,5 +31,19 @@ export default async function Home() {
   const report = getDailyReport(logs);
   const buckets = getTimeBuckets(logs);
 
-  return <TodayCommandCenter logs={logs} report={report} buckets={buckets} />;
+  // A night spans two calendar dates. Read recent bedtime/wake events
+  // independently of today's timeline, which contains only today's logs.
+  const since = new Date(Date.parse(today + "T12:00:00Z") - 10 * 86400000).toISOString().slice(0, 10);
+  const { data: moments, error: sleepError } = await supabase.from("logs")
+    .select("id, log_type, action_date, action_time")
+    .eq("user_id", user.id)
+    .in("log_type", ["Bedtime", "Woke up"])
+    .gte("action_date", since)
+    .order("action_date", { ascending: true })
+    .order("action_time", { ascending: true })
+    .limit(200);
+  if (sleepError) throw new Error(sleepError.message);
+
+  return <TodayCommandCenter logs={logs} report={report} buckets={buckets}
+    sleepEvents={(moments ?? []) as SleepMoment[]} />;
 }

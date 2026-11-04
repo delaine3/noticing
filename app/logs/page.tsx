@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "../lib/supabase-server";
 import LoadingLink from "../components/LoadingLink";
 import { PaginationControls } from "../components/PaginationControls";
 import { LogNotes } from "../components/LogNotes";
+import { getLogDisplayTitle } from "../lib/log-title";
 
 type LogsPageProps = {
   searchParams?: Promise<{
@@ -161,7 +162,7 @@ export default async function LogsPage({ searchParams }: LogsPageProps) {
                             </p>
 
                             <h2 className="mt-1 text-xl font-semibold">
-                              {log.title || "Untitled notice"}
+                              {getLogDisplayTitle(log)}
                             </h2>
                           </div>
 

@@ -1,6 +1,7 @@
 import { getEffectEmoji } from "../../lib/daily-rules";
 import { DailyLog } from "../../lib/log-types";
 import { LogNotes } from "../LogNotes";
+import { getLogDisplayTitle } from "../../lib/log-title";
 
 type TimelineLogProps = {
   log: DailyLog;
@@ -16,7 +17,7 @@ export function TimelineLog({ log }: TimelineLogProps) {
           </p>
 
           <h4 className="mt-1 font-semibold text-black-950">
-            {log.title || "Untitled action"}
+            {getLogDisplayTitle(log)}
           </h4>
 
           {log.treadmill_duration_minutes && log.treadmill_distance_km ? (

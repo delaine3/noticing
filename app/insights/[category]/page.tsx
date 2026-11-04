@@ -1,4 +1,5 @@
 import { LogNotes } from "../../components/LogNotes";
+import { getLogDisplayTitle } from "../../lib/log-title";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -151,7 +152,7 @@ export default async function InsightCategoryPage({ params }: Props) {
                     {formatLogDate(getLogDate(log))} · {log.log_type}
                   </p>
                   <h3 className="mt-1 text-lg font-semibold">
-                    {log.title || "No title entered"}
+                    {getLogDisplayTitle(log)}
                   </h3>
                   {describe(log) ? (
                     <p className="mt-2 text-sm font-semibold">

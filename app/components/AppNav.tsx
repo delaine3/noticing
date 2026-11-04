@@ -11,7 +11,6 @@ const navItems = [
   { href: "/", label: "Today" },
   { href: "/logs", label: "Logs" },
   { href: "/insights", label: "Insights" },
-  { href: "/capture", label: "Talk to Noticing" },
   { href: "/import/chat", label: "Import chats" },
 ];
 type UserProfile = {
@@ -113,10 +112,10 @@ export function AppNav() {
               );
             })}
             <LoadingLink
-              href="/logs/new"
+              href="/capture"
               className="flex h-full items-center bg-[rgba(63,127,99,0.88)] px-4 text-md font-semibold text-white transition hover:bg-[rgba(36,81,61,0.94)] sm:px-5"
             >
-              New log
+              Talk to Noticing
             </LoadingLink>
             <ProfileDropdown
               displayName={displayName}

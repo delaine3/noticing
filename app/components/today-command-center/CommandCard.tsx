@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getNextActionCopy } from "../../lib/daily-rules";
 import LoadingLink from "../LoadingLink";
 
@@ -21,6 +20,9 @@ export function CommandCard({ nextAction }: CommandCardProps) {
         {nextAction.body}
       </p>
 
+      <p className="mt-3 max-w-2xl rounded-lg bg-white/55 p-3 text-sm text-[var(--ink-soft)]">
+        <strong>Why it helps:</strong> {nextAction.benefit}
+      </p>
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
         <LoadingLink href={nextAction.href} className="submit-button">
           {nextAction.label}

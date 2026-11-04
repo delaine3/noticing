@@ -1,13 +1,10 @@
-import Link from "next/link";
 import { quickActions } from "../../lib/daily-rules";
 import LoadingLink from "../LoadingLink";
 
 export function QuickLogCard() {
   return (
-    <section className="glass-card">
-      <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
-        Quick log
-      </p>
+    <details className="glass-card">
+      <summary className="cursor-pointer text-sm font-semibold text-[var(--leaf-dark)]">Prefer buttons? Open manual quick actions</summary>
 
       <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {quickActions.map((action) => (
@@ -20,6 +17,6 @@ export function QuickLogCard() {
           </LoadingLink>
         ))}
       </div>
-    </section>
+    </details>
   );
 }

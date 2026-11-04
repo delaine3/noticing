@@ -9,7 +9,7 @@ export const insightAreas = [
     logType: "Sleep",
     recordPrompt: "Record sleep, a meal time, movement duration or drink quantity.",
     types: [
-      "Sleep", "Woke up", "First meal", "Meal", "Dessert eaten", "Dessert craving",
+      "Sleep", "Bedtime", "Woke up", "First meal", "Meal", "Dessert eaten", "Dessert craving",
       "Water", "Coffee", "Hygiene", "Sunlight", "Movement", "Exercise",
       "Treadmill walk", "Strength training", "Rest",
     ],
