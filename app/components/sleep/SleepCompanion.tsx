@@ -32,6 +32,12 @@ export function SleepCompanion({ events }: Props) {
     : 0;
   const recentWake = lastWakeStamp > now.getTime() - 36 * 3600000;
   const showCard = afterNine || !!state.pendingBedtime || recentWake;
+  const bedtimeTimestamp = state.pendingBedtime?.action_date && state.pendingBedtime?.action_time
+    ? Date.parse(state.pendingBedtime.action_date + "T" + state.pendingBedtime.action_time.slice(0, 5) + ":00")
+    : 0;
+  const bedtimeAgeMinutes = bedtimeTimestamp ? (now.getTime() - bedtimeTimestamp) / 60000 : null;
+  const newlyRecordedBedtime = bedtimeAgeMinutes !== null && bedtimeAgeMinutes >= 0 &&
+    bedtimeAgeMinutes < 240;
   if (!showCard) return null;
 
   async function save(kind: "Bedtime" | "Woke up") {
@@ -55,7 +61,15 @@ export function SleepCompanion({ events }: Props) {
       <p className="text-xs font-semibold uppercase tracking-wider text-[var(--leaf-dark)]">
         🌙 Your evening and morning
       </p>
-      {state.pendingBedtime ? (
+      {state.pendingBedtime && newlyRecordedBedtime ? (
+        <>
+          <h2 className="mt-2 text-xl font-semibold">Bedtime recorded. Rest well 🌙</h2>
+          <p className="mt-2 text-sm text-[var(--ink-soft)]">
+            You recorded getting into bed at {state.pendingBedtime.action_time?.slice(0, 5)}.
+            We&apos;ll ask for your wake time later, without guessing when you fell asleep.
+          </p>
+        </>
+      ) : state.pendingBedtime ? (
         <>
           <h2 className="mt-2 text-xl font-semibold">Good morning, whenever you&apos;re ready.</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
