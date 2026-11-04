@@ -3,13 +3,12 @@ import { TodayCommandCenter } from "./components/today-command-center/TodayComma
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "./lib/supabase-server";
 import type { SleepMoment } from "./lib/sleep-utils";
-
-function getTodayDate() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { cookies } from "next/headers";
+import { dayInTimeZone } from "./lib/local-day";
 
 export default async function Home() {
-  const today = getTodayDate();
+  const zone = (await cookies()).get("noticing_timezone")?.value;
+  const today = dayInTimeZone(zone);
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
