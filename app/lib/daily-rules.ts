@@ -15,7 +15,8 @@ type NextAction = {
 
 export const quickActions = [
   { label: "Daily check-in", href: "/logs/new?type=Daily%20check-in" },
-  { label: "I slept", href: "/logs/new?type=Sleep" },
+  { label: "Record sleep", href: "/logs/new?type=Sleep" },
+  { label: "Going to bed", href: "/?sleep=bedtime" },
   { label: "I woke up", href: "/logs/new?type=Woke%20up" },
   { label: "I ate", href: "/logs/new?type=First%20meal" },
   { label: "I had a drink", href: "/logs/new?type=Water" },
