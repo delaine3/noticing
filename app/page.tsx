@@ -34,7 +34,7 @@ export default async function Home() {
 
   // A night spans two calendar dates. Read recent bedtime/wake events
   // independently of today's timeline, which contains only today's logs.
-  const since = new Date(Date.now() - 10 * 86400000).toISOString().slice(0, 10);
+  const since = new Date(Date.parse(today + "T12:00:00Z") - 10 * 86400000).toISOString().slice(0, 10);
   const { data: moments, error: sleepError } = await supabase.from("logs")
     .select("id, log_type, action_date, action_time")
     .eq("user_id", user.id)
