@@ -104,7 +104,7 @@ export function AssistantDock() {
     }
     const messages = [{ role: "user" as const, content: text }];
     for (const modelId of [SMALL_MODEL, LARGE_MODEL]) {
-      if (operation.current < 0 || aiUnavailable) return null;
+      if (aiUnavailable) return null;
       try {
         const raw = await withOperationTimeout(
           ai.analyzeLocal({
@@ -246,7 +246,7 @@ export function AssistantDock() {
       if (!downloadAllowed) {
         setUnknownText(text);
         setStage("download-permission");
-        reply("I can try a more capable private assistant on your device. The first use may download up to about 2 GB of model files, using your internet data. Is that okay? Reply yes or no.");
+        reply("I can try a more capable private assistant on your device. The first use may download a substantial amount of model files (possibly over 2 GB in total), using your internet data. Is that okay? Reply yes or no.");
         return;
       }
       const found = await tryLocalModels(text);
