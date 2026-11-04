@@ -28,6 +28,14 @@ export const actionConfig: Record<string, ActionConfig> = {
     notesPlaceholder: "What happened? What might help next? Write observations, not predictions.",
     fields: ["mood", "energy", "intensity"],
   },
+  "Bedtime": {
+    heading: "Record when you went to bed",
+    instruction: "This is your bedtime, not proof that you fell asleep immediately. You can record wake-up tomorrow.",
+    titleLabel: "Bedtime note (optional)",
+    titlePlaceholder: "Example: went to bed around 9:30 PM",
+    notesPlaceholder: "Optional: what helped you wind down?",
+    fields: [],
+  },
   "Sleep": {
     heading: "Record last night's sleep",
     instruction: "Enter the hours you actually slept. Add how rested you feel and whether anything interrupted sleep.",
