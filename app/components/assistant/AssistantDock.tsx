@@ -80,10 +80,10 @@ export function AssistantDock() {
 
   if (pathname === "/login" || pathname === "/signup") return null;
   function reply(text: string) {
-    setMessages((prev) => [...prev, { role: "noticing", text }].slice(-32));
+    setMessages((prev) => [...prev, { role: "noticing" as const, text }].slice(-32));
   }
   function typed(text: string) {
-    setMessages((prev) => [...prev, { role: "me", text }].slice(-32));
+    setMessages((prev) => [...prev, { role: "me" as const, text }].slice(-32));
   }
   function startDrafts(records: Proposed[]) {
     const next = makePending(records, new Date());
