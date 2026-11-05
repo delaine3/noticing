@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../lib/supabase";
 
 export default function SignupPage() {
@@ -9,10 +10,16 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [adult, setAdult] = useState(false);
+  const [accepted, setAccepted] = useState(false);
 
   const router = useRouter();
 
   async function handleSignup() {
+    if (!adult || !accepted) {
+      alert("You must be 18 or older and accept the Terms and Privacy Notice.");
+      return;
+    }
     if (!email || !password || !fullName || !username) {
       alert("Please fill in all fields");
       return;
@@ -27,6 +34,9 @@ export default function SignupPage() {
         data: {
           full_name: fullName.trim(),
           username: normalizedUsername,
+          age_18_confirmed: adult,
+          legal_terms_accepted_at: new Date().toISOString(),
+          legal_terms_version: "2026-11-05",
         },
       },
     });
@@ -84,7 +94,15 @@ export default function SignupPage() {
           required
         />
 
-        <button type="submit" className="submit-button w-full">
+        <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={adult}
+          onChange={(e) => setAdult(e.target.checked)} required className="mt-1" />
+          I confirm I am at least 18 years old.</label>
+        <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={accepted}
+          onChange={(e) => setAccepted(e.target.checked)} required className="mt-1" />
+          <span>I have read and agree to the <Link className="underline" href="/terms">Terms</Link>
+          {" "}and acknowledge the <Link className="underline" href="/privacy">Privacy Notice</Link>.
+          Noticing is not a medical or crisis service.</span></label>
+        <button type="submit" disabled={!adult || !accepted} className="submit-button w-full disabled:opacity-50">
           Sign Up
         </button>
       </form>

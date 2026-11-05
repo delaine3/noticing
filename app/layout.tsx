@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { LegalFooter } from "./components/LegalFooter";
 import { AppNav } from "./components/AppNav";
 import { AssistantDock } from "./components/assistant/AssistantDock";
 import { TimezoneSync } from "./components/TimezoneSync";
@@ -21,6 +22,7 @@ export default function RootLayout({
         <AppNav />
         {children}
         <AssistantDock />
+        <LegalFooter />
       </body>
     </html>
   );

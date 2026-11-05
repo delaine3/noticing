@@ -75,7 +75,9 @@ export function AssistantDock() {
     logBottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, open]);
 
-  if (pathname === "/login" || pathname === "/signup") return null;
+  if (pathname === "/login" || pathname === "/signup" || pathname === "/privacy" ||
+      pathname === "/terms" || pathname === "/community-guidelines" || pathname === "/safety" ||
+      pathname === "/account") return null;
   function reply(text: string) {
     setMessages((prev) => [...prev, { role: "noticing" as const, text }].slice(-32));
   }
