@@ -356,7 +356,7 @@ export function AssistantDock() {
                 aria-label="Send message">Send</button>
             </div>
             <div className="mt-2 flex justify-between gap-2 text-xs text-[var(--ink-soft)]">
-              <span>I'll ask before saving.</span>
+              <span>I&apos;ll ask before saving.</span>
               <span className="flex items-center gap-3">
                 <Link href="/coaching/settings" onClick={() => setOpen(false)} className="underline">Privacy</Link>
                 <Link href="/logs/new" onClick={() => setOpen(false)} className="underline">Manual entry</Link>
