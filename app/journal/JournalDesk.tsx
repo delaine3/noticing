@@ -242,7 +242,7 @@ export function JournalDesk({ month, today, entries, journalReady }: {
     <div className="space-y-8">
       {journalReady ? <JournalComposer today={today} /> : (
         <p className="rounded-xl border border-[#b4b59e] bg-[#fff9e9] p-4 text-sm">
-          The journal isn't available right now. You can still read any check-in notes shown below.
+          The journal isn&apos;t available right now. You can still read any check-in notes shown below.
         </p>
       )}
       <section className="rounded-3xl bg-[linear-gradient(160deg,#eaf4e6_0%,#f5f5e7_47%,#f9ebdf_100%)] p-5 sm:p-8">
