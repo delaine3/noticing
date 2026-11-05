@@ -14,8 +14,8 @@ export default async function AccountDataPage() {
   return (
     <main className="min-h-[75vh] px-4 py-10">
       <section className="glass-card mx-auto max-w-3xl space-y-5 p-6">
-        <h1 className="text-3xl font-bold">Your data and privacy controls</h1>
-        <p>Your journal belongs to you. You can correct and delete individual logs in the Logs section.</p>
+        <h1 className="text-3xl font-bold">Your data</h1>
+        <p>You can edit or delete individual entries in Logs.</p>
         {demo ? (
           <p className="rounded-lg bg-amber-50 p-4 text-amber-950">
             This is a shared public demo. Do not enter private information. Export and account
@@ -23,8 +23,7 @@ export default async function AccountDataPage() {
           </p>
         ) : (
           <>
-            <p>Download a JSON copy of the records currently accessible through your account.
-              The export contains potentially sensitive information. Store it securely.</p>
+            <p>Download a copy of your entries. It may contain private information, so keep it somewhere safe.</p>
             <a href="/api/account/export" className="submit-button inline-block">Export my data (JSON)</a>
             <DeleteAccountForm />
           </>
