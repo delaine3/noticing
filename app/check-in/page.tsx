@@ -20,6 +20,8 @@ export default async function CheckInPage() {
     .lte("follow_up_at", new Date().toISOString())
     .order("follow_up_at", { ascending: true })
     .limit(3);
+  const { data: preference } = await supabase.from("coaching_preferences")
+    .select("fluid_restricted").eq("user_id", user.id).maybeSingle();
   const notInstalled = error?.code === "42P01" || error?.code === "PGRST205";
 
   return (
@@ -46,7 +48,7 @@ export default async function CheckInPage() {
         {(due ?? []).map((action) => (
           <FollowUpReview key={action.id} action={action as DueCoachingAction} />
         ))}
-        <CheckInFlow localDate={date} />
+        <CheckInFlow localDate={date} fluidRestricted={preference?.fluid_restricted ?? null} />
       </div>
     </main>
   );
