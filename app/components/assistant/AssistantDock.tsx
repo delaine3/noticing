@@ -148,8 +148,7 @@ export function AssistantDock() {
         reply("I couldn't finish saving every item. " + result.errors.join(" ").slice(0, 320));
       } else {
         reply(result.saved
-          ? "Saved " + result.saved + (result.saved === 1 ? " entry" : " entries") +
-            ". Thanks for telling me. 🌿"
+          ? "Saved " + result.saved + (result.saved === 1 ? " entry" : " entries") + "."
           : "These entries were already recorded.");
         setPending(null);
         setExpandDetails(false);
@@ -182,7 +181,7 @@ export function AssistantDock() {
           if (found?.length) startDrafts(found);
           else {
             setStage("more-info");
-            reply("I couldn't identify a specific completed activity. What happened, and when?");
+            reply("I didn't quite get that. What happened, and when?");
           }
         } catch (error) {
           reply(error instanceof Error ? error.message :
@@ -250,14 +249,11 @@ export function AssistantDock() {
         if (token !== operation.current) return;
         setUnknownText(text);
         setStage("cloud-permission");
-        reply("I can ask Cloudflare Workers AI to interpret only that message. " +
-          "Cloudflare says it doesn't train on customer prompts. May I send it? Reply yes or no.");
+        reply("Would you like me to use Cloudflare AI to understand that message? Only this message will be sent. Reply yes or no.");
         return;
       }
 
-      reply("I couldn't identify a completed activity from that wording. " +
-        "Try a specific action, such as ‘I just ate a fruit salad’. " +
-        "For less familiar phrasing, you can enable free Cloudflare AI in Coaching settings.");
+      reply("I didn't quite understand that. Try telling me what happened, like ‘I just ate a fruit salad’.");
     } catch {
       if (token !== operation.current) return;
       reply("I couldn't finish that request. Try basic recording or adjust your message.");
@@ -282,7 +278,7 @@ export function AssistantDock() {
         <section role="dialog" aria-label="Talk to Noticing"
           className="flex h-[min(76vh,620px)] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-[#f8f9f0] shadow-2xl">
           <header className="flex items-center justify-between bg-[#25543d] px-4 py-3 text-white">
-            <div><h2 className="font-semibold">🌿 Noticing</h2><p className="text-xs text-white/80">Your daily companion</p></div>
+            <div><h2 className="font-semibold">🌿 Noticing</h2><p className="text-xs text-white/80">Your journal</p></div>
             <button type="button" aria-label="Close assistant" onClick={() => setOpen(false)}
               className="rounded-lg px-2 py-1 text-xl hover:bg-white/20">×</button>
           </header>
