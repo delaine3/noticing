@@ -89,8 +89,8 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
 
   if (!hasLog(logs, ["Water", "Coffee"])) {
     return {
-      title: "No drinks recorded yet",
-      body: "Already had a drink? Record its amount. Otherwise, get a drink when you need one and log it.",
+      title: "Time for a drink?",
+      body: "Have some water if you need it, or tell Noticing about a drink you had.",
       href: "/logs/new?type=Water",
       label: "Record a drink",
       benefit: "Fluid intake supports circulation and temperature regulation. Recording amounts helps you see what you actually drank.",
@@ -99,8 +99,8 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
 
   if (!hasLog(logs, ["First meal", "Meal"])) {
     return {
-      title: "No meal recorded yet",
-      body: "If you've eaten, log what and when. If not, plan your next meal based on your day.",
+      title: "How about your next meal?",
+      body: "Food fuels your day. Record a meal or plan something nourishing.",
       href: "/logs/new?type=First%20meal",
       label: "Record a meal",
       benefit: "Meal timing can help you examine patterns in appetite and energy without making food a moral score.",
@@ -109,8 +109,8 @@ export function getNextActionCopy(logs: DailyLog[]): NextAction {
 
   if (!hasLog(logs, ["Movement", "Exercise", "Treadmill walk", "Strength training", "Yard Work"])) {
     return {
-      title: "No movement recorded yet",
-      body: "If you moved, record the activity and duration. Otherwise, a short walk or stretch is an option.",
+      title: "Take a movement break",
+      body: "A short walk or stretch can make a long sitting session easier.",
       href: "/logs/new?type=Movement",
       label: "Record movement",
       benefit: "A brief walk or stretch can reduce stiffness after sitting and gives you a practical break.",
@@ -180,7 +180,7 @@ function getMealReport(logs: DailyLog[]): ReportItem {
     label: "Meals",
     status: "neutral",
     emoji: "○",
-    message: "No meal entered today. This does not establish whether you ate.",
+    message: "Log your next meal when you get a chance.",
   };
 }
 
@@ -204,7 +204,7 @@ function getDrinkReport(logs: DailyLog[]): ReportItem {
     emoji: drinks.length ? "📝" : "○",
     message: drinks.length
       ? drinks.length + " drink entries, " + total + " ml recorded. Includes coffee and other liquids."
-      : "No drink quantities entered. This is not proof of zero intake.",
+      : "Record a drink to track your fluid goal.",
   };
 }
 
@@ -215,7 +215,7 @@ function getRecordedReport(logs: DailyLog[], label: string, types: string[], det
     status: count ? "check" : "neutral",
     emoji: count ? "📝" : "○",
     message: count ? count + " " + (count === 1 ? "entry" : "entries") + " recorded. " + detail :
-      "No entry recorded today.",
+      "Ready when you are.",
   };
 }
 
@@ -235,8 +235,8 @@ function getThoughtReport(logs: DailyLog[]): ReportItem | null {
 
 export function getWaterMessage(totalWaterMl: number) {
   return totalWaterMl > 0
-    ? "Total recorded drink volume, not a hydration target."
-    : "No drink volume entered yet.";
+    ? "See your progress toward the goal above."
+    : "Have a glass of water if you need one.";
 }
 
 export function getDailyReport(logs: DailyLog[]): ReportItem[] {
