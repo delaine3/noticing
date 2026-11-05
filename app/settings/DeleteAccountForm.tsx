@@ -49,8 +49,8 @@ export function DeleteAccountForm() {
     <section className="mt-8 rounded-xl border border-red-300 bg-red-50 p-5 text-red-950">
       <h2 className="text-xl font-semibold">Delete your account</h2>
       <p className="mt-2 text-sm">
-        This permanently deletes your account and saved entries. You can't undo it.
-        Download a copy of your data first if you'd like to keep it.
+        This permanently deletes your account and saved entries. You can&apos;t undo it.
+        Download a copy of your data first if you&apos;d like to keep it.
         Backups and security logs may take longer to disappear.
       </p>
       {!open ? (
