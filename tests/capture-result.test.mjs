@@ -54,3 +54,17 @@ test("hypothetical events do not generate local fallback records", () => {
   const result = resolve("1", "What if I walked 5 km today?", date, types);
   assert.equal(result.analysis.proposed_records.length, 0);
 });
+
+test("basic parser captures exact just-drank wording without inference", () => {
+  const result = extractLocalRecords("I just drank 500ml water", date);
+  assert.equal(result.proposed_records.length, 1);
+  assert.equal(result.proposed_records[0].log_type, "Water");
+  assert.equal(result.proposed_records[0].water_amount_ml, 500);
+});
+
+test("basic parser understands just-drank coffee without downloading a model", () => {
+  const result = extractLocalRecords("I've just had 250ml of coffee", date);
+  assert.equal(result.proposed_records.length, 1);
+  assert.equal(result.proposed_records[0].log_type, "Coffee");
+  assert.equal(result.proposed_records[0].water_amount_ml, 250);
+});
