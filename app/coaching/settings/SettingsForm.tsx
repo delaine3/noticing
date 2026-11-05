@@ -9,6 +9,7 @@ export type CoachingSettings = {
   fluid_restricted: boolean | null;
   all_drinks_logged: boolean;
   allow_checkin_invites: boolean;
+  max_daily_invites: number;
   cloud_enabled: boolean;
 };
 
@@ -23,6 +24,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
   );
   const [complete, setComplete] = useState(settings.all_drinks_logged);
   const [invites, setInvites] = useState(settings.allow_checkin_invites);
+  const [inviteCount, setInviteCount] = useState(settings.max_daily_invites);
   const [cloud, setCloud] = useState(settings.cloud_enabled);
   const [consent, setConsent] = useState(settings.cloud_enabled);
   const [busy, setBusy] = useState(false);
@@ -36,6 +38,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
         fluidRestricted: restriction === "unknown" ? null : restriction === "yes",
         allDrinksLogged: complete,
         allowInvites: invites,
+        maxDailyInvites: inviteCount,
         cloudEnabled: cloud,
         cloudConsent: cloud && consent,
       });
@@ -83,8 +86,19 @@ export function SettingsForm({ settings, cloudConfigured }: {
         <label className="flex gap-3 text-sm">
           <input type="checkbox" checked={invites} onChange={(e) => setInvites(e.target.checked)}
             className="mt-1 accent-[#25543d]"/>
-          Show an occasional check-in invitation on Today (maximum two per day)
+          Show optional check-in invitations on Today
         </label>
+        <label className="block text-sm">
+          How many check-in invitations would you like per day?
+          <input type="number" min={0} max={24} step={1}
+            value={inviteCount}
+            onChange={(e) => setInviteCount(Number(e.target.value))}
+            className="mt-2 block w-28 rounded-lg border p-3" />
+        </label>
+        <p className="text-sm text-[var(--ink-soft)]">
+          Set 0 for none or choose up to 24. This controls optional reminders on Today,
+          not how often you can check in. You can start a check-in whenever you like.
+        </p>
         <p className="text-sm text-[var(--ink-soft)]">
           Follow-up questions appear only when your answers make them useful.
           Follow-up reviews happen only when you explicitly request them.
