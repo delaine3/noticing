@@ -283,7 +283,7 @@ export default function ChatImportReview() {
         </>
       ) : conversations.length ? (
         <section className="glass-card">
-          <p>I couldn't find entries to suggest in this file. Nothing was uploaded.</p>
+          <p>I couldn&apos;t find entries to suggest in this file. Nothing was uploaded.</p>
         </section>
       ) : null}
     </div>
