@@ -67,7 +67,7 @@ export default function PrivacyPage() {
         in the app. Visit <Link href="/account">Your data</Link> to download a JSON copy of
         your records or delete your account yourself in Settings, after confirming your
         password. You don&apos;t need to email us to delete your account. For requests that
-        can't be handled in the app, you can use the contact address above.
+        can&apos;t be handled in the app, you can use the contact address above.
         You can complain to the relevant data-protection authority if your rights are not respected.
       </p>
       <h2>Children and cookies</h2>
