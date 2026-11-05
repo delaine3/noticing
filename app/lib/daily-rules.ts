@@ -79,10 +79,10 @@ export function getReportCardStyle(status: string) {
 
 export function getNextActionCopy(
   logs: DailyLog[],
-  coaching?: { checkinCount: number; latestCheckIn: CheckInValues | null },
+  coaching?: { checkinCount: number; latestCheckIn: CheckInValues | null; fluidRestricted: boolean | null },
 ): NextAction {
   if (coaching?.latestCheckIn) {
-    const recommended = recommendNextAction(coaching.latestCheckIn);
+    const recommended = recommendNextAction(coaching.latestCheckIn, { fluidRestricted: coaching.fluidRestricted });
     return {
       title: recommended.title,
       body: recommended.next,
