@@ -35,7 +35,7 @@ export default function TermsPage() {
       <p>
         Follow our <Link href="/community-guidelines">community guidelines</Link>.
         Do not misuse accounts, attempt to bypass security controls, disrupt the service,
-        scrape other users' data, upload illegal content, or expose personal information
+        scrape other users&apos; data, upload illegal content, or expose personal information
         without a lawful basis.
       </p>
       <h2>Availability and changes</h2>
