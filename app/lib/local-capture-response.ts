@@ -1,21 +1,9 @@
-import type { CaptureAnalysis, CaptureMessage, CaptureType } from "./capture-types";
+import type { CaptureAnalysis, CaptureType } from "./capture-types";
 
 /**
- * WebLLM 0.2.87 can throw in the WASM grammar matcher for unschematized
- * response_format: { type: "json_object" }. Use ordinary text completion
- * with a JSON-only instruction and validate the response on-device.
+ * Validate structured extraction returned by the optional consented cloud AI.
+ * Model text is untrusted until category, date and numeric ranges are checked.
  */
-export function createLocalCompletionRequest(
-  prompt: string,
-  transcript: CaptureMessage[],
-) {
-  return {
-    messages: [{ role: "system" as const, content: prompt }, ...transcript],
-    temperature: 0.1,
-    max_tokens: 1400,
-  };
-}
-
 const numberLimits = {
   water_amount_ml: 5000,
   treadmill_distance_km: 100,
@@ -59,12 +47,12 @@ function readJson(raw: string): unknown {
   }
   try { return JSON.parse(text); }
   catch {
-    // Small local models sometimes preface JSON with prose. Accept an object
+    // Cloud models sometimes preface JSON with prose. Accept an object
     // only when it can be parsed completely after trimming surrounding text.
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
-    if (start === -1) throw new Error("Local model did not return JSON.");
-    if (end <= start) throw new Error("Local model returned incomplete JSON.");
+    if (start === -1) throw new Error("AI response did not return JSON.");
+    if (end <= start) throw new Error("AI response returned incomplete JSON.");
     try { return JSON.parse(text.slice(start, end + 1)); }
     catch { throw new Error("Local model returned incomplete JSON."); }
   }
@@ -75,9 +63,9 @@ export function parseLocalCaptureResponse(
   allowedTypes: readonly string[],
 ): CaptureAnalysis {
   const root = object(readJson(raw));
-  if (!root) throw new Error("Local model response was not a JSON object.");
+  if (!root) throw new Error("AI response was not a JSON object.");
   const proposals = root.proposed_records;
-  if (!Array.isArray(proposals)) throw new Error("Local model omitted its proposed records.");
+  if (!Array.isArray(proposals)) throw new Error("AI response omitted its proposed records.");
   const allowed = new Set(allowedTypes);
 
   const records: CaptureAnalysis["proposed_records"] = [];
