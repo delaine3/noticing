@@ -86,18 +86,18 @@ export function getNextActionCopy(
     return {
       title: recommended.title,
       body: recommended.next,
-      href: "/capture",
-      label: "Tell Noticing how it went",
+      href: "/journal",
+      label: "Write a note",
       benefit: recommended.benefit,
     };
   }
   if (logs.length > 0 && !coaching?.checkinCount && !hasLog(logs, ["Daily check-in"])) {
     return {
       title: "A check-in could help",
-      body: "Record your mood, energy and stress today. This becomes useful when measured consistently over several days.",
+      body: "How are you feeling today? A quick check-in can help you look back later.",
       href: "/logs/new?type=Daily%20check-in",
       label: "Record a check-in",
-      benefit: "Comparable daily scores can reveal changes worth investigating over time; one score alone does not establish a cause.",
+      benefit: "Checking in regularly can help you notice changes over time.",
     };
   }
 
@@ -117,7 +117,7 @@ export function getNextActionCopy(
       body: "Food fuels your day. Record a meal or plan something nourishing.",
       href: "/logs/new?type=First%20meal",
       label: "Record a meal",
-      benefit: "Meal timing can help you examine patterns in appetite and energy without making food a moral score.",
+      benefit: "Your meal notes may help you spot changes in appetite or energy.",
     };
   }
 
@@ -229,7 +229,7 @@ function getRecordedReport(logs: DailyLog[], label: string, types: string[], det
     status: count ? "check" : "neutral",
     emoji: count ? "📝" : "○",
     message: count ? count + " " + (count === 1 ? "entry" : "entries") + " recorded. " + detail :
-      "Ready when you are.",
+      "Nothing recorded yet.",
   };
 }
 
