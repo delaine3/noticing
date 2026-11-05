@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 const tables = [
   "profiles", "logs", "strength_sets", "coaching_preferences",
   "wellness_checkins", "coaching_interventions", "coaching_outcomes",
-  "coaching_cloud_usage",
+  "coaching_cloud_usage", "login_events", "journal_entries",
 ] as const;
 
 async function fetchAll(supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
@@ -26,7 +26,7 @@ async function fetchAll(supabase: Awaited<ReturnType<typeof createSupabaseServer
     rows.push(...next);
     if (next.length < batch) return { rows, unavailable: false };
   }
-  throw new Error("Export exceeds safety limit. Contact support for a complete copy.");
+  throw new Error("This export is too large to complete here.");
 }
 
 export async function GET() {
@@ -60,7 +60,7 @@ export async function GET() {
       },
     });
   } catch {
-    return NextResponse.json({ error: "Export could not be completed. Contact the privacy address." },
+    return NextResponse.json({ error: "We couldn\'t download your data. Please try again later." },
       { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }
