@@ -3,18 +3,25 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingReviews }: {
-  todayCount: number; invitesEnabled: boolean; pendingReviews: number;
+export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingReviews, lastCheckinAt }: {
+  todayCount: number; invitesEnabled: boolean; pendingReviews: number; lastCheckinAt: string | null;
 }) {
   const [hour, setHour] = useState<number | null>(null);
+  const [dismissed, setDismissed] = useState(false);
   useEffect(() => {
-    const t = window.setTimeout(() => setHour(new Date().getHours()), 0);
+    const t = window.setTimeout(() => {
+      setHour(new Date().getHours());
+      setDismissed(window.localStorage.getItem("noticing_checkin_dismissed") ===
+        new Date().toLocaleDateString("en-CA"));
+    }, 0);
     return () => window.clearTimeout(t);
   }, []);
   if (!invitesEnabled && pendingReviews === 0) return null;
-  const offer = invitesEnabled && hour !== null &&
+  const longEnoughSinceCheckin = !lastCheckinAt ||
+    Date.now() - new Date(lastCheckinAt).getTime() >= 4 * 3600000;
+  const offer = !dismissed && invitesEnabled && hour !== null &&
     ((todayCount === 0 && hour >= 9 && hour <= 21) ||
-     (todayCount === 1 && hour >= 17 && hour <= 21));
+     (todayCount === 1 && hour >= 17 && hour <= 21 && longEnoughSinceCheckin));
   if (!offer && !pendingReviews) return null;
 
   return (
@@ -32,9 +39,18 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingRevie
             : "A short check-in can help you decide what your body and mind need next."}
         </p>
       </div>
-      <Link href="/check-in" className="submit-button">
-        {pendingReviews > 0 ? "Review outcome" : "Check in"}
-      </Link>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link href="/check-in" className="submit-button">
+          {pendingReviews > 0 ? "Review outcome" : "Check in"}
+        </Link>
+        {!pendingReviews ? (
+          <button type="button" className="text-sm underline" onClick={() => {
+            window.localStorage.setItem("noticing_checkin_dismissed",
+              new Date().toLocaleDateString("en-CA"));
+            setDismissed(true);
+          }}>Not today</button>
+        ) : null}
+      </div>
     </section>
   );
 }
