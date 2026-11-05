@@ -69,7 +69,7 @@ export default function PrivacyPage() {
       <h2>Children and cookies</h2>
       <p>
         Noticing is intended for adults aged 18 or older, not children. Noticing uses cookies to keep you signed in and remember your timezone.
-        We don't use advertising trackers. Our hosting and security providers may collect
+        We do not use advertising trackers. Our hosting and security providers may collect
         technical information needed to run the service.
       </p>
       <h2>Updates</h2>
