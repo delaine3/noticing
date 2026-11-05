@@ -56,9 +56,6 @@ export function TodayCommandCenter({
             Today, as recorded
           </h1>
 
-          <p className="mt-4 max-w-2xl text-black-700">
-            Your day, your wellbeing and the next useful thing.
-          </p>
         </div>
 
         <SleepCompanion events={sleepEvents} />
@@ -89,7 +86,6 @@ export function TodayCommandCenter({
           <Link href="/insights" className="secondary-button">Explore insights by life area</Link>
           <Link href="/insights/weekly" className="secondary-button">Review recent days</Link>
           <Link href="/import/chat" className="secondary-button">Import conversations</Link>
-          <Link href="/capture" className="submit-button">Tell Noticing what happened</Link>
         </div>
 
         <QuickLogCard />
