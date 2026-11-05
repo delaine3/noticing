@@ -41,7 +41,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
       ...values,
     });
   };
-  const distance = text.match(/\bI\s+(?:walked|ran|completed|did|finished)\s+(\d{1,2}(?:\.\d+)?)\s*(?:km|kilomet(?:er|re)s?)\b/i);
+  const distance = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:walked|ran|completed|did|finished)|I['’]ve\s+(?:just\s+)?(?:walked|run|completed|finished))\s+(\d{1,2}(?:\.\d+)?)\s*(?:km|kilomet(?:er|re)s?)\b/i);
   if (distance) {
     const km = Number(distance[1]);
     if (km > 0 && km <= 100) {
@@ -67,7 +67,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
       add(water[3].toLowerCase() === "coffee" ? "Coffee" : "Water",
         water[3] + ": " + volume + " ml", water[0], { water_amount_ml: volume });
   }
-  const slept = text.match(/\bI\s+(?:slept|got)\s+(?:for\s+)?(\d+(?:\.\d+)?)\s*hours?\b/i);
+  const slept = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:slept|got)|I['’]ve\s+(?:just\s+)?(?:slept|got))\s+(?:for\s+)?(\d+(?:\.\d+)?)\s*hours?\b/i);
   if (slept) {
     const hours = Number(slept[1]);
     if (hours > 0 && hours <= 24)
@@ -76,7 +76,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
   // Capture ordinary completed meals without network or multi-GB AI downloads.
   // "Had" can describe a meeting or a problem, so require food vocabulary
   // unless the user explicitly says ate/eaten. No inferred first meal.
-  const meal = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:ate|eaten)|I['’]ve\s+(?:just\s+)?eaten|I\s+(?:just\s+)?had(?:\s+for\s+(?:breakfast|lunch|dinner))?)\s+([^.!?;]{2,150})/i);
+  const meal = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:ate|eaten)|I['’]ve\s+(?:just\s+)?eaten|I\s+(?:just\s+)?had(?:\s+for\s+(?:breakfast|lunch|dinner))?|I\s+(?:just\s+)?finished)\s+([^.!?;]{2,150})/i);
   if (meal) {
     const verb = meal[0].slice(0, meal[0].length - meal[1].length);
     const explicitEating = /\b(?:ate|eaten)\b/i.test(verb);
@@ -107,13 +107,13 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
     }
   }
 
-  const garden = text.match(/\b(?:I\s+|and\s+)(?:watered|pruned|planted|repotted|mulched)\s+(?:my\s+|the\s+)?(?:garden|roses?|plants?|trees?|avocados?)\b/i);
+  const garden = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?|I['’]ve\s+(?:just\s+)?|and\s+)(?:watered|pruned|planted|repotted|mulched)\s+(?:my\s+|the\s+)?(?:garden|roses?|plants?|trees?|avocados?)\b/i);
   if (garden) add("Plant care", "Garden care", garden[0]);
-  const outreach = text.match(/\bI\s+(?:sent|emailed|submitted)\s+(?:(\d+)\s+)?(?:proposals?|outreach emails?|applications?)\b/i);
+  const outreach = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?|I['’]ve\s+(?:just\s+)?)(?:sent|emailed|submitted)\s+(?:(\d+)\s+)?(?:proposals?|outreach emails?|job applications?|applications?)\b/i);
   if (outreach) add(/application/i.test(outreach[0]) ? "Job application" : "Focused work",
     (outreach[1] ? outreach[1] + " " : "") + (/(?:applications?)/i.test(outreach[0]) ? "Applications sent" : "Outreach sent"),
     outreach[0]);
-  const creativity = text.match(/\bI\s+(?:photographed|painted|drew|sketched|wrote|filmed)\s+[^.!?]{2,70}/i);
+  const creativity = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?|I['’]ve\s+(?:just\s+)?)(?:photographed|painted|drew|sketched|written|wrote|filmed)\s+[^.!?]{2,70}/i);
   if (creativity) add("Creative time", "Creative activity", creativity[0]);
 
   return {
