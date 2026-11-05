@@ -94,7 +94,8 @@ export function SettingsForm({ settings, cloudConfigured }: {
       <div className="space-y-3 border-t border-[var(--border-soft)] pt-5">
         <h2 className="text-xl font-semibold">Optional cloud language understanding</h2>
         <p className="text-sm">
-          Your normal check-ins and wellness recommendations run locally.
+          Simple activity reports and coaching recommendations use built-in rules, not a language model.
+          Saved check-ins still sync to your private Supabase account.
           Cloudflare Workers AI can help interpret unusual descriptions if you allow it.
         </p>
         <p className="text-sm text-[var(--ink-soft)]">
