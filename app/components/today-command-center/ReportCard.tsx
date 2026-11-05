@@ -10,8 +10,8 @@ export function ReportCard({ report }: ReportCardProps) {
   return (
     <CollapsibleSection
       eyebrow="Today's records"
-      title="What is recorded"
-      summary={`${report.length} categories. See today's activity summaries.`}
+      title="Your entries"
+      summary={`${report.length} types of entries today.`}
       defaultOpen
     >
       <div className="grid gap-3 md:grid-cols-2">
