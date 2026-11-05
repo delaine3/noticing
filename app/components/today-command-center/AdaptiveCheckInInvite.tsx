@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingReviews, lastCheckinAt }: {
-  todayCount: number; invitesEnabled: boolean; pendingReviews: number; lastCheckinAt: string | null;
+export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, maxDailyInvites, pendingReviews, lastCheckinAt }: {
+  todayCount: number; invitesEnabled: boolean; maxDailyInvites: number;
+  pendingReviews: number; lastCheckinAt: string | null;
 }) {
   const [hour, setHour] = useState<number | null>(null);
   const [nowMs, setNowMs] = useState<number | null>(null);
@@ -20,11 +21,14 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingRevie
     return () => window.clearTimeout(t);
   }, []);
   if (!invitesEnabled && pendingReviews === 0) return null;
+  // There is no cap on manual check-ins. This only determines whether Today
+  // suggests another check-in, with a spacing interval based on preferences.
+  const desired = Number.isInteger(maxDailyInvites) ? Math.max(0, Math.min(24, maxDailyInvites)) : 2;
+  const gapMinutes = Math.max(20, Math.round((14 * 60) / Math.max(1, desired)));
   const longEnoughSinceCheckin = !lastCheckinAt ||
-    (nowMs !== null && nowMs - new Date(lastCheckinAt).getTime() >= 4 * 3600000);
-  const offer = !dismissed && invitesEnabled && hour !== null &&
-    ((todayCount === 0 && hour >= 9 && hour <= 21) ||
-     (todayCount === 1 && hour >= 17 && hour <= 21 && longEnoughSinceCheckin));
+    (nowMs !== null && nowMs - new Date(lastCheckinAt).getTime() >= gapMinutes * 60000);
+  const offer = !dismissed && invitesEnabled && desired > 0 && hour !== null &&
+    hour >= 8 && hour <= 22 && todayCount < desired && longEnoughSinceCheckin;
   if (!offer && !pendingReviews) return null;
 
   return (

@@ -10,6 +10,7 @@ import { supabase } from "../lib/supabase";
 const navItems = [
   { href: "/", label: "Today" },
   { href: "/logs", label: "Logs" },
+  { href: "/journal", label: "🌷 Journal" },
   { href: "/insights", label: "Insights" },
   { href: "/import/chat", label: "Import chats" },
 ];

@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { getAdaptiveQuestions, recommendNextAction, type CheckInValues, type ThoughtTopic, type QuestionKey } from "../lib/coaching";
 import { saveWellnessCheckIn } from "../coaching/actions";
+import { saveJournalEntry } from "../journal/actions";
 
 type Answers = Omit<CheckInValues, "energy" | "mood" | "stress" | "thought_topic"> & {
   energy: number | null; mood: number | null; stress: number | null; thought_topic: ThoughtTopic | null;
@@ -55,7 +56,10 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [stage, setStage] = useState<Stage>("core");
   const [answeredExtra, setAnsweredExtra] = useState<QuestionKey[]>([]);
-  const [saveThoughtText, setSaveThoughtText] = useState(false);
+  const [draftMessage, setDraftMessage] = useState("");
+  const journalDraftId = useRef<string | null>(null);
+  const draftTimer = useRef<number | null>(null);
+  const draftInFlight = useRef<Promise<unknown>>(Promise.resolve());
   const [followUp, setFollowUp] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -96,25 +100,62 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
     setAnswers(emptyAnswers());
     setStage("core");
     setAnsweredExtra([]);
-    setSaveThoughtText(false);
+    setDraftMessage("");
+    journalDraftId.current = null;
     setFollowUp(false);
     setMessage("");
     requestKey.current = null;
   }
+
+  // A check-in reflection is a diary entry even before its ratings are submitted.
+  // Recover typed text as a private draft; submitting the check-in attaches the
+  // note to the check-in and deletes the redundant draft.
+  useEffect(() => {
+    const body = answers.thought_detail ?? "";
+    if (!body.trim() || stage !== "review" || busy) return;
+    journalDraftId.current ??= crypto.randomUUID();
+    const id = journalDraftId.current;
+    const timer = window.setTimeout(() => {
+      // Queue drafts, so an older save never runs after a newer one.
+      draftInFlight.current = draftInFlight.current.then(async () => {
+        const result = await saveJournalEntry({
+          id, entryDate: localDate, title: "Check-in reflection",
+          body, status: "draft", origin: "checkin_draft",
+        });
+        setDraftMessage(result.ok ? "Draft saved privately" : result.message);
+      }).catch(() => setDraftMessage("Draft not saved. Save your check-in to retain the text."));
+    }, 950);
+    draftTimer.current = timer;
+    return () => window.clearTimeout(timer);
+  }, [answers.thought_detail, localDate, stage, busy]);
 
   async function save() {
     if (!values || busy) return;
     setBusy(true);
     setMessage("");
     try {
+      // Flush the current text before saving, so fast navigation cannot discard
+      // a pending autosave. The check-in write still saves the note itself.
+      if (draftTimer.current) window.clearTimeout(draftTimer.current);
+      await draftInFlight.current;
+      const noteText = values.thought_detail?.trim();
+      if (noteText && journalDraftId.current) {
+        const draft = await saveJournalEntry({
+          id: journalDraftId.current, entryDate: localDate,
+          title: "Check-in reflection", body: noteText,
+          status: "draft", origin: "checkin_draft",
+        });
+        if (!draft.ok) setDraftMessage(draft.message);
+      }
       requestKey.current ??= crypto.randomUUID();
       const result = await saveWellnessCheckIn({
         values: {
           ...values,
-          thought_detail: saveThoughtText ? (values.thought_detail?.trim() || null) : null,
+          thought_detail: values.thought_detail?.trim() || null,
         },
         requestKey: requestKey.current,
         localDate, followUp,
+        journalDraftId: journalDraftId.current,
       });
       setMessage(result.message);
       if (result.ok) setStage("saved");
@@ -188,24 +229,19 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
           <p className="rounded-lg bg-white/75 p-3 text-sm">
             <strong>Why:</strong> {suggestion.benefit}
           </p>
-          {answers.thought_topic !== "prefer_not_to_say" ? (
-            <details className="rounded-lg border border-[var(--border-soft)] p-3 text-sm">
-              <summary className="cursor-pointer font-medium">Add a private note (optional)</summary>
-              <label className="mt-3 block">
-                What&apos;s on your mind?
-                <textarea rows={2} maxLength={600}
-                  value={answers.thought_detail ?? ""}
-                  onChange={(e) => setAnswers((old) => ({ ...old, thought_detail: e.target.value }))}
-                  className="mt-1 block w-full rounded border p-2" />
-              </label>
-              <label className="mt-2 flex gap-2">
-                <input type="checkbox" checked={saveThoughtText}
-                  onChange={(e) => setSaveThoughtText(e.target.checked)} />
-                Save this note with my check-in
-              </label>
-              {!saveThoughtText ? <p className="mt-1 text-xs text-[var(--ink-soft)]">The note won&apos;t be stored.</p> : null}
-            </details>
-          ) : null}
+          <section className="space-y-2 rounded-xl border border-[var(--border-soft)] bg-white/80 p-4">
+            <label htmlFor="checkin-thoughts" className="block font-semibold">Your private thoughts</label>
+            <p className="text-sm text-[var(--ink-soft)]">
+              Write as much as you want. Your text is automatically saved as a private draft,
+              then attached to this check-in when you save. It will appear in Journal.
+            </p>
+            <textarea id="checkin-thoughts" rows={6} maxLength={12000}
+              placeholder="What have you been thinking about? What happened today?"
+              value={answers.thought_detail ?? ""}
+              onChange={(e) => { setAnswers((old) => ({ ...old, thought_detail: e.target.value })); setDraftMessage("Saving draft…"); }}
+              className="block w-full rounded-lg border border-[var(--border-soft)] bg-white p-3 leading-relaxed" />
+            <p role="status" className="text-xs text-[var(--ink-soft)]">{draftMessage || "Only you can read this text while signed in."}</p>
+          </section>
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" checked={followUp} onChange={(e) => setFollowUp(e.target.checked)}
               className="mt-1 accent-[#25543d]" />
@@ -227,6 +263,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
           <p>{message}</p>
           <div className="flex flex-wrap gap-3">
             <button type="button" onClick={reset} className="submit-button">Check in again</button>
+            <Link href="/journal" className="secondary-button">View your journal</Link>
             <Link href="/" className="secondary-button">Back to Today</Link>
           </div>
         </>
@@ -234,7 +271,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
 
       {message && stage !== "saved" ? <p role="status" className="text-sm text-amber-900">{message}</p> : null}
       <p className="text-xs text-[var(--ink-soft)]">
-        You can skip additional questions. Personal thoughts are saved only when you opt in.
+        You can skip additional questions. Your written reflections are saved privately and can be edited or deleted in Journal.
       </p>
     </section>
   );

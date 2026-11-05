@@ -47,7 +47,7 @@ export default async function Home() {
 
   const [{ data: pref }, { count: checkinCount }, { count: dueCount }, { data: latestCheckIn }] = await Promise.all([
     supabase.from("coaching_preferences")
-      .select("fluid_goal_ml,fluid_restricted,all_drinks_logged,allow_checkin_invites")
+      .select("fluid_goal_ml,fluid_restricted,all_drinks_logged,allow_checkin_invites,max_daily_invites")
       .eq("user_id", user.id).maybeSingle(),
     supabase.from("wellness_checkins")
       .select("id", { head: true, count: "exact" })
@@ -68,6 +68,7 @@ export default async function Home() {
       fluidRestricted: pref?.fluid_restricted ?? null,
       allDrinksLogged: pref?.all_drinks_logged ?? false,
       invitesEnabled: pref?.allow_checkin_invites ?? true,
+      maxDailyInvites: pref?.max_daily_invites ?? 2,
       checkinCount: checkinCount ?? 0,
       pendingReviews: dueCount ?? 0,
       latestCheckIn: validateCheckIn(latestCheckIn) ? latestCheckIn as CheckInValues : null,

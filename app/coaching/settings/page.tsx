@@ -10,19 +10,21 @@ export default async function CoachingSettingsPage() {
   if (!user) redirect("/login");
 
   const { data, error } = await supabase.from("coaching_preferences")
-    .select("fluid_goal_ml,fluid_restricted,all_drinks_logged,allow_checkin_invites,cloud_enabled")
+    .select("fluid_goal_ml,fluid_restricted,all_drinks_logged,allow_checkin_invites,max_daily_invites,cloud_enabled")
     .eq("user_id", user.id).maybeSingle();
   const settings: CoachingSettings = data ? {
     fluid_goal_ml: data.fluid_goal_ml ?? 1800,
     fluid_restricted: data.fluid_restricted ?? null,
     all_drinks_logged: data.all_drinks_logged ?? false,
     allow_checkin_invites: data.allow_checkin_invites ?? true,
+    max_daily_invites: data.max_daily_invites ?? 2,
     cloud_enabled: data.cloud_enabled ?? false,
   } : {
     fluid_goal_ml: 1800,
     fluid_restricted: null,
     all_drinks_logged: false,
     allow_checkin_invites: true,
+    max_daily_invites: 2,
     cloud_enabled: false,
   };
   const cloudConfigured = freeCloudConfigured({

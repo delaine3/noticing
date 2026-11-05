@@ -27,6 +27,7 @@ type TodayCommandCenterProps = {
     fluidRestricted: boolean | null;
     allDrinksLogged: boolean;
     invitesEnabled: boolean;
+    maxDailyInvites: number;
     checkinCount: number;
     pendingReviews: number;
     latestCheckIn: CheckInValues | null;
@@ -63,7 +64,8 @@ export function TodayCommandCenter({
 
         <SleepCompanion events={sleepEvents} />
         <AdaptiveCheckInInvite todayCount={coaching.checkinCount}
-          invitesEnabled={coaching.invitesEnabled} pendingReviews={coaching.pendingReviews}
+          invitesEnabled={coaching.invitesEnabled} maxDailyInvites={coaching.maxDailyInvites}
+          pendingReviews={coaching.pendingReviews}
           lastCheckinAt={coaching.lastCheckinAt} />
         <HydrationCoach totalMl={totalWaterMl}
           fluidGoalMl={coaching.fluidGoalMl}
@@ -86,6 +88,7 @@ export function TodayCommandCenter({
         </section>
 
         <div className="mt-5 flex flex-wrap gap-3">
+          <Link href="/journal" className="secondary-button">🌷 Open your Thought Garden</Link>
           <Link href="/insights" className="secondary-button">Explore insights by life area</Link>
           <Link href="/insights/weekly" className="secondary-button">Review recent days</Link>
           <Link href="/import/chat" className="secondary-button">Import conversations</Link>
