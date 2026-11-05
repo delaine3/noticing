@@ -62,19 +62,21 @@ export function understandActivity(
       time || (/\bjust\b/i.test(text) ? localTime(now) : ""), text));
   }
 
-  // Everyday phrasing such as "I just drank 500ml water" must stay on
-  // the free deterministic path. No AI request is needed.
-  const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|made|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b/i;
+  // Simple drink reports must not require cloud AI. Require drink words
+  // directly after a drinking verb to avoid treating "had fruit salad with
+  // coffee" as a confirmed drink. "Made coffee" is not proof of drinking.
+  const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b/i;
   const drinkPhrase = drinkLead.exec(text);
-  const drinkContext = drinkPhrase ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 46) : "";
-  const coffee = /\bcoffee\b/i.test(drinkContext);
-  const water = /\bwater\b/i.test(drinkContext);
-  if (coffee || water) {
-    const type = coffee ? "Coffee" : "Water";
+  const drinkContext = drinkPhrase
+    ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 60) : "";
+  const beverage = drinkContext.match(/^\s*(?:(?:a|an|one|two|some|the|of|glass|glasses|cup|cups|bottle|bottles|mug|mugs|iced|hot|cold|large|small|big|fresh|plain|sparkling|tap|black|oat)\s+|\d+(?:\.\d+)?\s*(?:ml|l|lit(?:er|re)s?)?\s*(?:of\s+)?){0,7}(coffee|water|tea|juice|milk|smoothie|soda)\b/i)?.[1]?.toLowerCase();
+  if (beverage) {
+    const type = beverage === "coffee" ? "Coffee" : "Water";
+    const title = beverage === "water" ? "Drank water" : "Had " + beverage;
     const justNow = /\bjust\b/i.test(drinkPhrase?.[0] ?? "") &&
-      !/\b(?:yesterday|last night|last week|last month)\b/i.test(text);
-    const proposed = record(type, coffee ? "Had coffee" : "Drank water", day, time || (justNow ? localTime(now) : ""), text);
-    proposed.water_amount_ml = extractVolume(text);
+      !/\b(?:yesterday|last night|last week|last month|ago|earlier)\b/i.test(text);
+    const proposed = record(type, title, day, time || (justNow ? localTime(now) : ""), text);
+    proposed.water_amount_ml = extractVolume(drinkContext);
     result.push(proposed);
   }
 
