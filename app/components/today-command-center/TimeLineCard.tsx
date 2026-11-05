@@ -12,7 +12,7 @@ export function TimelineCard({ buckets, totalLogs }: TimelineCardProps) {
     <CollapsibleSection
       eyebrow="Timeline"
       title="Entries by time of day"
-      summary={`${totalLogs} actions logged today.`}
+      summary={`${totalLogs} entries today.`}
     >
       <div className="grid gap-4 lg:grid-cols-2">
         {buckets.map((bucket) => (
