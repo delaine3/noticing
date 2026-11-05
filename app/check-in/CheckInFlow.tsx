@@ -172,7 +172,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
         <>
           <div>
             <h2 className="text-xl font-semibold">How are you right now?</h2>
-            <p className="mt-1 text-sm text-[var(--ink-soft)]">A few quick questions about how you're feeling.</p>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">A few quick questions about how you&apos;re feeling.</p>
           </div>
           <Rating name="Energy" prompt="Physical energy" value={answers.energy}
             onChange={(v) => setScore("energy", v)} />
