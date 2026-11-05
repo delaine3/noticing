@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   };
   if (!freeCloudConfigured(env)) {
     return NextResponse.json({
-      error: "Private free cloud processing is not configured. Use local recording.",
+      error: "AI isn't available right now. You can still add entries.",
     }, { status: 503 });
   }
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     .eq("user_id", user.id).maybeSingle();
   if (settingsError || !settings?.cloud_enabled || !settings?.cloud_consent_at) {
     return NextResponse.json({
-      error: "Enable optional cloud processing in Coaching settings first.",
+      error: "Turn on optional AI in check-in settings first.",
     }, { status: 403 });
   }
 
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     await supabase.rpc("claim_free_coaching_cloud_request");
   if (quotaError || permitted !== true) {
     return NextResponse.json({
-      error: "Today's free cloud allowance is unavailable. Use local recording.",
+      error: "You've reached today's AI limit. You can still add entries.",
     }, { status: 429 });
   }
 
@@ -84,8 +84,8 @@ export async function POST(request: Request) {
     if (!response.ok) {
       return NextResponse.json({
         error: response.status === 429 || response.status === 403
-          ? "Cloudflare's free allowance is unavailable. Use the local assistant."
-          : "Cloud processing didn't complete. Use local recording.",
+          ? "AI isn't available right now. You can still add entries."
+          : "AI didn't respond. You can still add your entry.",
       }, { status: response.status === 429 ? 429 : 502 });
     }
     const payload = await response.json() as {
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({
-      error: "Cloud processing failed. No automatic paid fallback was used.",
+      error: "AI didn't respond. No charges were made by Noticing.",
     }, { status: 502 });
   } finally {
     clearTimeout(timer);

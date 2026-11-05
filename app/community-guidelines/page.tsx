@@ -7,15 +7,14 @@ export default function CommunityGuidelinesPage() {
   return (
     <LegalPage title="Community guidelines">
       <p>
-        Noticing is currently a personal journaling app, not a public social network.
-        These guidelines apply to accounts, shared demos, support messages, and any
-        community features added in the future.
+        Noticing is a private journal, not a public social network.
+        Please respect other people&apos;s privacy and use the service responsibly.
       </p>
       <h2>Respect privacy</h2>
       <ul>
-        <li>Write about your own experiences without unnecessarily exposing someone else's private information.</li>
+        <li>Write about your own experiences without unnecessarily exposing someone else&apos;s private information.</li>
         <li>Never put real personal information into the shared demonstration account.</li>
-        <li>Do not attempt to view, extract, or alter another user's private entries.</li>
+        <li>Do not attempt to view, extract, or alter another user&apos;s private entries.</li>
       </ul>
       <h2>Respect other people</h2>
       <ul>

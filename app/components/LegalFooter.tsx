@@ -9,7 +9,7 @@ export function LegalFooter() {
         <Link href="/terms" className="underline underline-offset-2">Terms</Link>
         <Link href="/community-guidelines" className="underline underline-offset-2">Guidelines</Link>
         <Link href="/safety" className="underline underline-offset-2">Wellbeing &amp; safety</Link>
-        <Link href="/account" className="underline underline-offset-2">Your data</Link>
+        <Link href="/settings" className="underline underline-offset-2">Settings</Link>
       </div>
       <p className="mx-auto mt-2 max-w-4xl text-center">
         Noticing is a journaling tool, not a medical or crisis service. Please do not enter private information in the shared demo.

@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 const tables = [
   "profiles", "logs", "strength_sets", "coaching_preferences",
   "wellness_checkins", "coaching_interventions", "coaching_outcomes",
-  "coaching_cloud_usage",
+  "coaching_cloud_usage", "login_events", "journal_entries",
 ] as const;
 
 async function fetchAll(supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
@@ -19,14 +19,14 @@ async function fetchAll(supabase: Awaited<ReturnType<typeof createSupabaseServer
     const result = await supabase.from(table).select("*").eq(column, userId)
       .range(from, from + batch - 1);
     if (result.error) {
-      if (result.error.code === "42P01" || result.error.code === "PGRST205") return { rows: [], unavailable: true };
+      if (["42P01", "PGRST205", "42501"].includes(result.error.code)) return { rows: [], unavailable: true };
       throw new Error("Could not export " + table + ".");
     }
     const next = (result.data ?? []) as Record<string, unknown>[];
     rows.push(...next);
     if (next.length < batch) return { rows, unavailable: false };
   }
-  throw new Error("Export exceeds safety limit. Contact support for a complete copy.");
+  throw new Error("This export is too large to complete here.");
 }
 
 export async function GET() {
@@ -60,7 +60,7 @@ export async function GET() {
       },
     });
   } catch {
-    return NextResponse.json({ error: "Export could not be completed. Contact the privacy address." },
+    return NextResponse.json({ error: "We couldn\'t download your data. Please try again later." },
       { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }

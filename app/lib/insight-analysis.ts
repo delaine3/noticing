@@ -88,10 +88,10 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     } else if (meals.length && wakeTimes.length) {
       findings.push(finding("Compare wake and meal times", "You have " + wakeTimes.length + " wake-time entries and " + meals.length + " timed meals. Compare days with both before judging meal timing.", "Record the time of your next meal", "/logs/new?type=First%20meal"));
     } else {
-      findings.push(finding("Make meal timing interpretable", "A clock time alone cannot tell you whether a meal was late relative to waking.", "Record wake time and your first meal on the same day", "/logs/new?type=Woke%20up"));
+      findings.push(finding("Compare your meal times", "A clock time alone cannot tell you whether a meal was late relative to waking.", "Record wake time and your first meal on the same day", "/logs/new?type=Woke%20up"));
     }
     if (sleep.length < 3) {
-      findings.push(finding("Start a sleep baseline", "Record hours slept and how rested you feel for at least three mornings. This gives you observations worth comparing.", "Record last night's sleep", "/logs/new?type=Sleep"));
+      findings.push(finding("Start with a few sleep notes", "Record hours slept and how rested you feel for at least three mornings. This gives you observations worth comparing.", "Record last night's sleep", "/logs/new?type=Sleep"));
     } else {
       findings.push(finding("Review your sleep notes", sleep.length + " sleep entries are available. Compare hours slept with the next morning's energy.", "Record sleep quality and hours", "/logs/new?type=Sleep"));
     }
@@ -107,8 +107,8 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     );
     const checks = count(logs, "Daily check-in");
     findings.push(checks < 3
-      ? finding("Establish a repeatable check-in", "Mood ratings attached to different events are not equivalent to consistent daily measurements. Use one check-in at roughly the same time on several days.", "Rate mood, energy and stress", "/logs/new?type=Daily%20check-in")
-      : finding("Inspect repeat check-ins", checks + " daily check-ins are recorded. Compare the dates and the circumstances in your notes; a change in ratings does not establish a cause.", "Add today's check-in", "/logs/new?type=Daily%20check-in"));
+      ? finding("Check in regularly", "Mood ratings attached to different events are not equivalent to consistent daily measurements. Use one check-in at roughly the same time on several days.", "Rate mood, energy and stress", "/logs/new?type=Daily%20check-in")
+      : finding("Look back at your check-ins", checks + " daily check-ins are recorded. Compare the dates and the circumstances in your notes; a change in ratings does not establish a cause.", "Add today's check-in", "/logs/new?type=Daily%20check-in"));
     const scrollMinutes = logs.filter((log) => log.log_type === "TikTok used")
       .map((log) => noteMetric(log, "Duration minutes"))
       .filter((value): value is number => value !== null);
@@ -135,11 +135,11 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
       { label: "Interviews", value: String(interviews), detail: "Recorded interview events" },
       { label: "Recorded focus time", value: timedWork.length ? number(timedWork.reduce((sum, value) => sum + value, 0)) + " min" : "—", detail: timedWork.length + " measured sessions; " + work + " work logs" },
     );
-    findings.push(finding("Track outcomes after applications", applications
+    findings.push(finding("See what happened after applying", applications
       ? "You recorded " + applications + " applications and " + interviews + " interviews. These counts are not a conversion rate unless all outcomes are tracked and the observation period is defined."
       : "Add an application when you want to track follow-up outcomes.",
       "Record a reply, follow-up or interview", "/logs/new?type=Job%20follow-up"));
-    findings.push(finding("Define a finished result", "A session is useful when you can name what changed: a bug fixed, a proposal sent or a page shipped.", "Log a concrete work result", "/logs/new?type=Focused%20work"));
+    findings.push(finding("Keep track of what you finish", "A session is useful when you can name what changed: a bug fixed, a proposal sent or a page shipped.", "Log a concrete work result", "/logs/new?type=Focused%20work"));
   } else if (id === "life") {
     const household = count(logs, "Cook", "Wash Dishes", "Clean", "Home improvement");
     const garden = count(logs, "Plant care", "Yard Work");
@@ -151,8 +151,8 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
       { label: "Social interactions", value: String(people), detail: "Recorded contacts" },
       { label: "Creative sessions", value: String(creative), detail: "Painting, writing, music and other activities" },
     );
-    findings.push(finding("Notice what makes home easier", "Record a practical change, time saved or recurring chore. Task counts alone do not measure quality of life.", "Record a home task", "/logs/new?type=Clean"));
-    findings.push(finding("Track rewarding time too", "The app should include creativity and relationships, not only maintenance and output. Record what you did and whether you want to repeat it.", "Record creative time", "/logs/new?type=Creative%20time"));
+    findings.push(finding("Notice what makes home easier", "Think of a change at home that made your day easier, or a chore you keep coming back to.", "Record a home task", "/logs/new?type=Clean"));
+    findings.push(finding("Track rewarding time too", "It's worth remembering the things you enjoyed, too. Record what you did and whether you'd like to do it again.", "Record creative time", "/logs/new?type=Creative%20time"));
   }
 
   return { sample, metrics, findings };

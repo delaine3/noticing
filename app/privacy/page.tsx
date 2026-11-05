@@ -22,10 +22,8 @@ export default function PrivacyPage() {
       <h2>Why we process it</h2>
       <p>
         We use account and saved content to operate your private journal, show your history and
-        summaries, protect accounts, respond to requests, and maintain the service. Processing
-        needed to provide your account is ordinarily connected to providing the requested service;
-        other processing must have a valid legal basis under laws that apply to you. You decide
-        what you record. Optional AI processing requires separate, revocable permission.
+        summaries, protect accounts, respond to requests, and maintain the service. You decide what to record. Optional AI is off unless you turn it on,
+        and you can turn it off again at any time.
       </p>
       <h2>AI and imported chats</h2>
       <p>
@@ -41,9 +39,7 @@ export default function PrivacyPage() {
       <p>
         Noticing uses Vercel for hosting and Supabase for authentication and database storage.
         Cloudflare is used for optional AI processing when enabled. These providers may process
-        data outside Eswatini and your country of residence. Their locations, subprocessors,
-        security measures, transfer safeguards, and retention terms need periodic contractual
-        review. We do not offer personal journal content to advertisers or sell it as a product.
+        data outside Eswatini and your country of residence. We do not sell your journal entries or use them for advertising.
       </p>
       <h2>Who can see your content</h2>
       <p>
@@ -58,26 +54,23 @@ export default function PrivacyPage() {
         Saved entries are kept while your account is active unless you delete them. Account
         removal is intended to erase active Noticing account data. Provider backups, security
         logs, or legally required records may remain temporarily according to provider schedules
-        or applicable law. Exact backup deletion periods must be verified against provider terms
-        before a wider launch. Do not treat account deletion as a guarantee of immediate erasure
-        from every backup.
+        or applicable law. Account deletion doesn&apos;t immediately remove information from every backup.
       </p>
       <h2>Your rights and options</h2>
       <p>
         Depending on applicable law, you may request access, correction, deletion, portability,
         restriction, or objection to particular processing. You can edit and delete journal logs
-        in the app. Visit <Link href="/account">Your data</Link> to download a JSON copy of
-        your records or request account deletion where available. You may also email the
-        address above. We may need to verify your identity before handling a request.
+        in the app. Visit <Link href="/settings">Settings</Link> to download a JSON copy of
+        your records or delete your account yourself in Settings, after confirming your
+        password. You don&apos;t need to email us to delete your account. For requests that
+        can&apos;t be handled in the app, you can use the contact address above.
         You can complain to the relevant data-protection authority if your rights are not respected.
       </p>
       <h2>Children and cookies</h2>
       <p>
-        Noticing is intended for adults aged 18 or older, not children. Essential authentication
-        cookies and a timezone preference are used for the service. The codebase does not
-        currently add advertising-tracker scripts, but infrastructure providers may process
-        technical information. New optional analytics or tracking must be disclosed and, where
-        required, consented to before deployment.
+        Noticing is intended for adults aged 18 or older, not children. Noticing uses cookies to keep you signed in and remember your timezone.
+        We do not use advertising trackers. Our hosting and security providers may collect
+        technical information needed to run the service.
       </p>
       <h2>Updates</h2>
       <p>

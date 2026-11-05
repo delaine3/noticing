@@ -125,17 +125,17 @@ export default async function LogsPage({ searchParams }: LogsPageProps) {
             </h1>
 
             <p className="mt-3 text-md text-[var(--ink-soft)]">
-              Showing {typedLogs.length} of {count ?? 0} logs.
+              Showing {typedLogs.length} of {count ?? 0} entries.
             </p>
           </div>
 
           <LoadingLink href="/logs/new" className="submit-button">
-            New action
+            New entry
           </LoadingLink>
         </div>
 
         {!typedLogs.length ? (
-          <div className="glass-card mt-8">No logs yet.</div>
+          <div className="glass-card mt-8">No entries yet.</div>
         ) : (
           <>
             <div className="scroll-card">

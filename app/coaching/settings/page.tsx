@@ -39,14 +39,14 @@ export default async function CoachingSettingsPage() {
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Noticing · Coaching</p>
         <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">Your preferences</h1>
         <p className="mt-3 text-[var(--ink-soft)]">
-          Set what matters, how often Noticing offers check-ins, and what information can leave your device.
+          Manage check-ins and optional AI.
         </p>
         <div className="mt-4">
           <Link href="/check-in" className="secondary-button">Back to check-in</Link>
         </div>
         {(error?.code === "42P01" || error?.code === "PGRST205") ? (
           <p className="mt-5 rounded-lg bg-amber-50 p-4 text-sm">
-            The coaching migration needs to be applied in Supabase before preferences can be saved.
+            Settings aren&apos;t available right now. Please try again later.
           </p>
         ) : null}
         <SettingsForm settings={settings} cloudConfigured={cloudConfigured}/>

@@ -35,7 +35,7 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
           <p className="text-sm text-[var(--ink-soft)]">
             Daily goal: {assessment.goalMl.toLocaleString("en-US")} ml
           </p>
-        ) : <p className="text-sm text-[var(--ink-soft)]">Clinician-directed fluid plan</p>}
+        ) : <p className="text-sm text-[var(--ink-soft)]">Your doctor&apos;s fluid limit</p>}
       </div>
       {fluidRestricted !== true ? (
         <div role="progressbar" aria-label="Daily drink goal progress" aria-valuemin={0}
@@ -48,7 +48,7 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
       <p className="mt-3 text-sm leading-6">{assessment.guidance}</p>
       {assessment.caution ? <p className="mt-2 text-xs text-[var(--ink-soft)]">{assessment.caution}</p> : null}
       <div className="mt-4 flex flex-wrap gap-3">
-        <Link href="/capture" className="secondary-button">Record a drink</Link>
+        <Link href="/logs/new?type=Water" className="secondary-button">Record a drink</Link>
         <Link href="/coaching/settings" className="text-sm font-semibold underline">Adjust goal</Link>
       </div>
     </section>

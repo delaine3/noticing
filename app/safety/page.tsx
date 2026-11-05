@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LegalPage } from "../components/LegalPage";
 
 export const metadata = { title: "Wellbeing & Safety | Noticing" };
@@ -26,8 +27,7 @@ export default function SafetyPage() {
       <h2>Protect sensitive information</h2>
       <p>
         Think carefully before saving information about your health, relationships, identity,
-        or another person. Do not use the shared demo for personal reflections. For data
-        export or account deletion, visit Your data in the footer.
+        or another person. Do not use the shared demo for personal reflections. To download your data or delete your account, visit <Link href="/settings">Settings</Link>.
       </p>
     </LegalPage>
   );

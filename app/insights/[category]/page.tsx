@@ -85,7 +85,7 @@ export default async function InsightCategoryPage({ params }: Props) {
           href="/insights"
           className="text-sm font-semibold text-[var(--leaf-dark)] hover:underline"
         >
-          ← All insight areas
+          ← Back to insights
         </Link>
         <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">
           Insights / {area.title}
@@ -154,7 +154,7 @@ export default async function InsightCategoryPage({ params }: Props) {
 
         <section className="mt-7 glass-card">
           <h2 className="text-2xl font-bold">
-            What you can do with these records
+            What stands out
           </h2>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
             {findings.map((item) => (
@@ -184,7 +184,7 @@ export default async function InsightCategoryPage({ params }: Props) {
 
         <section className="mt-8 glass-card">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-2xl font-bold">Recent records</h2>
+            <h2 className="text-2xl font-bold">Recent entries</h2>
             <Link
               href={logUrl(
                 `/logs/new?type=${encodeURIComponent(area.logType)}`,
@@ -192,7 +192,7 @@ export default async function InsightCategoryPage({ params }: Props) {
               )}
               className="secondary-button"
             >
-              Add a record
+              Add an entry
             </Link>
           </div>
           {recent.length ? (
@@ -218,7 +218,7 @@ export default async function InsightCategoryPage({ params }: Props) {
                     href={`/logs/${log.id}/edit`}
                     className="mt-3 inline-block text-sm font-semibold text-[var(--leaf-dark)] hover:underline"
                   >
-                    Edit record →
+                    Edit entry →
                   </Link>
                 </article>
               ))}
@@ -230,7 +230,7 @@ export default async function InsightCategoryPage({ params }: Props) {
                 href={`/logs/new?type=${encodeURIComponent(area.logType)}`}
                 className="submit-button mt-4 inline-block"
               >
-                Start recording
+                Add an entry
               </Link>
             </div>
           )}

@@ -5,11 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../lib/supabase";
 
-const demoCredentials = {
-  email: "demo@noticing.com",
-  password: "D3m0Pa$$w0rd783!",
-};
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +33,7 @@ export default function LoginPage() {
 
     if (!data.session) {
       setMessage(
-        "Login did not create a session. Check email confirmation settings.",
+        "We couldn't sign you in. Check your email for a confirmation link, then try again.",
       );
       return;
     }
@@ -53,25 +48,9 @@ export default function LoginPage() {
     await loginWithCredentials(email, password);
   }
 
-  async function handleDemoLogin() {
-    await loginWithCredentials(demoCredentials.email, demoCredentials.password);
-  }
-
   return (
     <main className="min-h-screen flex items-center justify-center page px-4">
       <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
-        <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
-          The demo is shared and not private. Never enter real personal information in it.
-          For your own journal, <Link className="underline" href="/signup">create an account</Link>.
-        </p>
-        <button
-          type="button"
-          onClick={handleDemoLogin}
-          className="danger-button w-full"
-          disabled={isSubmitting}
-        >
-          Login to demo account
-        </button>
         <input
           type="email"
           placeholder="Email"
@@ -98,6 +77,9 @@ export default function LoginPage() {
         {message ? (
           <p className="text-sm text-[var(--ink-soft)]">{message}</p>
         ) : null}
+        <p className="text-center text-sm text-[var(--ink-soft)]">
+          New to Noticing? <Link href="/signup" className="underline">Create an account</Link>
+        </p>
       </form>
     </main>
   );

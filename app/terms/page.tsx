@@ -35,12 +35,12 @@ export default function TermsPage() {
       <p>
         Follow our <Link href="/community-guidelines">community guidelines</Link>.
         Do not misuse accounts, attempt to bypass security controls, disrupt the service,
-        scrape other users' data, upload illegal content, or expose personal information
+        scrape other users&apos; data, upload illegal content, or expose personal information
         without a lawful basis.
       </p>
       <h2>Availability and changes</h2>
       <p>
-        The service is an early-stage product. Features may change or become unavailable.
+        Features may change or become unavailable.
         Export any entries you need to preserve. We may suspend abusive accounts or temporarily
         restrict access to protect the service, subject to applicable law and user rights.
       </p>
@@ -55,8 +55,8 @@ export default function TermsPage() {
       <h2>Privacy, termination, and contact</h2>
       <p>
         See our <Link href="/privacy">privacy notice</Link> for data handling and
-        <Link href="/account"> Your data</Link> for export/deletion options. You may stop
-        using the service and request closure of your account.
+        <Link href="/settings">Settings</Link> for export/deletion options. You may stop
+        using the service or delete your account directly in Settings.
       </p>
     </LegalPage>
   );

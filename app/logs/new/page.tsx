@@ -13,11 +13,6 @@ type NewLogPageProps = {
   }>;
 };
 
-type CommonWaterTitleRow = {
-  title: string;
-  use_count: number;
-};
-
 async function createLog(formData: FormData) {
   "use server";
 
@@ -159,18 +154,23 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
 
   if (!user) redirect("/login");
 
-  const { data: commonWaterTitleRows, error: commonWaterTitlesError } =
-    await supabase.rpc("get_common_water_titles");
-
-  if (commonWaterTitlesError) {
-    throw new Error(commonWaterTitlesError.message);
+  // Look up suggestions only from this account; no shared RPC or global titles.
+  // Missing suggestions must never prevent a user from recording something.
+  const { data: recentDrinks } = await supabase.from("logs")
+    .select("title")
+    .eq("user_id", user.id)
+    .eq("log_type", "Water")
+    .order("occurred_at", { ascending: false })
+    .limit(200);
+  const titleCounts = new Map<string, number>();
+  for (const item of recentDrinks ?? []) {
+    const title = item.title?.trim();
+    if (title) titleCounts.set(title, (titleCounts.get(title) ?? 0) + 1);
   }
-
-  const commonWaterTitles = (
-    (commonWaterTitleRows ?? []) as CommonWaterTitleRow[]
-  )
-    .map((item) => item.title)
-    .filter(Boolean);
+  const commonWaterTitles = [...titleCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([title]) => title);
 
   const today = dayInTimeZone((await cookies()).get("noticing_timezone")?.value);
 
@@ -178,7 +178,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
     <main className="min-h-screen px-6 py-10 text-black-950">
       <section className="mx-auto max-w-3xl">
         <p className="text-md font-medium uppercase tracking-[0.25em] text-green-700">
-          New action
+          New entry
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
@@ -186,7 +186,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
         </h1>
 
         <p className="mt-4 text-black-700">
-          Select an activity, enter what happened and when, then save. Only relevant fields appear.
+          Tell us what happened and when. Add any details you&apos;d like to keep.
         </p>
 
         <NewActionForm

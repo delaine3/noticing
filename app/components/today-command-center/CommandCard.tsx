@@ -9,7 +9,7 @@ export function CommandCard({ nextAction }: CommandCardProps) {
   return (
     <section className="message-card">
       <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-800">
-        An optional next step
+        Something to try
       </p>
 
       <h2 className="mt-3 text-2xl font-semibold tracking-tight text-black-950 sm:text-3xl">
@@ -21,7 +21,7 @@ export function CommandCard({ nextAction }: CommandCardProps) {
       </p>
 
       <p className="mt-3 max-w-2xl rounded-lg bg-white/55 p-3 text-sm text-[var(--ink-soft)]">
-        <strong>Why it helps:</strong> {nextAction.benefit}
+        <strong>Why:</strong> {nextAction.benefit}
       </p>
       <div className="mt-5 flex flex-col gap-3 sm:flex-row">
         <LoadingLink href={nextAction.href} className="submit-button">

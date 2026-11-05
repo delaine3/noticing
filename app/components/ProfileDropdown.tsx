@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LayoutDashboard, LogOut, BookOpen, ChartColumn, MessageSquareText } from "lucide-react";
+import { LayoutDashboard, LogOut, BookOpen, ChartColumn, MessageSquareText, Settings } from "lucide-react";
 import LoadingLink from "./LoadingLink";
 
 type Props = {
@@ -97,14 +97,17 @@ export default function ProfileDropdown({
                 <MessageSquareText size={16} />
                 Import chats
               </LoadingLink>
-              <LoadingLink href="/capture" onClick={() => setOpen(false)}
-                className="flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40">
-                <MessageSquareText size={16} />
-                Talk to Noticing
-              </LoadingLink>
             </div>
           )}
 
+          <LoadingLink
+            href="/settings"
+            onClick={() => setOpen(false)}
+            className="mt-1 flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40 sm:py-2"
+          >
+            <Settings size={16} />
+            Settings
+          </LoadingLink>
           <button
             type="button"
             onClick={onLogout}
