@@ -58,6 +58,8 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
   const [answeredExtra, setAnsweredExtra] = useState<QuestionKey[]>([]);
   const [draftMessage, setDraftMessage] = useState("");
   const journalDraftId = useRef<string | null>(null);
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const draftInFlight = useRef<Promise<unknown>>(Promise.resolve());
   const [followUp, setFollowUp] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -110,18 +112,22 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
   // note to the check-in and deletes the redundant draft.
   useEffect(() => {
     const body = answers.thought_detail ?? "";
-    if (!body.trim()) return;
+    if (!body.trim() || stage !== "review" || busy) return;
     journalDraftId.current ??= crypto.randomUUID();
     const id = journalDraftId.current;
     const timer = window.setTimeout(() => {
-      void saveJournalEntry({
-        id, entryDate: localDate, title: "Check-in reflection",
-        body, status: "draft", origin: "checkin_draft",
-      }).then((result) => setDraftMessage(result.ok ? "Draft saved privately" : result.message))
-        .catch(() => setDraftMessage("Draft not saved. Save your check-in to retain the text."));
+      // Queue drafts, so an older save never runs after a newer one.
+      draftInFlight.current = draftInFlight.current.then(async () => {
+        const result = await saveJournalEntry({
+          id, entryDate: localDate, title: "Check-in reflection",
+          body, status: "draft", origin: "checkin_draft",
+        });
+        setDraftMessage(result.ok ? "Draft saved privately" : result.message);
+      }).catch(() => setDraftMessage("Draft not saved. Save your check-in to retain the text."));
     }, 950);
+    draftTimer.current = timer;
     return () => window.clearTimeout(timer);
-  }, [answers.thought_detail, localDate]);
+  }, [answers.thought_detail, localDate, stage, busy]);
 
   async function save() {
     if (!values || busy) return;
@@ -130,6 +136,8 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
     try {
       // Flush the current text before saving, so fast navigation cannot discard
       // a pending autosave. The check-in write still saves the note itself.
+      if (draftTimer.current) window.clearTimeout(draftTimer.current);
+      await draftInFlight.current;
       const noteText = values.thought_detail?.trim();
       if (noteText && journalDraftId.current) {
         const draft = await saveJournalEntry({
