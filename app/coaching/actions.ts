@@ -26,11 +26,13 @@ export async function saveWellnessCheckIn(payload: {
   requestKey: string;
   localDate: string;
   followUp: boolean;
+  journalDraftId?: string | null;
 }): Promise<CoachingResult> {
   if (!payload || !validateCheckIn(payload.values) ||
       typeof payload.requestKey !== "string" || !isUuid(payload.requestKey) ||
       typeof payload.localDate !== "string" || !isDate(payload.localDate) ||
-      typeof payload.followUp !== "boolean") {
+      typeof payload.followUp !== "boolean" ||
+      (payload.journalDraftId != null && !isUuid(payload.journalDraftId))) {
     return { ok: false, message: "Check the scores and date before saving." };
   }
   const supabase = await createSupabaseServerClient();
@@ -40,7 +42,11 @@ export async function saveWellnessCheckIn(payload: {
   // requestKey makes retries safe after a slow request.
   const { data: previouslySaved } = await supabase.from("wellness_checkins")
     .select("id").eq("user_id", user.id).eq("request_key", payload.requestKey).maybeSingle();
-  if (previouslySaved?.id) return { ok: true, id: previouslySaved.id, message: "This check-in is already saved." };
+  if (previouslySaved?.id) {
+    if (payload.journalDraftId) await supabase.from("journal_entries").delete()
+      .eq("id", payload.journalDraftId).eq("user_id", user.id).eq("origin", "checkin_draft");
+    return { ok: true, id: previouslySaved.id, message: "This check-in is already saved." };
+  }
 
   const v = payload.values;
   const { data: saved, error } = await supabase.from("wellness_checkins").insert({
@@ -81,6 +87,9 @@ export async function saveWellnessCheckIn(payload: {
   revalidatePath("/");
   revalidatePath("/check-in");
   revalidatePath("/insights");
+  revalidatePath("/journal");
+  if (payload.journalDraftId) await supabase.from("journal_entries").delete()
+    .eq("id", payload.journalDraftId).eq("user_id", user.id).eq("origin", "checkin_draft");
   return {
     ok: true,
     id: saved.id,
@@ -139,6 +148,7 @@ export async function saveCoachingPreferences(payload: {
   fluidRestricted: boolean | null;
   allDrinksLogged: boolean;
   allowInvites: boolean;
+  maxDailyInvites: number;
   cloudEnabled: boolean;
   cloudConsent: boolean;
 }): Promise<CoachingResult> {
@@ -147,6 +157,8 @@ export async function saveCoachingPreferences(payload: {
       ![null, true, false].includes(payload.fluidRestricted) ||
       typeof payload.allDrinksLogged !== "boolean" ||
       typeof payload.allowInvites !== "boolean" ||
+      !Number.isInteger(payload.maxDailyInvites) ||
+      payload.maxDailyInvites < 0 || payload.maxDailyInvites > 24 ||
       typeof payload.cloudEnabled !== "boolean" ||
       (payload.cloudEnabled && payload.cloudConsent !== true)) {
     return { ok: false, message: "Check your preferences and cloud permission before saving." };
@@ -161,6 +173,7 @@ export async function saveCoachingPreferences(payload: {
     fluid_restricted: payload.fluidRestricted,
     all_drinks_logged: payload.allDrinksLogged,
     allow_checkin_invites: payload.allowInvites,
+    max_daily_invites: payload.maxDailyInvites,
     cloud_enabled: payload.cloudEnabled,
     cloud_consent_at: payload.cloudEnabled ? new Date().toISOString() : null,
     updated_at: new Date().toISOString(),
