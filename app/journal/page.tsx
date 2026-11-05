@@ -74,7 +74,7 @@ export default async function JournalPage({ searchParams }: {
           The Thought Garden 🌷
         </h1>
         <p className="mt-3 max-w-2xl text-[#556a59]">
-          Write what's on your mind, and come back to it whenever you like.
+          Write what&apos;s on your mind, and come back to it whenever you like.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link href="/check-in" className="secondary-button">Wellness check-in</Link>
@@ -83,7 +83,7 @@ export default async function JournalPage({ searchParams }: {
         </div>
         {checkins.error ? (
           <p role="alert" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
-            We couldn't load your check-ins right now. Please try again later.
+            We couldn&apos;t load your check-ins right now. Please try again later.
           </p>
         ) : null}
         <nav className="my-6 flex items-center justify-between gap-3 rounded-2xl border border-[#d9e5d6] bg-white/70 p-3"
@@ -101,7 +101,7 @@ export default async function JournalPage({ searchParams }: {
         <JournalDesk month={month} today={today} entries={entries} journalReady={journalReady} />
         {(checkins.data?.length === 500 || notes.data?.length === 500) ? (
           <p className="mt-6 text-sm text-[#a45c4a]">
-            Some older entries aren't shown here because this view is limited to 500 entries per type. They haven't been deleted.
+            Some older entries aren&apos;t shown here because this view is limited to 500 entries per type. They haven&apos;t been deleted.
           </p>
         ) : null}
       </div>
