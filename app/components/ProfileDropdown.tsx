@@ -82,6 +82,11 @@ export default function ProfileDropdown({
                 <BookOpen size={16} />
                 Logs
               </LoadingLink>
+              <LoadingLink href="/journal" onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40">
+                <BookOpen size={16} />
+                Thought Garden
+              </LoadingLink>
               <LoadingLink href="/insights" onClick={() => setOpen(false)}
                 className="flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40">
                 <ChartColumn size={16} />
