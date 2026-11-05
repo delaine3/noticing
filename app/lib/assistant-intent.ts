@@ -63,7 +63,7 @@ export function understandActivity(
   }
 
   // Everyday phrasing such as "I just drank 500ml water" must stay on
-  // the free deterministic path. Never require a multi-GB model for this.
+  // the free deterministic path. No AI request is needed.
   const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|made|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b/i;
   const drinkPhrase = drinkLead.exec(text);
   const drinkContext = drinkPhrase ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 46) : "";
@@ -82,10 +82,15 @@ export function understandActivity(
   for (const item of fromRules) {
     if (result.length >= 6) break;
     if (!result.some((existing) => existing.log_type === item.log_type)) {
+      const recentMeal = item.log_type === "Meal" &&
+        (/\bI\s+(?:have\s+)?just\s+(?:ate|eaten|had)\b/i.test(item.evidence) ||
+         /\bI['’]ve\s+just\s+(?:eaten|had)\b/i.test(item.evidence) ||
+         /\bjust now\b/i.test(item.evidence));
+      const historical = /\b(?:yesterday|last night|last week|earlier|ago)\b/i.test(text);
       result.push({
         ...item,
         action_date: item.action_date || day,
-        action_time: item.action_time || time,
+        action_time: item.action_time || time || (recentMeal && !historical ? localTime(now) : ""),
         uncertainty: item.uncertainty || "",
       });
     }
