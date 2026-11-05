@@ -44,6 +44,27 @@ export default async function Home() {
     .limit(200);
   if (sleepError) throw new Error(sleepError.message);
 
+  const [{ data: pref }, { count: checkinCount }, { count: dueCount }] = await Promise.all([
+    supabase.from("coaching_preferences")
+      .select("fluid_goal_ml,fluid_restricted,all_drinks_logged,allow_checkin_invites")
+      .eq("user_id", user.id).maybeSingle(),
+    supabase.from("wellness_checkins")
+      .select("id", { head: true, count: "exact" })
+      .eq("user_id", user.id).eq("local_date", today),
+    supabase.from("coaching_interventions")
+      .select("id", { head: true, count: "exact" })
+      .eq("user_id", user.id).eq("status", "accepted")
+      .lte("follow_up_at", new Date().toISOString()),
+  ]);
+
   return <TodayCommandCenter logs={logs} report={report} buckets={buckets}
+    coaching={{
+      fluidGoalMl: pref?.fluid_goal_ml ?? 1800,
+      fluidRestricted: pref?.fluid_restricted ?? null,
+      allDrinksLogged: pref?.all_drinks_logged ?? false,
+      invitesEnabled: pref?.allow_checkin_invites ?? true,
+      checkinCount: checkinCount ?? 0,
+      pendingReviews: dueCount ?? 0,
+    }}
     sleepEvents={(moments ?? []) as SleepMoment[]} />;
 }
