@@ -62,11 +62,18 @@ export function understandActivity(
       time || (/\bjust\b/i.test(text) ? localTime(now) : ""), text));
   }
 
-  const coffee = /\bi\s+(?:had|drank|made|finished)\b.{0,45}\bcoffee\b/i.test(text);
-  const water = /\bi\s+(?:had|drank|finished)\b.{0,45}\bwater\b/i.test(text);
+  // Everyday phrasing such as "I just drank 500ml water" must stay on
+  // the free deterministic path. Never require a multi-GB model for this.
+  const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|made|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b/i;
+  const drinkPhrase = drinkLead.exec(text);
+  const drinkContext = drinkPhrase ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 46) : "";
+  const coffee = /\bcoffee\b/i.test(drinkContext);
+  const water = /\bwater\b/i.test(drinkContext);
   if (coffee || water) {
     const type = coffee ? "Coffee" : "Water";
-    const proposed = record(type, coffee ? "Had coffee" : "Drank water", day, time, text);
+    const justNow = /\bjust\b/i.test(drinkPhrase?.[0] ?? "") &&
+      !/\b(?:yesterday|last night|last week|last month)\b/i.test(text);
+    const proposed = record(type, coffee ? "Had coffee" : "Drank water", day, time || (justNow ? localTime(now) : ""), text);
     proposed.water_amount_ml = extractVolume(text);
     result.push(proposed);
   }
