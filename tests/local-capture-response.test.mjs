@@ -1,22 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import {
-  createLocalCompletionRequest,
-  parseLocalCaptureResponse,
-} from "../app/lib/local-capture-response.ts";
+import { parseLocalCaptureResponse } from "../app/lib/local-capture-response.ts";
 
 const allowedTypes = ["Movement", "Treadmill walk", "Sleep", "Plant care"];
 
-test("local completion avoids the WebLLM json_object grammar matcher", () => {
-  const request = createLocalCompletionRequest("Return JSON only", [
-    { role: "user", content: "Today I walked 8 km." },
-  ]);
-  assert.equal("response_format" in request, false);
-  assert.equal(request.messages[1].content, "Today I walked 8 km.");
-  assert.equal(request.temperature, 0.1);
-});
-
-test("compact local JSON normalizes missing fields without inventing values", () => {
+test("structured cloud JSON normalizes missing fields without inventing values", () => {
   const raw = JSON.stringify({
     reply: "One walk found.",
     follow_up_question: "When did you walk?",
@@ -36,7 +24,7 @@ test("compact local JSON normalizes missing fields without inventing values", ()
   assert.equal(data.follow_up_question, "When did you walk?");
 });
 
-test("accepts JSON in a markdown fence without transmitting anything", () => {
+test("accepts JSON in a markdown fence", () => {
   const text = '```json\n{"reply":"Done","follow_up_question":null,"proposed_records":[]}\n```';
   assert.deepEqual(parseLocalCaptureResponse(text, allowedTypes).proposed_records, []);
 });
@@ -56,7 +44,7 @@ test("rejects invalid dates, bogus measurements and unknown activity categories"
   assert.equal(output.proposed_records[0].energy_score, null);
 });
 
-test("fails explicitly for incomplete local JSON", () => {
+test("fails explicitly for incomplete AI JSON", () => {
   assert.throws(
     () => parseLocalCaptureResponse('{"reply":"broken", "proposed_records":[', allowedTypes),
     /incomplete JSON/,
