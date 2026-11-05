@@ -144,7 +144,7 @@ function JournalComposer({ today }: { today: string }) {
   const draftTimer = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!body.trim()) return;
+    if (!body.trim() && title === "A thought from today") return;
     id.current ??= crypto.randomUUID();
     const entryId = id.current;
     const revision = ++version.current;
@@ -230,6 +230,8 @@ export function JournalDesk({ month, today, entries, journalReady }: {
     month: "long", year: "numeric", timeZone: "UTC",
   });
   const written = entries.filter((entry) => entry.body.trim());
+  const planted = entries.filter((entry) => entry.body.trim() || entry.kind === "journal");
+  const scoreOnly = entries.filter((entry) => entry.kind === "checkin" && !entry.body.trim());
   const bouquetFlowers = bouquetThoughts(entries);
   const [year, mon] = month.split("-").map(Number);
   const lastDay = new Date(Date.UTC(year, mon, 0)).getUTCDate();
@@ -256,9 +258,9 @@ export function JournalDesk({ month, today, entries, journalReady }: {
           </div>
           <Link href="/check-in" className="secondary-button">Wellness check-in</Link>
         </div>
-        {entries.length ? (
+        {planted.length ? (
           <div className="mt-6 columns-1 gap-4 space-y-4 md:columns-2 xl:columns-3">
-            {entries.map((entry) => <ThoughtCard key={entry.kind + entry.id} item={entry} />)}
+            {planted.map((entry) => <ThoughtCard key={entry.kind + entry.id} item={entry} />)}
           </div>
         ) : (
           <div className="mt-7 rounded-2xl border border-dashed border-[#b5c6ad] bg-white/65 p-8 text-center">
@@ -268,6 +270,20 @@ export function JournalDesk({ month, today, entries, journalReady }: {
           </div>
         )}
       </section>
+      {scoreOnly.length ? (
+        <details className="rounded-2xl border border-[#dce6d6] bg-white/70 p-5">
+          <summary className="cursor-pointer font-semibold text-[#345e46]">
+            {scoreOnly.length} check-ins without written reflections
+          </summary>
+          <p className="mt-2 text-sm text-[#5b705e]">
+            Their ratings are still safely recorded. You can add notes to them or
+            leave them as they are.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {scoreOnly.map((entry) => <ThoughtCard key={entry.id} item={entry} />)}
+          </div>
+        </details>
+      ) : null}
       {complete ? (
         <section className="rounded-3xl border border-[#e3c6b5] bg-[#fff6ee] p-5 sm:p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#ad6f68]">A little gift from your month</p>
