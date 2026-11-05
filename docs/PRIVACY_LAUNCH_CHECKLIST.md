@@ -3,9 +3,10 @@
 **Status: NOT verified globally compliant. Do not invite public users until the critical checks are complete.**
 
 ## Critical before onboarding strangers
-- [ ] Confirm Supabase RLS for **every** existing and future table, view, RPC, and storage bucket. The repo only contains the newer coaching migration, not the original schema. Test account A cannot read/update/delete account B records.
+- [ ] Run `docs/ACCOUNT_RLS_AUDIT.sql` and confirm Supabase RLS for **every** existing and future table, view, RPC, and storage bucket. The repo only contains the newer coaching migration, not the original schema. Test account A cannot read/update/delete account B records.
 - [ ] Inspect Supabase Auth policies, confirmation and password recovery, rate limits, MFA options, security events, and breached-password protection.
 - [ ] **Rotate or disable the shared demo account in Supabase.** A password was published in previous commits. The login button and embedded credential have been removed from the proposed code, but Git history still exposes that old password. Do not re-enable a shared demo without isolation, synthetic data, and safeguards against users entering private material.
+- [ ] Keep the production `SUPABASE_SERVICE_ROLE_KEY` out of Vercel Preview environments that use the production Supabase project. Preview code can read server-side environment variables. Use an isolated test Supabase project and separate key if preview testing is needed.
 - [ ] Test the new self-service account deletion from Settings end to end with a disposable user, including password verification, the auth record, user-owned table records and error handling. There is no email approval step. Check the Vercel server-only `SUPABASE_SERVICE_ROLE_KEY` setting.
 - [x] User confirmed zero orphaned rows in nine user-linked tables, applied auth.users ON DELETE CASCADE constraints in Supabase, and confirmed there are no Storage buckets (5 November 2026). The journal_entries migration includes its own cascading foreign key, but must be applied separately before journal writing works.
 - [ ] Verify privacy contact address is monitored, appropriate as a public contact, and able to receive access/erasure requests.
