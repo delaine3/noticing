@@ -73,11 +73,11 @@ export default function ChatImportReview() {
     setSelectedConversation("");
     setDrafts({});
     if (file.size > 35 * 1024 * 1024) {
-      setMessage("This file exceeds 35 MB. Use a smaller conversations export or curated Noticing JSON file.");
+      setMessage("That file is too large. Please use a JSON file smaller than 35 MB.");
       return;
     }
     if (!file.name.toLowerCase().endsWith(".json")) {
-      setMessage("Select a .json file, either ChatGPT conversations.json or Noticing curated-v1 format.");
+      setMessage("Please select your ChatGPT export as a JSON file.");
       return;
     }
     setLoading(true);
@@ -91,10 +91,10 @@ export default function ChatImportReview() {
       setDrafts(initial);
       setSelectedConversation(parsed.find((c) => c.proposals.length > 0)?.id ?? "");
       setMessage(parsed.length
-        ? "Loaded " + parsed.length + " conversations locally. No transcript has been uploaded."
-        : "No readable conversations were found in this JSON file.");
+        ? "Found " + parsed.length + " conversations. Nothing has been uploaded."
+        : "I couldn't find any conversations in that file.");
     } catch (error) {
-      setMessage(error instanceof Error ? "Could not parse export: " + error.message : "Could not read this JSON file.");
+      setMessage(error instanceof Error ? "Couldn't read the file: " + error.message : "Could not read this JSON file.");
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ export default function ChatImportReview() {
   async function save() {
     if (!current || saving || !approved.length) return;
     if (approved.length > 25) {
-      setMessage("Approve at most 25 entries in one batch.");
+      setMessage("You can save up to 25 entries at a time.");
       return;
     }
     const invalid = approved.find((p) => {
@@ -111,7 +111,7 @@ export default function ChatImportReview() {
       return !d.date || !/^\d{4}-\d{2}-\d{2}$/.test(d.date) || !d.title.trim();
     });
     if (invalid) {
-      setMessage("Each approved entry needs a verified event date and a short title.");
+      setMessage("Please add a date and title to each entry you want to save.");
       return;
     }
 
@@ -153,11 +153,9 @@ export default function ChatImportReview() {
   return (
     <div className="space-y-6">
       <section className="glass-card space-y-4">
-        <h2 className="text-xl font-semibold">1. Open your export locally</h2>
+        <h2 className="text-xl font-semibold">1. Upload your ChatGPT export</h2>
         <p className="text-sm text-[var(--ink-soft)]">
-          Select <strong>conversations.json</strong> from a ChatGPT export, or a smaller
-          <strong> Noticing curated JSON file</strong>. This page reads the file in your browser;
-          the file and the original messages are never sent to Noticing&apos;s server.
+          Select <strong>conversations.json</strong> from your ChatGPT export. The file stays on your device until you approve entries to save.
         </p>
         <input type="file" accept=".json,application/json" aria-label="Select ChatGPT conversations.json"
           onChange={(event) => { void loadFile(event.target.files?.[0]); }}
@@ -175,7 +173,7 @@ export default function ChatImportReview() {
       {candidateConversations.length ? (
         <>
           <section className="glass-card space-y-3">
-            <h2 className="text-xl font-semibold">2. Select a conversation or life area</h2>
+            <h2 className="text-xl font-semibold">2. Find what you want to keep</h2>
             <label className="block text-sm font-medium" htmlFor="conversation-selector">Conversation or group</label>
             <select id="conversation-selector" value={selectedConversation}
               onChange={(e) => { setSelectedConversation(e.target.value); setResult(null); }}
@@ -185,8 +183,7 @@ export default function ChatImportReview() {
               ))}
             </select>
             <p className="text-sm text-[var(--ink-soft)]">
-              Raw chat extraction can miss events or misread sentences. Curated summaries are paraphrases, not original quotes. Check the source summary,
-              especially dates, ownership of the activity and numerical values.
+              Noticing can get things wrong. Check each date and detail before saving.
             </p>
             <button type="button" className="text-sm font-semibold text-[var(--leaf-dark)] underline"
               onClick={() => setShowSignals((v) => !v)}>
@@ -194,11 +191,11 @@ export default function ChatImportReview() {
             </button>
             {showSignals ? (
               <div className="rounded-lg bg-white/75 p-4">
-                <p className="text-sm font-semibold">Topics mentioned, not inferred life facts</p>
+                <p className="text-sm font-semibold">Topics in this conversation</p>
                 <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
                   {current?.topicSignals.length
                     ? current.topicSignals.map((s) => <li key={s}>{s}</li>)
-                    : <li>No topic signals found.</li>}
+                    : <li>No topics found.</li>}
                 </ul>
               </div>
             ) : null}
@@ -206,7 +203,7 @@ export default function ChatImportReview() {
 
           <section className="space-y-4">
             <div>
-              <h2 className="text-2xl font-semibold">3. Verify each proposed record</h2>
+              <h2 className="text-2xl font-semibold">3. Review your entries</h2>
               <p className="mt-2 text-sm text-[var(--ink-soft)]">
                 Select only activities you can confirm. For raw chat exports, dates initially represent the message date,
                 <strong> not necessarily when the event happened</strong>. Correct each date before approval.
@@ -225,7 +222,7 @@ export default function ChatImportReview() {
                     Approve this record
                   </label>
                   <div className="rounded-lg border-l-4 border-[var(--leaf)] bg-white/70 p-3 text-sm">
-                    <p className="text-xs font-semibold uppercase tracking-wide">Source excerpt or curated evidence summary</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide">From your conversation</p>
                     <p className="mt-2 break-words whitespace-pre-wrap">{proposal.messageExcerpt}</p>
                     <p className="mt-2 text-xs text-[var(--ink-soft)]">
                       Source report date: {proposal.reportedDate || "unknown"}
@@ -240,7 +237,7 @@ export default function ChatImportReview() {
                       </select>
                     </label>
                     <label className="block text-sm font-medium">
-                      Actual event date
+                      Date of the event
                       <input type="date" value={draft.date} onChange={(e) => edit(proposal.sourceKey, { date: e.target.value })}
                         className="mt-1 w-full rounded-lg border border-[var(--border-soft)] bg-white p-3" />
                     </label>
@@ -251,7 +248,7 @@ export default function ChatImportReview() {
                       className="mt-1 w-full rounded-lg border border-[var(--border-soft)] bg-white p-3" />
                   </label>
                   <label className="block text-sm font-medium">
-                    Useful note, no transcript text
+                    Note
                     <textarea rows={2} maxLength={1500} value={draft.notes} onChange={(e) => edit(proposal.sourceKey, { notes: e.target.value })}
                       className="mt-1 w-full rounded-lg border border-[var(--border-soft)] bg-white p-3" />
                   </label>
@@ -268,14 +265,14 @@ export default function ChatImportReview() {
                       </label>
                     ))}
                   </div>
-                  <p className="text-xs text-[var(--ink-soft)]">A source fingerprint, title, note, event date and relevant numeric values are the only data submitted after approval.</p>
+                  <p className="text-xs text-[var(--ink-soft)]">Only the entries you approve will be saved.</p>
                 </article>
               );
             })}
           </section>
           <section className="glass-card space-y-3">
-            <h2 className="text-xl font-semibold">4. Save only reviewed records</h2>
-            <p className="text-sm">Approved: {approved.length} / 25 per batch. Unapproved proposals remain local and are never submitted.</p>
+            <h2 className="text-xl font-semibold">4. Save your entries</h2>
+            <p className="text-sm">Approved: {approved.length} / 25 per batch. Everything else stays on your device.</p>
             <button type="button" className="submit-button disabled:cursor-not-allowed disabled:opacity-50"
               disabled={saving || approved.length === 0 || approved.length > 25} onClick={() => void save()}>
               {saving ? "Saving approved entries…" : "Save approved entries"}
@@ -286,7 +283,7 @@ export default function ChatImportReview() {
         </>
       ) : conversations.length ? (
         <section className="glass-card">
-          <p>No concrete events matched the initial extraction rules. Your chats remain on your device. Future versions can support broader extraction and manual candidate selection.</p>
+          <p>I couldn't find entries to suggest in this file. Nothing was uploaded.</p>
         </section>
       ) : null}
     </div>
