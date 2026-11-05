@@ -19,7 +19,7 @@ async function fetchAll(supabase: Awaited<ReturnType<typeof createSupabaseServer
     const result = await supabase.from(table).select("*").eq(column, userId)
       .range(from, from + batch - 1);
     if (result.error) {
-      if (result.error.code === "42P01" || result.error.code === "PGRST205") return { rows: [], unavailable: true };
+      if (["42P01", "PGRST205", "42501"].includes(result.error.code)) return { rows: [], unavailable: true };
       throw new Error("Could not export " + table + ".");
     }
     const next = (result.data ?? []) as Record<string, unknown>[];
