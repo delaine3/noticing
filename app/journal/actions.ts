@@ -30,7 +30,7 @@ function refreshJournal() {
 }
 function failure(message: string, code?: string): JournalResult {
   return { ok: false, message: code === "42P01" || code === "PGRST205"
-    ? "Journal storage needs its Supabase migration. Your existing check-ins remain intact."
+    ? "The journal isn\'t available right now. Your existing check-ins are safe."
     : message };
 }
 
