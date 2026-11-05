@@ -111,12 +111,6 @@ export function AppNav() {
                 </LoadingLink>
               );
             })}
-            <LoadingLink
-              href="/capture"
-              className="flex h-full items-center bg-[rgba(63,127,99,0.88)] px-4 text-md font-semibold text-white transition hover:bg-[rgba(36,81,61,0.94)] sm:px-5"
-            >
-              Talk to Noticing
-            </LoadingLink>
             <ProfileDropdown
               displayName={displayName}
               userEmail={userEmail}
