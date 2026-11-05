@@ -172,7 +172,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
         <>
           <div>
             <h2 className="text-xl font-semibold">How are you right now?</h2>
-            <p className="mt-1 text-sm text-[var(--ink-soft)]">Four quick answers. I&apos;ll ask more only when it would change the advice.</p>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">A few quick questions about how you're feeling.</p>
           </div>
           <Rating name="Energy" prompt="Physical energy" value={answers.energy}
             onChange={(v) => setScore("energy", v)} />
@@ -222,7 +222,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
       {stage === "review" && suggestion ? (
         <>
           <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">
-            Your next useful move
+            Something you could try
           </p>
           <h2 className="text-2xl font-semibold">{suggestion.title}</h2>
           <p>{suggestion.next}</p>
@@ -232,20 +232,19 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
           <section className="space-y-2 rounded-xl border border-[var(--border-soft)] bg-white/80 p-4">
             <label htmlFor="checkin-thoughts" className="block font-semibold">Your private thoughts</label>
             <p className="text-sm text-[var(--ink-soft)]">
-              Write as much as you want. Your text is automatically saved as a private draft,
-              then attached to this check-in when you save. It will appear in Journal.
+              Write whatever is on your mind. Your draft saves as you type and appears in your journal when you save this check-in.
             </p>
             <textarea id="checkin-thoughts" rows={6} maxLength={12000}
               placeholder="What have you been thinking about? What happened today?"
               value={answers.thought_detail ?? ""}
               onChange={(e) => { setAnswers((old) => ({ ...old, thought_detail: e.target.value })); setDraftMessage("Saving draft…"); }}
               className="block w-full rounded-lg border border-[var(--border-soft)] bg-white p-3 leading-relaxed" />
-            <p role="status" className="text-xs text-[var(--ink-soft)]">{draftMessage || "Only you can read this text while signed in."}</p>
+            <p role="status" className="text-xs text-[var(--ink-soft)]">{draftMessage || "Your writing is saved to your private account."}</p>
           </section>
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" checked={followUp} onChange={(e) => setFollowUp(e.target.checked)}
               className="mt-1 accent-[#25543d]" />
-            When I return after about an hour, ask whether this helped
+            Ask me later if this helped
           </label>
           <div className="flex flex-wrap gap-3">
             <button type="button" className="submit-button disabled:opacity-50"
