@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../lib/supabase";
 
 export default function LoginPage() {
@@ -76,6 +77,9 @@ export default function LoginPage() {
         {message ? (
           <p className="text-sm text-[var(--ink-soft)]">{message}</p>
         ) : null}
+        <p className="text-center text-sm text-[var(--ink-soft)]">
+          New to Noticing? <Link href="/signup" className="underline">Create an account</Link>
+        </p>
       </form>
     </main>
   );
