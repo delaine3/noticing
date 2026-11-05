@@ -46,7 +46,7 @@ export default async function CoachingSettingsPage() {
         </div>
         {(error?.code === "42P01" || error?.code === "PGRST205") ? (
           <p className="mt-5 rounded-lg bg-amber-50 p-4 text-sm">
-            Settings aren't available right now. Please try again later.
+            Settings aren&apos;t available right now. Please try again later.
           </p>
         ) : null}
         <SettingsForm settings={settings} cloudConfigured={cloudConfigured}/>
