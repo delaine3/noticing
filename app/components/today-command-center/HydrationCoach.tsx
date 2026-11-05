@@ -35,7 +35,7 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
           <p className="text-sm text-[var(--ink-soft)]">
             Daily goal: {assessment.goalMl.toLocaleString("en-US")} ml
           </p>
-        ) : <p className="text-sm text-[var(--ink-soft)]">Your doctor's fluid limit</p>}
+        ) : <p className="text-sm text-[var(--ink-soft)]">Your doctor&apos;s fluid limit</p>}
       </div>
       {fluidRestricted !== true ? (
         <div role="progressbar" aria-label="Daily drink goal progress" aria-valuemin={0}
