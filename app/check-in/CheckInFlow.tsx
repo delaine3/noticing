@@ -51,7 +51,7 @@ function Rating({ name, prompt, value, onChange }: {
   );
 }
 
-export function CheckInFlow({ localDate }: { localDate: string }) {
+export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string; fluidRestricted: boolean | null }) {
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [stage, setStage] = useState<Stage>("core");
   const [answeredExtra, setAnsweredExtra] = useState<QuestionKey[]>([]);
@@ -79,7 +79,7 @@ export function CheckInFlow({ localDate }: { localDate: string }) {
   }, [answers.energy, answers.mood, answers.stress, answers.thought_topic]);
 
   const nextQuestion = questions.find((q) => !answeredExtra.includes(q.key));
-  const suggestion = values ? recommendNextAction(values) : null;
+  const suggestion = values ? recommendNextAction(values, { fluidRestricted }) : null;
 
   function setScore(key: "energy" | "mood" | "stress", v: number) {
     setAnswers((old) => ({ ...old, [key]: v }));
