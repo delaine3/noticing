@@ -38,8 +38,8 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingRevie
         </h2>
         <p className="mt-1 text-sm text-[var(--ink-soft)]">
           {pendingReviews > 0
-            ? "A follow-up you requested is ready. Your answer can improve future suggestions."
-            : "A short check-in can help you decide what your body and mind need next."}
+            ? "You asked to revisit a suggestion. How did it go?"
+            : "Want to check in for a moment?"}
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-3">
