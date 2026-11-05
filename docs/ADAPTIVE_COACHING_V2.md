@@ -43,6 +43,12 @@ Existing `logs` remain untouched. There is no destructive migration.
   absent once dismissed. Follow-up invitations are voluntary.
 - `/insights/mind` displays the new structured check-ins and counts
   of suggestions the user marked helpful after trying them.
+- The conversational assistant recognizes common completed activities locally, including
+  "I just ate a fruit salad", "I just drank 500ml water", recent walks, garden care,
+  and sent job applications. These ordinary events never need AI inference.
+- All multi-GB WebLLM model downloads, GPU session code, and the WebLLM npm
+  dependency have been removed. For complex phrasing, the only optional
+  language-model provider is consented Cloudflare Workers AI.
 - Existing manual logs and conversation imports remain usable.
 
 ## Hydration science and limits
