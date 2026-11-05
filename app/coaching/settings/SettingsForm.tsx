@@ -100,7 +100,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
         <p className="text-sm text-[var(--ink-soft)]">
           When used, only the message you approve is sent to Cloudflare. Your saved logs,
           personal health scores and previous chats are not automatically sent.
-          Cloudflare says Workers AI doesn't train on customer inputs and does not retain
+          Cloudflare says Workers AI doesn&apos;t train on customer inputs and does not retain
           ordinary inference content after processing, subject to exceptions.
         </p>
         <p className="text-xs text-[var(--ink-soft)]">
