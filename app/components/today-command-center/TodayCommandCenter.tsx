@@ -30,6 +30,7 @@ type TodayCommandCenterProps = {
     checkinCount: number;
     pendingReviews: number;
     latestCheckIn: CheckInValues | null;
+    lastCheckinAt: string | null;
   };
 };
 
@@ -62,7 +63,8 @@ export function TodayCommandCenter({
 
         <SleepCompanion events={sleepEvents} />
         <AdaptiveCheckInInvite todayCount={coaching.checkinCount}
-          invitesEnabled={coaching.invitesEnabled} pendingReviews={coaching.pendingReviews} />
+          invitesEnabled={coaching.invitesEnabled} pendingReviews={coaching.pendingReviews}
+          lastCheckinAt={coaching.lastCheckinAt} />
         <HydrationCoach totalMl={totalWaterMl}
           fluidGoalMl={coaching.fluidGoalMl}
           fluidRestricted={coaching.fluidRestricted}
