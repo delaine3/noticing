@@ -32,7 +32,7 @@ export default async function CheckInPage() {
         </p>
         <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">How are you doing right now?</h1>
         <p className="mt-3 max-w-2xl text-[var(--ink-soft)]">
-          Take a moment to check in with yourself. Skip anything you don't want to answer.
+          Take a moment to check in with yourself. Skip anything you don&apos;t want to answer.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/coaching/settings" className="secondary-button">My coaching preferences</Link>
@@ -41,7 +41,7 @@ export default async function CheckInPage() {
         {notInstalled ? (
           <section className="glass-card mt-5 p-5">
             <h2 className="font-semibold">Check-ins are unavailable</h2>
-            <p className="mt-2 text-sm">We couldn't load check-ins right now. Please try again later.</p>
+            <p className="mt-2 text-sm">We couldn&apos;t load check-ins right now. Please try again later.</p>
           </section>
         ) : null}
         {(due ?? []).map((action) => (
