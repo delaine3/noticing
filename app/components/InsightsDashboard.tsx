@@ -63,8 +63,8 @@ function getUsefulTruth(logs: InsightLog[]) {
   }
 
   return "You have " + logs.length + " entries, " + rated +
-    " self-rated effects, and " + withNotes +
-    " notes. To investigate a pattern, log the same activity and a measurable result several times.";
+    " ratings, and " + withNotes +
+    " notes. Keep recording to see what changes over time.";
 }
 
 export function InsightsDashboard({ logs }: InsightsDashboardProps) {
@@ -84,16 +84,16 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
 
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-            Your recorded patterns
+            What you've recorded
           </h1>
 
           <p className="mt-4 max-w-2xl text-[var(--ink-soft)]">
-            Review recorded quantities, ratings, and timing. Look for repeated observations before changing a routine.
+            See what you've been doing and how it's felt over time.
           </p>
         </div>
         <section className="glass-card mt-6  p-5 shadow-sm">
           <p className="text-md font-semibold uppercase tracking-[0.2em] text-[var(--leaf-dark)]">
-            What is measurable
+            From your entries
           </p>
 
           <h2 className="mt-2 text-2xl font-semibold">
@@ -107,7 +107,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <article className="glass-card  p-5 shadow-sm">
             <p className="text-md font-medium text-[var(--ink-soft)]">
-              Total logs
+              Entries
             </p>
             <p className="mt-2 text-3xl font-semibold">{logs.length}</p>
           </article>
@@ -170,7 +170,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
                 </ResponsiveContainer>
               ) : (
                 <p className="text-md text-[var(--ink-soft)]">
-                  No action data yet.
+                  Nothing recorded here yet.
                 </p>
               )}
             </div>
@@ -180,11 +180,11 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
         </section>
         <article className="glass-card  p-5 shadow-sm">
           <p className="text-md font-medium text-[var(--ink-soft)]">
-            Drink volume recorded
+            Drinks recorded
           </p>
           <p className="mt-2 text-3xl font-semibold">{totalWaterMl} ml</p>
         </article>
-        <p className="mt-3 text-sm text-[var(--ink-soft)]">Includes any logged drink with a quantity, including coffee. Not a daily hydration assessment.</p>
+        <p className="mt-3 text-sm text-[var(--ink-soft)]">Includes any logged drink with a quantity, including coffee. This isn't a measure of how hydrated you are.</p>
         <ScoreTrendChart logs={logs} /> <Treadmill logs={logs} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <InsightNotes />
