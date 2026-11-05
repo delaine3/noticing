@@ -52,7 +52,15 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
         treadmill ? { treadmill_distance_km: km } : { notes: "Distance recorded: " + km + " km." });
     }
   }
-  const water = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:drank|drunk|had|finished)|I['’]ve\s+(?:just\s+)?(?:drunk|had|finished))\s+(\d+(?:\.\d+)?)\s*(ml|l|lit(?:er|re)s?)\s+(?:of\s+)?(water|tea|coffee)\b/i);
+  const directDrink = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:drank|drunk|had|finished)|I['’]ve\s+(?:just\s+)?(?:drunk|had|finished))\s+(\d+(?:\.\d+)?)\s*(ml|l|lit(?:er|re)s?)\s+(?:of\s+)?(water|tea|coffee)\b/i);
+  // "I just ate fruit salad and drank 500ml water" carries the "I" across
+  // both completed actions. Do not match someone else's report.
+  const carriedDrink = text.match(/\b(?:and(?:\s+then)?|then)\s+(?:just\s+)?(?:drank|had|finished)\s+(\d+(?:\.\d+)?)\s*(ml|l|lit(?:er|re)s?)\s+(?:of\s+)?(water|tea|coffee)\b/i);
+  const water = directDrink || (
+    carriedDrink && /\bI\s+(?:have\s+)?(?:just\s+)?(?:ate|eaten|had|drank|walked|ran)\b/i
+      .test(text.slice(0, carriedDrink.index))
+      ? carriedDrink : null
+  );
   if (water) {
     const volume = Number(water[1]) * (water[2].toLowerCase().startsWith("l") ? 1000 : 1);
     if (volume > 0 && volume <= 5000)
