@@ -123,7 +123,10 @@ export default async function InsightCategoryPage({ params }: Props) {
           <section className="mt-6 glass-card p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-xl font-semibold">Your wellness check-ins</h2>
-              <Link href="/check-in" className="submit-button">Check in</Link>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/journal" className="secondary-button">Read your reflections 🌷</Link>
+                <Link href="/check-in" className="submit-button">Check in</Link>
+              </div>
             </div>
             {wellnessCheckins.length ? (
               <>
