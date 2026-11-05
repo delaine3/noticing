@@ -211,3 +211,13 @@ test("preparing coffee is not proof of drinking it", () => {
   assert.equal(withLocalParser("I made coffee").length, 0);
   assert.equal(withLocalParser("I had a meeting with coffee on the table").length, 0);
 });
+
+test("one drink cannot inherit another drink's reported volume", () => {
+  const records = withLocalParser("I had water and I drank 500ml coffee");
+  const water = records.find((r) => r.log_type === "Water");
+  const coffee = records.find((r) => r.log_type === "Coffee");
+  assert.ok(water);
+  assert.ok(coffee);
+  assert.equal(water.water_amount_ml, null);
+  assert.equal(coffee.water_amount_ml, 500);
+});
