@@ -1,5 +1,6 @@
 import { DailyLog } from "./log-types";
 import { ReportItem } from "./report-item";
+import { recommendNextAction, type CheckInValues } from "./coaching";
 
 export type TimeBucket = {
   label: string;
@@ -76,8 +77,21 @@ export function getReportCardStyle(status: string) {
   return "bg-white";
 }
 
-export function getNextActionCopy(logs: DailyLog[]): NextAction {
-  if (logs.length > 0 && !hasLog(logs, ["Daily check-in"])) {
+export function getNextActionCopy(
+  logs: DailyLog[],
+  coaching?: { checkinCount: number; latestCheckIn: CheckInValues | null },
+): NextAction {
+  if (coaching?.latestCheckIn) {
+    const recommended = recommendNextAction(coaching.latestCheckIn);
+    return {
+      title: recommended.title,
+      body: recommended.next,
+      href: "/capture",
+      label: "Tell Noticing how it went",
+      benefit: recommended.benefit,
+    };
+  }
+  if (logs.length > 0 && !coaching?.checkinCount && !hasLog(logs, ["Daily check-in"])) {
     return {
       title: "A check-in could help",
       body: "Record your mood, energy and stress today. This becomes useful when measured consistently over several days.",
