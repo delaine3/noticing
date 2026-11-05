@@ -92,11 +92,6 @@ export default function ProfileDropdown({
                 <MessageSquareText size={16} />
                 Import chats
               </LoadingLink>
-              <LoadingLink href="/capture" onClick={() => setOpen(false)}
-                className="flex w-full items-center gap-2 rounded px-3 py-3 text-sm hover:bg-[#bed582]/40">
-                <MessageSquareText size={16} />
-                Talk to Noticing
-              </LoadingLink>
             </div>
           )}
 
