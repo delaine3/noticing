@@ -16,7 +16,7 @@ import { validCaptureDate, type CaptureDraft } from "../../lib/capture-types";
 
 type Message = { role: "me" | "noticing"; text: string };
 type Pending = AssistantPending & { ids: string[] };
-type Stage = "ordinary" | "download-permission" | "more-info";
+type Stage = "ordinary" | "download-permission" | "cloud-permission" | "more-info";
 const SMALL_MODEL = "SmolLM2-360M-Instruct-q4f16_1-MLC";
 const LARGE_MODEL = "SmolLM2-1.7B-Instruct-q4f16_1-MLC";
 
@@ -132,6 +132,41 @@ export function AssistantDock() {
     return null;
   }
 
+  async function optionalCloudIsEnabled() {
+    try {
+      const response = await withOperationTimeout(
+        fetch("/api/coaching/cloud/status", { cache: "no-store" }),
+        6000, "Cloud settings lookup timed out.",
+      );
+      if (!response.ok) return false;
+      const status = await response.json() as { enabled?: boolean };
+      return status.enabled === true;
+    } catch { return false; }
+  }
+
+  async function tryConsentedCloud(text: string): Promise<Proposed[] | null> {
+    const response = await withOperationTimeout(
+      fetch("/api/coaching/cloud", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consent: true,
+          message: text,
+          localDate: localDate(new Date()),
+        }),
+      }),
+      20000,
+      "Private cloud processing timed out.",
+    );
+    const result = await response.json() as {
+      proposed_records?: Proposed[];
+      error?: string;
+    };
+    if (!response.ok) throw new Error(result.error || "Cloud processing is unavailable.");
+    return Array.isArray(result.proposed_records)
+      ? result.proposed_records.slice(0, 3) : null;
+  }
+
   async function savePending(current: Pending) {
     const items: CaptureDraft[] = current.records.map((item, index) => ({
       ...item, id: current.ids[index], approved: true,
@@ -173,6 +208,26 @@ export function AssistantDock() {
     setInput("");
     typed(text);
     try {
+      if (stage === "cloud-permission") {
+        setStage("ordinary");
+        if (!isYes(text)) {
+          reply("No problem. Tell me what happened in simpler terms, or use manual entry.");
+          return;
+        }
+        try {
+          const found = await tryConsentedCloud(unknownText);
+          if (token !== operation.current) return;
+          if (found?.length) startDrafts(found);
+          else {
+            setStage("more-info");
+            reply("I couldn't identify a specific completed activity. What happened, and when?");
+          }
+        } catch (error) {
+          reply(error instanceof Error ? error.message :
+            "Cloud processing is unavailable. Try a shorter message.");
+        }
+        return;
+      }
       if (stage === "download-permission") {
         setStage("ordinary");
         if (!isYes(text)) {
@@ -244,6 +299,17 @@ export function AssistantDock() {
       }
       if (stage === "more-info") setStage("ordinary");
 
+      // No cloud processing unless settings opt-in AND user grants permission
+      // for this one message. Only the selected text is sent, no history.
+      if (await optionalCloudIsEnabled()) {
+        if (token !== operation.current) return;
+        setUnknownText(text);
+        setStage("cloud-permission");
+        reply("I can ask Cloudflare's private AI to interpret only that message. " +
+          "Cloudflare says it doesn't train on customer prompts. May I send it? Reply yes or no.");
+        return;
+      }
+
       if (aiUnavailable || !("gpu" in navigator)) {
         reply("I couldn't reliably turn that into a record yet. Try telling me what you did and when, or use the optional manual entry.");
         return;
@@ -302,7 +368,7 @@ export function AssistantDock() {
               }`}>{message.text}</p>
             ))}
             {busy ? <p role="status" className="text-sm text-[var(--ink-soft)]">
-              Thinking on your device…
+              Working on it…
               <button type="button" className="ml-2 underline" onClick={stopThinking}>Use simple recording</button>
             </p> : null}
             <div ref={logBottom} />
@@ -370,7 +436,10 @@ export function AssistantDock() {
             </div>
             <div className="mt-2 flex justify-between gap-2 text-xs text-[var(--ink-soft)]">
               <span>Nothing saved without your yes.</span>
-              <Link href="/logs/new" onClick={() => setOpen(false)} className="underline">Manual entry</Link>
+              <span className="flex items-center gap-3">
+                <Link href="/coaching/settings" onClick={() => setOpen(false)} className="underline">Privacy</Link>
+                <Link href="/logs/new" onClick={() => setOpen(false)} className="underline">Manual entry</Link>
+              </span>
             </div>
             {saveUncertain ? <p className="mt-2 text-xs text-amber-900">
               The last save may have completed. Check <Link href="/logs" className="underline">Logs</Link> before trying again.

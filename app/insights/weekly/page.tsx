@@ -14,7 +14,7 @@ export default async function WeeklyReviewPage() {
         <h1 className="mt-2 text-3xl font-bold sm:text-5xl">What happened, and what next?</h1>
         <p className="mt-3 max-w-3xl text-[var(--ink-soft)]">
           The seven calendar days ending on your most recent recorded date
-          {review.latest ? " (" + review.latest + ")" : ""}. This is a review of entries, not a grade.
+          {review.latest ? " (" + review.latest + ")" : ""}. 
         </p>
         <section className="mt-5 grid gap-3 sm:grid-cols-3">
           <article className="glass-card p-5"><h2 className="text-sm font-semibold">Days with entries</h2><p className="mt-2 text-3xl font-bold">{review.activeDays}/7</p></article>
@@ -47,8 +47,8 @@ export default async function WeeklyReviewPage() {
             <li>Which recurring difficulty could be reduced with one specific change?</li>
             <li>What is worth repeating, and what should stop taking your time?</li>
           </ol>
-          <p className="mt-4 text-sm">Use a work session, check-in or other log to record the answer. The app does not assume an unrecorded activity did not happen.</p>
-          <Link href="/logs/new?type=Daily%20check-in" className="submit-button mt-4 inline-block">Write a check-in</Link>
+          <p className="mt-4 text-sm">Record useful discoveries as you go.</p>
+          <Link href="/check-in" className="submit-button mt-4 inline-block">Write a check-in</Link>
         </section>
         <p className="mt-6 text-sm text-[var(--ink-soft)]">Based on up to {INSIGHT_LOG_LIMIT} most recent records. Earlier entries may not be represented.</p>
       </div>

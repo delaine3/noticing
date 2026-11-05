@@ -5,7 +5,6 @@ import {
   TimeBucket,
   getNextActionCopy,
   getTotalWaterMl,
-  getWaterMessage,
 } from "../../lib/daily-rules";
 import { CommandCard } from "./CommandCard";
 import { QuickLogCard } from "./QuickLogCard";
@@ -14,12 +13,25 @@ import { SummaryCard } from "../SummaryCard";
 import { TimelineCard } from "./TimeLineCard";
 import { SleepCompanion } from "../sleep/SleepCompanion";
 import type { SleepMoment } from "../../lib/sleep-utils";
+import { HydrationCoach } from "./HydrationCoach";
+import { AdaptiveCheckInInvite } from "./AdaptiveCheckInInvite";
+import type { CheckInValues } from "../../lib/coaching";
 
 type TodayCommandCenterProps = {
   logs: DailyLog[];
   report: ReportItem[];
   buckets: TimeBucket[];
   sleepEvents: SleepMoment[];
+  coaching: {
+    fluidGoalMl: number;
+    fluidRestricted: boolean | null;
+    allDrinksLogged: boolean;
+    invitesEnabled: boolean;
+    checkinCount: number;
+    pendingReviews: number;
+    latestCheckIn: CheckInValues | null;
+    lastCheckinAt: string | null;
+  };
 };
 
 export function TodayCommandCenter({
@@ -27,8 +39,9 @@ export function TodayCommandCenter({
   report,
   buckets,
   sleepEvents,
+  coaching,
 }: TodayCommandCenterProps) {
-  const nextAction = getNextActionCopy(logs);
+  const nextAction = getNextActionCopy(logs, coaching);
   const totalWaterMl = getTotalWaterMl(logs);
 
   return (
@@ -44,30 +57,31 @@ export function TodayCommandCenter({
           </h1>
 
           <p className="mt-4 max-w-2xl text-black-700">
-            See what you recorded, fill any gaps that matter, and decide what to do next.
+            Your day, your wellbeing and the next useful thing.
           </p>
         </div>
 
         <SleepCompanion events={sleepEvents} />
+        <AdaptiveCheckInInvite todayCount={coaching.checkinCount}
+          invitesEnabled={coaching.invitesEnabled} pendingReviews={coaching.pendingReviews}
+          lastCheckinAt={coaching.lastCheckinAt} />
+        <HydrationCoach totalMl={totalWaterMl}
+          fluidGoalMl={coaching.fluidGoalMl}
+          fluidRestricted={coaching.fluidRestricted}
+          allDrinksLogged={coaching.allDrinksLogged} />
         <CommandCard nextAction={nextAction} />
 
-        <section className="mt-5 grid gap-3 sm:grid-cols-3">
-          <SummaryCard
-            label="Drinks recorded"
-            value={`${totalWaterMl} ml`}
-            message={getWaterMessage(totalWaterMl)}
-          />
-
+        <section className="mt-5 grid gap-3 sm:grid-cols-2">
           <SummaryCard
             label="Entries"
             value={logs.length}
-            message="Saved today, not a measure of productivity."
+            message="Activities recorded today."
           />
 
           <SummaryCard
             label="Categories"
             value={report.length}
-            message="Summaries of recorded activity."
+            message="Activity summaries."
           />
         </section>
 

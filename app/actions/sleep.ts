@@ -48,9 +48,7 @@ export async function saveSleepMoment(
     return { ok: false, message: "No unfinished bedtime was found. You can record a wake-up through a normal log." };
   }
   const title = kind === "Bedtime" ? "Getting ready for bed" : "Woke up";
-  const notes = kind === "Bedtime"
-    ? "Going to bed. This is not confirmation of time asleep."
-    : "Wake time recorded. Bedtime and waking estimate time in bed, not hours actually asleep.";
+  const notes = kind === "Bedtime" ? "Bedtime recorded." : "Wake time recorded.";
   const { error: insertError } = await supabase.from("logs").insert({
     user_id: user.id,
     log_type: kind,
@@ -68,6 +66,6 @@ export async function saveSleepMoment(
     ok: true,
     message: kind === "Bedtime"
       ? "Bedtime noted. When you wake, Noticing can record that time too. Good night 🌙"
-      : "Wake time saved. Noticing will show time in bed separately from actual sleep.",
+      : "Wake time saved. 🌤️",
   };
 }

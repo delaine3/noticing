@@ -66,7 +66,7 @@ export function SleepCompanion({ events }: Props) {
           <h2 className="mt-2 text-xl font-semibold">Bedtime recorded. Rest well 🌙</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             You recorded getting into bed at {state.pendingBedtime.action_time?.slice(0, 5)}.
-            We&apos;ll ask for your wake time later, without guessing when you fell asleep.
+            When you get up, you can record your wake time.
           </p>
         </>
       ) : state.pendingBedtime ? (
@@ -75,7 +75,7 @@ export function SleepCompanion({ events }: Props) {
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             You recorded bedtime {state.pendingBedtime.action_date}
             {state.pendingBedtime.action_time ? " at " + state.pendingBedtime.action_time.slice(0, 5) : ""}.
-            Record when you got out of bed. We will not call that time asleep.
+            Record when you got up.
           </p>
           <button type="button" className="submit-button mt-4 disabled:opacity-50"
             disabled={busy} onClick={() => void save("Woke up")}>
@@ -86,8 +86,7 @@ export function SleepCompanion({ events }: Props) {
         <>
           <h2 className="mt-2 text-xl font-semibold">Ready to wind down?</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
-            {sleepBenefitForDate(parts.date)} There is no obligation to go to bed at 9 PM.
-            Record when you&apos;re actually getting into bed.
+            {sleepBenefitForDate(parts.date)} When you head to bed, tap the button.
           </p>
           <button type="button" className="submit-button mt-4 disabled:opacity-50"
             disabled={busy} onClick={() => void save("Bedtime")}>
@@ -99,7 +98,7 @@ export function SleepCompanion({ events }: Props) {
           <h2 className="mt-2 text-xl font-semibold">Last night&apos;s rest window</h2>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
             {formatTimeInBed(state.lastNight.timeInBedMinutes)} between recorded bedtime and wake-up.
-            This is <strong>time in bed</strong>, not measured sleep duration.
+            <strong>Time in bed</strong>.
           </p>
         </>
       ) : null}

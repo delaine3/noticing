@@ -11,7 +11,7 @@ export function ReportCard({ report }: ReportCardProps) {
     <CollapsibleSection
       eyebrow="Today's records"
       title="What is recorded"
-      summary={`${report.length} categories. Missing entries do not mean an activity did not happen.`}
+      summary={`${report.length} categories. See today's activity summaries.`}
       defaultOpen
     >
       <div className="grid gap-3 md:grid-cols-2">
