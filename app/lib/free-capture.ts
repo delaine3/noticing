@@ -11,7 +11,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
   const exclude = /\b(?:what if|imagine|hypothetically|if I|if we|I might|I would|I want to|I plan to|I need to|I should|I could|pretend|for example)\b/i;
   if (!text || exclude.test(text)) {
     return {
-      reply: "No completed activity was confidently detected. You can rephrase with what you actually did or try the on-device model.",
+      reply: "No completed activity was identified. Try a more specific description.",
       follow_up_question: null,
       proposed_records: [],
     };
@@ -65,25 +65,37 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
     if (hours > 0 && hours <= 24)
       add("Sleep", "Slept " + hours + " hours", slept[0], { sleep_hours: hours });
   }
-  // A reported meal is not automatically the *first* meal of the day.
-  // Keep its explicitly stated time and food description where available.
-  const meal = text.match(/\bI\s+(?:ate|had for (?:breakfast|lunch|dinner))\s+([^.!?;,]{2,90})/i);
+  // Capture ordinary completed meals without network or multi-GB AI downloads.
+  // "Had" can describe a meeting or a problem, so require food vocabulary
+  // unless the user explicitly says ate/eaten. No inferred first meal.
+  const meal = text.match(/\b(?:I\s+(?:have\s+)?(?:just\s+)?(?:ate|eaten)|I['’]ve\s+(?:just\s+)?eaten|I\s+(?:just\s+)?had(?:\s+for\s+(?:breakfast|lunch|dinner))?)\s+([^.!?;]{2,150})/i);
   if (meal) {
-    const timing = meal[1].match(/\bat\s+(1[0-2]|0?[1-9])(?::([0-5]\d))?\s*(a\.?m\.?|p\.?m\.?)\b/i);
-    const food = meal[1].replace(/\bat\s+\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?/i, "")
-      .replace(/\b(?:today|yesterday|this morning|this afternoon|this evening)\b/gi, "")
+    const verb = meal[0].slice(0, meal[0].length - meal[1].length);
+    const explicitEating = /\b(?:ate|eaten)\b/i.test(verb);
+    const rawFood = meal[1]
+      .split(/\s+(?:(?:and\s+then|then|and)\s+)(?:(?:I|we)\s+)?(?:just\s+)?(?:drank|had|ate|eaten|walked|went|finished|took|started|made|worked|watered)\b/i)[0]
       .trim();
-    const cleanFood = food.slice(0, 75);
-    if (cleanFood) {
-      let time = "";
-      if (timing) {
-        const hour = Number(timing[1]) % 12 + (/^p/i.test(timing[3]) ? 12 : 0);
-        time = String(hour).padStart(2, "0") + ":" + String(Number(timing[2] || 0)).padStart(2, "0");
+    const foodVocabulary = /\b(?:salad|fruit|fruits|peach|guava|apple|banana|orange|grape|melon|berries|strawberry|mango|avocado|yoghurt|yogurt|egg|eggs|toast|bread|sandwich|rice|beans|chicken|beef|pork|fish|meat|vegetable|vegetables|veggies|cereal|oats|porridge|pasta|noodles|soup|pizza|burger|chips|potato|potatoes|breakfast|lunch|dinner|snack|cake|food)\b/i;
+    const negativeFood = /^(?:nothing|no\s|not\s|none\b|zero\b)/i.test(rawFood);
+    if ((explicitEating || foodVocabulary.test(rawFood)) && !negativeFood) {
+      const timing = rawFood.match(/\b(?:at|around)\s+(1[0-2]|0?[1-9])(?::([0-5]\d))?\s*(a\.?m\.?|p\.?m\.?)\b/i);
+      const food = rawFood
+        .replace(/\b(?:at|around)\s+\d{1,2}(?::\d{2})?\s*[ap]\.?m\.?/gi, "")
+        .replace(/\b(?:today|yesterday|this morning|this afternoon|this evening|just now)\b/gi, "")
+        .replace(/\s+for\s+(?:breakfast|lunch|dinner)\b/gi, "")
+        .replace(/[,\s]+$/, "")
+        .trim();
+      if (food && !/^(?:to\b|that\b)/i.test(food)) {
+        let time = "";
+        if (timing) {
+          const hour = Number(timing[1]) % 12 + (/^p/i.test(timing[3]) ? 12 : 0);
+          time = String(hour).padStart(2, "0") + ":" + String(Number(timing[2] || 0)).padStart(2, "0");
+        }
+        add("Meal", "Ate " + food.slice(0, 75), meal[0].slice(0, 250), {
+          action_time: time,
+          uncertainty: "Review the event date and meal details before saving.",
+        });
       }
-      add("Meal", "Ate " + cleanFood, meal[0], {
-        action_time: time,
-        uncertainty: "Confirm the event date and meal details.",
-      });
     }
   }
 
@@ -99,7 +111,7 @@ export function extractLocalRecords(input: string, localDate: string): CaptureAn
   return {
     reply: draft.length
       ? "Found " + draft.length + " possible " + (draft.length === 1 ? "record" : "records") + ". Review the dates and details before saving."
-      : "No confidently matched activities in basic mode. Try adding a specific completed activity, or switch to free-tier AI.",
+      : "I couldn't identify a completed activity. Try adding what you did and when.",
     follow_up_question: null,
     proposed_records: draft,
   };
