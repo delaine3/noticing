@@ -109,3 +109,73 @@ test("an explicit time overrides now, and a past date never invents the present 
 test("a hypothetical drink is not falsely saved", () => {
   assert.equal(understandActivity("What if I just drank 500ml water?", now, fallback).length, 0);
 });
+
+const withLocalParser = (text) => understandActivity(
+  text, now, (input, day) => extractLocalRecords(input, day),
+);
+
+test("just ate a fruit salad creates a meal proposal without any model", () => {
+  const records = withLocalParser("I just ate a fruit salad");
+  assert.equal(records.length, 1);
+  assert.equal(records[0].log_type, "Meal");
+  assert.equal(records[0].title, "Ate a fruit salad");
+  assert.equal(records[0].action_date, "2026-11-04");
+  assert.equal(records[0].action_time, "21:15");
+  assert.equal(nextQuestion(records), null);
+});
+
+test("common completed-meal phrasings all stay on the basic path", () => {
+  for (const input of [
+    "I just ate a fruit salad",
+    "I have just eaten a fruit salad",
+    "I've just eaten a fruit salad",
+    "I’ve just eaten a fruit salad",
+    "I just had a fruit salad",
+    "I ate a fruit salad",
+    "I had a fruit salad for lunch",
+    "I ate a fruit salad with peach, guava and yoghurt",
+    "I just ate an apple",
+    "I had 5 eggs",
+    "I ate yoghurt at 7am today",
+  ]) {
+    const records = withLocalParser(input);
+    assert.equal(records.length, 1, input);
+    assert.equal(records[0].log_type, "Meal", input);
+    assert.ok(records[0].title.startsWith("Ate "), input);
+    assert.equal(nextQuestion(records), null, input);
+  }
+});
+
+test("just now and explicit meal times remain distinct from dated history", () => {
+  const [recent] = withLocalParser("I just ate a fruit salad");
+  assert.equal(recent.action_time, "21:15");
+  const [timed] = withLocalParser("I just ate a fruit salad at 7am today");
+  assert.equal(timed.action_time, "07:00");
+  const [older] = withLocalParser("I just ate a fruit salad yesterday");
+  assert.equal(older.action_date, "2026-11-03");
+  assert.equal(older.action_time, "");
+});
+
+test("a completed meal and drink can be reported in one message", () => {
+  const records = withLocalParser("I just ate a fruit salad and drank 500ml water");
+  assert.deepEqual(records.map((r) => r.log_type).sort(), ["Meal", "Water"]);
+  assert.equal(records.find((r) => r.log_type === "Meal").title, "Ate a fruit salad");
+  assert.equal(records.find((r) => r.log_type === "Water").water_amount_ml, 500);
+});
+
+test("do not convert future plans, negation or other people's meals into records", () => {
+  for (const input of [
+    "I'm going to eat a fruit salad",
+    "I want to eat a fruit salad",
+    "I did not eat a fruit salad",
+    "I didn't eat a fruit salad",
+    "I haven't eaten a fruit salad",
+    "I ate nothing",
+    "What if I just ate a fruit salad?",
+    "My friend just ate a fruit salad",
+    "I had a meeting at noon",
+    "I just had a difficult day",
+  ]) {
+    assert.equal(withLocalParser(input).length, 0, input);
+  }
+});
