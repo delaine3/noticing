@@ -32,8 +32,7 @@ export default async function CheckInPage() {
         </p>
         <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">How are you doing right now?</h1>
         <p className="mt-3 max-w-2xl text-[var(--ink-soft)]">
-          A short check-in, a useful suggestion and an optional follow-up.
-          Answer what matters and skip the rest.
+          Take a moment to check in with yourself. Skip anything you don't want to answer.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/coaching/settings" className="secondary-button">My coaching preferences</Link>
@@ -41,8 +40,8 @@ export default async function CheckInPage() {
         </div>
         {notInstalled ? (
           <section className="glass-card mt-5 p-5">
-            <h2 className="font-semibold">Coaching storage needs setting up</h2>
-            <p className="mt-2 text-sm">Run the SQL migration in Supabase before recording structured check-ins.</p>
+            <h2 className="font-semibold">Check-ins are unavailable</h2>
+            <p className="mt-2 text-sm">We couldn't load check-ins right now. Please try again later.</p>
           </section>
         ) : null}
         {(due ?? []).map((action) => (
