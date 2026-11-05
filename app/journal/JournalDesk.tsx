@@ -242,8 +242,7 @@ export function JournalDesk({ month, today, entries, journalReady }: {
     <div className="space-y-8">
       {journalReady ? <JournalComposer today={today} /> : (
         <p className="rounded-xl border border-[#b4b59e] bg-[#fff9e9] p-4 text-sm">
-          Your previous check-in reflections remain readable below. To write new diary pages,
-          edit them or save drafts, apply the Thought Garden SQL migration in Supabase.
+          The journal isn't available right now. You can still read any check-in notes shown below.
         </p>
       )}
       <section className="rounded-3xl bg-[linear-gradient(160deg,#eaf4e6_0%,#f5f5e7_47%,#f9ebdf_100%)] p-5 sm:p-8">
@@ -265,7 +264,7 @@ export function JournalDesk({ month, today, entries, journalReady }: {
         ) : (
           <div className="mt-7 rounded-2xl border border-dashed border-[#b5c6ad] bg-white/65 p-8 text-center">
             <p className="text-5xl" aria-hidden="true">🌱</p>
-            <p className="mt-3 text-lg font-medium">The garden is ready for your first thought.</p>
+            <p className="mt-3 text-lg font-medium">No entries here yet.</p>
             <p className="mt-1 text-sm text-[#607160]">Write a diary page or record a check-in.</p>
           </div>
         )}
