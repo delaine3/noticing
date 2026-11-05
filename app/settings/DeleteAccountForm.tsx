@@ -17,6 +17,7 @@ export function DeleteAccountForm() {
     if (busy || confirmation !== "DELETE MY ACCOUNT" || !password) return;
     setBusy(true);
     setError("");
+    let wasDeleted = false;
     try {
       const response = await fetch("/api/account/delete", {
         method: "POST",
@@ -30,12 +31,15 @@ export function DeleteAccountForm() {
         setError(result.error ?? "Could not delete your account.");
         return;
       }
+      wasDeleted = true;
       setPassword("");
       await supabase.auth.signOut();
-      router.replace("/login?deleted=1");
+      router.replace("/login");
       router.refresh();
     } catch {
-      setError("We couldn't confirm whether your account was deleted. Try signing in again before retrying.");
+      setError(wasDeleted
+        ? "Your account was deleted, but we couldn't sign you out. Please refresh the page."
+        : "We couldn't confirm whether your account was deleted. Try signing in again before retrying.");
     } finally {
       setBusy(false);
     }
