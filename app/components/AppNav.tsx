@@ -85,7 +85,7 @@ export function AppNav() {
               Noticing
             </span>
             <span className="block text-xs font-medium text-[var(--ink-soft)]">
-              run the day
+              your journal
             </span>
           </div>
         </LoadingLink>
