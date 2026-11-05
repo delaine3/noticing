@@ -72,13 +72,13 @@ export function TodayCommandCenter({
           <SummaryCard
             label="Entries"
             value={logs.length}
-            message="Activities recorded today."
+            message="Entries from today."
           />
 
           <SummaryCard
             label="Categories"
             value={report.length}
-            message="Activity summaries."
+            message="Types of entries today."
           />
         </section>
 
