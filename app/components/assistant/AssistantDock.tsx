@@ -52,7 +52,7 @@ export function AssistantDock() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "noticing", text: "Hi 🌿 Tell me what happened today. I'll ask if I need another detail, then check with you before saving." },
+    { role: "noticing", text: "Hi 🌿 What's on your mind? I'll ask before saving anything." },
   ]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState<Pending | null>(null);
@@ -172,7 +172,7 @@ export function AssistantDock() {
       if (stage === "cloud-permission") {
         setStage("ordinary");
         if (!isYes(text)) {
-          reply("No problem. Tell me what happened in simpler terms, or use manual entry.");
+          reply("Okay. Try describing it another way, or add it manually.");
           return;
         }
         try {
@@ -356,7 +356,7 @@ export function AssistantDock() {
                 aria-label="Send message">Send</button>
             </div>
             <div className="mt-2 flex justify-between gap-2 text-xs text-[var(--ink-soft)]">
-              <span>Nothing saved without your yes.</span>
+              <span>I'll ask before saving.</span>
               <span className="flex items-center gap-3">
                 <Link href="/coaching/settings" onClick={() => setOpen(false)} className="underline">Privacy</Link>
                 <Link href="/logs/new" onClick={() => setOpen(false)} className="underline">Manual entry</Link>
