@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../lib/supabase";
 
 const demoCredentials = {
@@ -59,6 +60,10 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center page px-4">
       <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
+        <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
+          The demo is shared and not private. Never enter real personal information in it.
+          For your own journal, <Link className="underline" href="/signup">create an account</Link>.
+        </p>
         <button
           type="button"
           onClick={handleDemoLogin}
