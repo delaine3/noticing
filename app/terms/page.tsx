@@ -56,7 +56,8 @@ export default function TermsPage() {
       <p>
         See our <Link href="/privacy">privacy notice</Link> for data handling and
         <Link href="/account"> Your data</Link> for export/deletion options. You may stop
-        using the service and request closure of your account.
+        using the service and permanently delete your account yourself from the Your data
+        page after identity verification, without emailing the operator.
       </p>
     </LegalPage>
   );
