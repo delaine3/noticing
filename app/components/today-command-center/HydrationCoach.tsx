@@ -28,7 +28,7 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
     <section className="glass-card mt-5 p-5" aria-label="Fluid intake">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Today's fluids</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Today&apos;s fluids</p>
           <h2 className="mt-1 text-3xl font-semibold">{assessment.headline}</h2>
         </div>
         {fluidRestricted !== true ? (
