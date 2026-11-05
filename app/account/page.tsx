@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DeleteAccountForm } from "./DeleteAccountForm";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "../lib/supabase-server";
 
@@ -25,14 +26,7 @@ export default async function AccountDataPage() {
             <p>Download a JSON copy of the records currently accessible through your account.
               The export contains potentially sensitive information. Store it securely.</p>
             <a href="/api/account/export" className="submit-button inline-block">Export my data (JSON)</a>
-            <p>
-              To request account closure and deletion of account data, email{" "}
-              <a className="underline" href="mailto:delaineabner3@gmail.com?subject=Noticing%20account%20deletion%20request">
-                delaineabner3@gmail.com
-              </a> from your registered address. We will verify the request and explain
-              the deletion process and any remaining provider backup retention.
-              <strong> This request is not instant or automatic.</strong>
-            </p>
+            <DeleteAccountForm />
           </>
         )}
         <p className="text-sm text-[var(--ink-soft)]">
