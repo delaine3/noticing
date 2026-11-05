@@ -78,13 +78,23 @@ export type CoachingRecommendation = {
   next: string;
 };
 
-export function recommendNextAction(v: CheckInValues): CoachingRecommendation {
+export function recommendNextAction(
+  v: CheckInValues,
+  context: { fluidRestricted?: boolean | null } = {},
+): CoachingRecommendation {
   if (v.physical_discomfort === true && v.energy <= 2) {
     return {
       code: "rest",
       title: "Give your body a break",
       benefit: "Taking a break from effort is sensible when you're uncomfortable. If symptoms are severe, new, or worsening, seek medical advice rather than relying on an app.",
       next: "Sit somewhere comfortable and reassess how you feel.",
+    };
+  }
+  if (v.thirsty === true && context.fluidRestricted === true) {
+    return {
+      code: "reflect", title: "Follow your fluid plan",
+      benefit: "If a clinician has limited your fluids, follow that plan even if your general intake goal differs.",
+      next: "Check the guidance you were given about thirst and your fluid allowance.",
     };
   }
   if (v.thirsty === true) {
