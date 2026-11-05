@@ -31,16 +31,20 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
           <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Today's fluids</p>
           <h2 className="mt-1 text-3xl font-semibold">{assessment.headline}</h2>
         </div>
-        <p className="text-sm text-[var(--ink-soft)]">
-          Daily goal: {assessment.goalMl.toLocaleString("en-US")} ml
-        </p>
+        {fluidRestricted !== true ? (
+          <p className="text-sm text-[var(--ink-soft)]">
+            Daily goal: {assessment.goalMl.toLocaleString("en-US")} ml
+          </p>
+        ) : <p className="text-sm text-[var(--ink-soft)]">Clinician-directed fluid plan</p>}
       </div>
-      <div role="progressbar" aria-label="Daily drink goal progress" aria-valuemin={0}
-        aria-valuemax={assessment.goalMl} aria-valuenow={Math.min(assessment.loggedMl, assessment.goalMl)}
-        className="mt-4 h-3 overflow-hidden rounded-full bg-[#e3e9df]">
-        <div className="h-full rounded-full bg-[#37869d] transition-all"
-          style={{ width: progress + "%" }} />
-      </div>
+      {fluidRestricted !== true ? (
+        <div role="progressbar" aria-label="Daily drink goal progress" aria-valuemin={0}
+          aria-valuemax={assessment.goalMl} aria-valuenow={Math.min(assessment.loggedMl, assessment.goalMl)}
+          className="mt-4 h-3 overflow-hidden rounded-full bg-[#e3e9df]">
+          <div className="h-full rounded-full bg-[#37869d] transition-all"
+            style={{ width: progress + "%" }} />
+        </div>
+      ) : null}
       <p className="mt-3 text-sm leading-6">{assessment.guidance}</p>
       {assessment.caution ? <p className="mt-2 text-xs text-[var(--ink-soft)]">{assessment.caution}</p> : null}
       <div className="mt-4 flex flex-wrap gap-3">
