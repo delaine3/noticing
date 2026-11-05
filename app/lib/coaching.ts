@@ -59,11 +59,15 @@ const questions: Record<QuestionKey, AdaptiveQuestion> = {
 };
 
 export function getAdaptiveQuestions(values: CheckInValues): AdaptiveQuestion[] {
+  // Mix physical and mental follow-ups rather than allowing one
+  // dimension to consume all three questions.
   const order: QuestionKey[] = [];
-  if (values.energy <= 2) order.push("recently_ate", "rested", "thirsty", "physical_discomfort");
-  if (values.stress >= 4 || values.thought_topic === "worries")
-    order.push("thought_actionable", "overwhelmed");
-  if (values.mood <= 2) order.push("overwhelmed", "physical_discomfort");
+  if (values.energy <= 2) order.push("recently_ate");
+  if (values.stress >= 4 || values.thought_topic === "worries") order.push("thought_actionable");
+  if (values.mood <= 2) order.push("overwhelmed");
+  if (values.energy <= 2) order.push("rested", "thirsty", "physical_discomfort");
+  if (values.stress >= 4 || values.thought_topic === "worries") order.push("overwhelmed");
+  if (values.mood <= 2) order.push("physical_discomfort");
   const keys = [...new Set(order)].filter((key) => values[key] === null);
   return keys.slice(0, 3).map((key) => questions[key]);
 }
