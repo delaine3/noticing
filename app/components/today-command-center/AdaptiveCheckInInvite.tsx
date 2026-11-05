@@ -7,10 +7,13 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingRevie
   todayCount: number; invitesEnabled: boolean; pendingReviews: number; lastCheckinAt: string | null;
 }) {
   const [hour, setHour] = useState<number | null>(null);
+  const [nowMs, setNowMs] = useState<number | null>(null);
   const [dismissed, setDismissed] = useState(false);
   useEffect(() => {
     const t = window.setTimeout(() => {
-      setHour(new Date().getHours());
+      const now = new Date();
+      setHour(now.getHours());
+      setNowMs(now.getTime());
       setDismissed(window.localStorage.getItem("noticing_checkin_dismissed") ===
         new Date().toLocaleDateString("en-CA"));
     }, 0);
@@ -18,7 +21,7 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, pendingRevie
   }, []);
   if (!invitesEnabled && pendingReviews === 0) return null;
   const longEnoughSinceCheckin = !lastCheckinAt ||
-    Date.now() - new Date(lastCheckinAt).getTime() >= 4 * 3600000;
+    (nowMs !== null && nowMs - new Date(lastCheckinAt).getTime() >= 4 * 3600000);
   const offer = !dismissed && invitesEnabled && hour !== null &&
     ((todayCount === 0 && hour >= 9 && hour <= 21) ||
      (todayCount === 1 && hour >= 17 && hour <= 21 && longEnoughSinceCheckin));
