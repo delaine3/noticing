@@ -131,7 +131,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
         <>
           <div>
             <h2 className="text-xl font-semibold">How are you right now?</h2>
-            <p className="mt-1 text-sm text-[var(--ink-soft)]">Four quick answers. I'll ask more only when it would change the advice.</p>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">Four quick answers. I&apos;ll ask more only when it would change the advice.</p>
           </div>
           <Rating name="Energy" prompt="Physical energy" value={answers.energy}
             onChange={(v) => setScore("energy", v)} />
@@ -173,7 +173,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
             <button type="button" className="secondary-button" onClick={() => extra(nextQuestion.key, null)}>Skip</button>
           </div>
           <button type="button" onClick={() => setStage("review")} className="text-sm underline">
-            That's enough questions
+            That&apos;s enough questions
           </button>
         </>
       ) : null}
@@ -192,7 +192,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
             <details className="rounded-lg border border-[var(--border-soft)] p-3 text-sm">
               <summary className="cursor-pointer font-medium">Add a private note (optional)</summary>
               <label className="mt-3 block">
-                What's on your mind?
+                What&apos;s on your mind?
                 <textarea rows={2} maxLength={600}
                   value={answers.thought_detail ?? ""}
                   onChange={(e) => setAnswers((old) => ({ ...old, thought_detail: e.target.value }))}
@@ -203,7 +203,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
                   onChange={(e) => setSaveThoughtText(e.target.checked)} />
                 Save this note with my check-in
               </label>
-              {!saveThoughtText ? <p className="mt-1 text-xs text-[var(--ink-soft)]">The note won't be stored.</p> : null}
+              {!saveThoughtText ? <p className="mt-1 text-xs text-[var(--ink-soft)]">The note won&apos;t be stored.</p> : null}
             </details>
           ) : null}
           <label className="flex items-start gap-2 text-sm">
