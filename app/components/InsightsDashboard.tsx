@@ -84,11 +84,11 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
 
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-            What you've recorded
+            What you&apos;ve recorded
           </h1>
 
           <p className="mt-4 max-w-2xl text-[var(--ink-soft)]">
-            See what you've been doing and how it's felt over time.
+            See what you&apos;ve been doing and how it&apos;s felt over time.
           </p>
         </div>
         <section className="glass-card mt-6  p-5 shadow-sm">
@@ -184,7 +184,7 @@ export function InsightsDashboard({ logs }: InsightsDashboardProps) {
           </p>
           <p className="mt-2 text-3xl font-semibold">{totalWaterMl} ml</p>
         </article>
-        <p className="mt-3 text-sm text-[var(--ink-soft)]">Includes any logged drink with a quantity, including coffee. This isn't a measure of how hydrated you are.</p>
+        <p className="mt-3 text-sm text-[var(--ink-soft)]">Includes any logged drink with a quantity, including coffee. This isn&apos;t a measure of how hydrated you are.</p>
         <ScoreTrendChart logs={logs} /> <Treadmill logs={logs} />
         <section className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <InsightNotes />
