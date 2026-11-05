@@ -62,12 +62,22 @@ export function understandActivity(
       time || (/\bjust\b/i.test(text) ? localTime(now) : ""), text));
   }
 
-  const coffee = /\bi\s+(?:had|drank|made|finished)\b.{0,45}\bcoffee\b/i.test(text);
-  const water = /\bi\s+(?:had|drank|finished)\b.{0,45}\bwater\b/i.test(text);
-  if (coffee || water) {
-    const type = coffee ? "Coffee" : "Water";
-    const proposed = record(type, coffee ? "Had coffee" : "Drank water", day, time, text);
-    proposed.water_amount_ml = extractVolume(text);
+  // Simple drink reports must not require cloud AI. Require drink words
+  // directly after a drinking verb to avoid treating "had fruit salad with
+  // coffee" as a confirmed drink. "Made coffee" is not proof of drinking.
+  const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b/i;
+  const drinkPhrase = drinkLead.exec(text);
+  const drinkContext = drinkPhrase
+    ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 60) : "";
+  const drinkMatch = drinkContext.match(/^\s*(?:(?:a|an|one|two|some|the|of|glass|glasses|cup|cups|bottle|bottles|mug|mugs|iced|hot|cold|large|small|big|fresh|plain|sparkling|tap|black|oat)\s+|\d+(?:\.\d+)?\s*(?:ml|l|lit(?:er|re)s?)?\s*(?:of\s+)?){0,7}(coffee|water|tea|juice|milk|smoothie|soda)\b/i);
+  const beverage = drinkMatch?.[1]?.toLowerCase();
+  if (beverage) {
+    const type = beverage === "coffee" ? "Coffee" : "Water";
+    const title = beverage === "water" ? "Drank water" : "Had " + beverage;
+    const justNow = /\bjust\b/i.test(drinkPhrase?.[0] ?? "") &&
+      !/\b(?:yesterday|last night|last week|last month|ago|earlier)\b/i.test(text);
+    const proposed = record(type, title, day, time || (justNow ? localTime(now) : ""), text);
+    proposed.water_amount_ml = extractVolume(drinkMatch?.[0] ?? "");
     result.push(proposed);
   }
 
@@ -75,10 +85,15 @@ export function understandActivity(
   for (const item of fromRules) {
     if (result.length >= 6) break;
     if (!result.some((existing) => existing.log_type === item.log_type)) {
+      const recentMeal = item.log_type === "Meal" &&
+        (/\bI\s+(?:have\s+)?just\s+(?:ate|eaten|had)\b/i.test(item.evidence) ||
+         /\bI['’]ve\s+just\s+(?:eaten|had)\b/i.test(item.evidence) ||
+         /\bjust now\b/i.test(item.evidence));
+      const historical = /\b(?:yesterday|last night|last week|earlier|ago)\b/i.test(text);
       result.push({
         ...item,
         action_date: item.action_date || day,
-        action_time: item.action_time || time,
+        action_time: item.action_time || time || (recentMeal && !historical ? localTime(now) : ""),
         uncertainty: item.uncertainty || "",
       });
     }

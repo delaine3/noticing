@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@mlc-ai/web-llm": "0.2.87",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
     "lucide-react": "^1.16.0",

@@ -4,6 +4,7 @@ import {
   applyDetailReply, interpretClock, nextQuestion, summarizeRecords,
   understandActivity,
 } from "../app/lib/assistant-intent.ts";
+import { extractLocalRecords } from "../app/lib/free-capture.ts";
 
 const now = new Date(2026, 10, 4, 21, 15);
 const fallback = () => ({ reply: "", follow_up_question: null, proposed_records: [] });
@@ -62,4 +63,161 @@ test("a wake-up without time asks a useful follow-up and accepts plain 6am", () 
   const updated = applyDetailReply(pending, "6am");
   assert.equal(updated.records[0].action_time, "06:00");
   assert.equal(updated.phase, "confirm");
+});
+
+test("just drank 500ml water stays local, with volume and current time", () => {
+  const records = understandActivity(
+    "I just drank 500ml water", now,
+    (text, date) => ({
+      reply: "", follow_up_question: null,
+      proposed_records: extractLocalRecords(text, date).proposed_records,
+    }),
+  );
+  assert.equal(records.length, 1);
+  assert.equal(records[0].log_type, "Water");
+  assert.equal(records[0].water_amount_ml, 500);
+  assert.equal(records[0].action_date, "2026-11-04");
+  assert.equal(records[0].action_time, "21:15");
+  assert.equal(nextQuestion(records), null);
+});
+
+test("common variations of immediate drink reports need no AI or extra questions", () => {
+  for (const input of [
+    "I just drank 500 ml of water",
+    "I've just drunk 500ml water",
+    "I have just had 500 ml of water",
+    "I just had 500 ml water",
+    "I just finished 500ml water",
+  ]) {
+    const records = understandActivity(input, now, fallback);
+    assert.equal(records.length, 1, input);
+    assert.equal(records[0].log_type, "Water", input);
+    assert.equal(records[0].water_amount_ml, 500, input);
+    assert.equal(records[0].action_time, "21:15", input);
+    assert.equal(nextQuestion(records), null, input);
+  }
+});
+
+test("an explicit time overrides now, and a past date never invents the present time", () => {
+  const [timed] = understandActivity("I just drank 500ml water at 7am", now, fallback);
+  assert.equal(timed.action_time, "07:00");
+  const [yesterday] = understandActivity("I just drank 500ml water yesterday", now, fallback);
+  assert.equal(yesterday.action_date, "2026-11-03");
+  assert.equal(yesterday.action_time, "");
+});
+
+test("a hypothetical drink is not falsely saved", () => {
+  assert.equal(understandActivity("What if I just drank 500ml water?", now, fallback).length, 0);
+});
+
+const withLocalParser = (text) => understandActivity(
+  text, now, (input, day) => extractLocalRecords(input, day),
+);
+
+test("just ate a fruit salad creates a meal proposal without any model", () => {
+  const records = withLocalParser("I just ate a fruit salad");
+  assert.equal(records.length, 1);
+  assert.equal(records[0].log_type, "Meal");
+  assert.equal(records[0].title, "Ate a fruit salad");
+  assert.equal(records[0].action_date, "2026-11-04");
+  assert.equal(records[0].action_time, "21:15");
+  assert.equal(nextQuestion(records), null);
+});
+
+test("common completed-meal phrasings all stay on the basic path", () => {
+  for (const input of [
+    "I just ate a fruit salad",
+    "I have just eaten a fruit salad",
+    "I've just eaten a fruit salad",
+    "I’ve just eaten a fruit salad",
+    "I just had a fruit salad",
+    "I ate a fruit salad",
+    "I had a fruit salad for lunch",
+    "I ate a fruit salad with peach, guava and yoghurt",
+    "I just ate an apple",
+    "I had 5 eggs",
+    "I ate yoghurt at 7am today",
+  ]) {
+    const records = withLocalParser(input);
+    assert.equal(records.length, 1, input);
+    assert.equal(records[0].log_type, "Meal", input);
+    assert.ok(records[0].title.startsWith("Ate "), input);
+    assert.equal(nextQuestion(records), null, input);
+  }
+});
+
+test("just now and explicit meal times remain distinct from dated history", () => {
+  const [recent] = withLocalParser("I just ate a fruit salad");
+  assert.equal(recent.action_time, "21:15");
+  const [timed] = withLocalParser("I just ate a fruit salad at 7am today");
+  assert.equal(timed.action_time, "07:00");
+  const [older] = withLocalParser("I just ate a fruit salad yesterday");
+  assert.equal(older.action_date, "2026-11-03");
+  assert.equal(older.action_time, "");
+});
+
+test("a completed meal and drink can be reported in one message", () => {
+  const records = withLocalParser("I just ate a fruit salad and drank 500ml water");
+  assert.deepEqual(records.map((r) => r.log_type).sort(), ["Meal", "Water"]);
+  assert.equal(records.find((r) => r.log_type === "Meal").title, "Ate a fruit salad");
+  assert.equal(records.find((r) => r.log_type === "Water").water_amount_ml, 500);
+});
+
+test("do not convert future plans, negation or other people's meals into records", () => {
+  for (const input of [
+    "I'm going to eat a fruit salad",
+    "I want to eat a fruit salad",
+    "I did not eat a fruit salad",
+    "I didn't eat a fruit salad",
+    "I haven't eaten a fruit salad",
+    "I ate nothing",
+    "What if I just ate a fruit salad?",
+    "My friend just ate a fruit salad",
+    "I had a meeting at noon",
+    "I just had a difficult day",
+  ]) {
+    assert.equal(withLocalParser(input).length, 0, input);
+  }
+});
+
+test("common just-completed activities are understood without an AI model", () => {
+  const cases = [
+    ["I just walked 5 km", "Movement"],
+    ["I've just walked 5km", "Movement"],
+    ["I just watered my garden", "Plant care"],
+    ["I've just watered my roses", "Plant care"],
+    ["I just sent 3 applications", "Job application"],
+    ["I just sent 2 job applications", "Job application"],
+    ["I just painted a picture", "Creative time"],
+    ["I just slept 7 hours", "Sleep"],
+    ["I just finished a fruit salad", "Meal"],
+  ];
+  for (const [input, expectedType] of cases) {
+    const records = withLocalParser(input);
+    assert.ok(records.some((r) => r.log_type === expectedType), input);
+  }
+});
+
+test("tea and juice can be logged without AI and uncertain amounts are requested", () => {
+  for (const input of ["I just had tea", "I drank a cup of tea", "I just had a glass of juice"]) {
+    const records = withLocalParser(input);
+    assert.equal(records.length, 1, input);
+    assert.equal(records[0].log_type, "Water", input);
+    assert.equal(nextQuestion(records)?.field, "water_amount_ml", input);
+  }
+});
+
+test("preparing coffee is not proof of drinking it", () => {
+  assert.equal(withLocalParser("I made coffee").length, 0);
+  assert.equal(withLocalParser("I had a meeting with coffee on the table").length, 0);
+});
+
+test("one drink cannot inherit another drink's reported volume", () => {
+  const records = withLocalParser("I had water and I drank 500ml coffee");
+  const water = records.find((r) => r.log_type === "Water");
+  const coffee = records.find((r) => r.log_type === "Coffee");
+  assert.ok(water);
+  assert.ok(coffee);
+  assert.equal(water.water_amount_ml, null);
+  assert.equal(coffee.water_amount_ml, 500);
 });
