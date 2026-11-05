@@ -17,7 +17,7 @@ function isUuid(value: string) {
 }
 function problem(error: { code?: string; message?: string } | null, fallback: string) {
   if (error?.code === "42P01" || error?.code === "PGRST205")
-    return "Coaching storage has not been installed yet. Run the SQL migration in Supabase first.";
+    return "Check-ins aren't available right now. Please try again later.";
   return fallback;
 }
 
