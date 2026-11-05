@@ -57,7 +57,7 @@ export default async function Home() {
       .eq("user_id", user.id).eq("status", "accepted")
       .lte("follow_up_at", new Date().toISOString()),
     supabase.from("wellness_checkins")
-      .select("energy,mood,stress,thought_topic,recently_ate,thirsty,physical_discomfort,overwhelmed,thought_actionable,rested")
+      .select("recorded_at,energy,mood,stress,thought_topic,recently_ate,thirsty,physical_discomfort,overwhelmed,thought_actionable,rested")
       .eq("user_id", user.id).eq("local_date", today)
       .order("recorded_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
@@ -71,6 +71,7 @@ export default async function Home() {
       checkinCount: checkinCount ?? 0,
       pendingReviews: dueCount ?? 0,
       latestCheckIn: validateCheckIn(latestCheckIn) ? latestCheckIn as CheckInValues : null,
+      lastCheckinAt: latestCheckIn?.recorded_at ?? null,
     }}
     sleepEvents={(moments ?? []) as SleepMoment[]} />;
 }
