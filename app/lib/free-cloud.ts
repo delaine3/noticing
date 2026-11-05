@@ -6,7 +6,7 @@
  * before enabling this. There is no remote API guarantee that a paid account
  * cannot exceed the allowance, so server configuration must fail closed.
  */
-export const FREE_WORKERS_MODEL = "@cf/meta/llama-3.1-8b-instruct";
+export const FREE_WORKERS_MODEL = "@cf/google/gemma-4-26b-a4b-it";
 
 export function freeCloudConfigured(env: {
   CLOUDFLARE_ACCOUNT_ID?: string;
