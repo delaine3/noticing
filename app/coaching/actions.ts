@@ -66,7 +66,9 @@ export async function saveWellnessCheckIn(payload: {
     };
     return { ok: false, message: problem(error, "Couldn't save the check-in. Please try again.") };
   }
-  const suggestion = recommendNextAction(v);
+  const { data: preference } = await supabase.from("coaching_preferences")
+    .select("fluid_restricted").eq("user_id", user.id).maybeSingle();
+  const suggestion = recommendNextAction(v, { fluidRestricted: preference?.fluid_restricted ?? null });
   const { error: suggestionError } = await supabase.from("coaching_interventions").insert({
     user_id: user.id,
     checkin_id: saved.id,
