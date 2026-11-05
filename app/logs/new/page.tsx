@@ -186,7 +186,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
         </h1>
 
         <p className="mt-4 text-black-700">
-          Tell us what happened and when. Add any details you'd like to keep.
+          Tell us what happened and when. Add any details you&apos;d like to keep.
         </p>
 
         <NewActionForm
