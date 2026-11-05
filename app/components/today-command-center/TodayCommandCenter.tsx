@@ -15,6 +15,7 @@ import { SleepCompanion } from "../sleep/SleepCompanion";
 import type { SleepMoment } from "../../lib/sleep-utils";
 import { HydrationCoach } from "./HydrationCoach";
 import { AdaptiveCheckInInvite } from "./AdaptiveCheckInInvite";
+import type { CheckInValues } from "../../lib/coaching";
 
 type TodayCommandCenterProps = {
   logs: DailyLog[];
@@ -28,6 +29,7 @@ type TodayCommandCenterProps = {
     invitesEnabled: boolean;
     checkinCount: number;
     pendingReviews: number;
+    latestCheckIn: CheckInValues | null;
   };
 };
 
@@ -38,7 +40,7 @@ export function TodayCommandCenter({
   sleepEvents,
   coaching,
 }: TodayCommandCenterProps) {
-  const nextAction = getNextActionCopy(logs);
+  const nextAction = getNextActionCopy(logs, coaching);
   const totalWaterMl = getTotalWaterMl(logs);
 
   return (
