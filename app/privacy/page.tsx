@@ -58,7 +58,7 @@ export default function PrivacyPage() {
         Saved entries are kept while your account is active unless you delete them. Account
         removal is intended to erase active Noticing account data. Provider backups, security
         logs, or legally required records may remain temporarily according to provider schedules
-        or applicable law. Account deletion doesn't immediately remove information from every backup.
+        or applicable law. Account deletion doesn&apos;t immediately remove information from every backup.
       </p>
       <h2>Your rights and options</h2>
       <p>
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
         restriction, or objection to particular processing. You can edit and delete journal logs
         in the app. Visit <Link href="/account">Your data</Link> to download a JSON copy of
         your records or delete your account yourself in Settings, after confirming your
-        password. You don't need to email us to delete your account. For requests that
+        password. You don&apos;t need to email us to delete your account. For requests that
         can't be handled in the app, you can use the contact address above.
         You can complain to the relevant data-protection authority if your rights are not respected.
       </p>
