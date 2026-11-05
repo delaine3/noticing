@@ -52,7 +52,7 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     const sleepHours = sleep.map((log) => noteMetric(log, "Hours slept"))
       .filter((value): value is number => value !== null);
     metrics.push(
-      { label: "Drink volume entered", value: number(drinkMl) + " ml", detail: "From " + drinkEntries.length + " entries, not a fluid target" },
+      { label: "Drink volume entered", value: number(drinkMl) + " ml", detail: "From " + drinkEntries.length + " drink entries" },
       { label: "Treadmill distance", value: number(distance) + " km", detail: treadmill.length + " recorded sessions" },
       { label: "Meals with time", value: String(meals.length), detail: "Useful for checking meal timing" },
       { label: "Average recorded sleep", value: sleepHours.length ? average(sleepHours) + " h" : "—", detail: sleepHours.length + " measured entries; " + sleep.length + " sleep logs" },
@@ -137,7 +137,7 @@ export function analyzeArea(id: string, logs: InsightLog[]): AreaAnalysis {
     );
     findings.push(finding("Track outcomes after applications", applications
       ? "You recorded " + applications + " applications and " + interviews + " interviews. These counts are not a conversion rate unless all outcomes are tracked and the observation period is defined."
-      : "No applications are recorded in this history. That does not mean none were sent.",
+      : "Add an application when you want to track follow-up outcomes.",
       "Record a reply, follow-up or interview", "/logs/new?type=Job%20follow-up"));
     findings.push(finding("Define a finished result", "A session is useful when you can name what changed: a bug fixed, a proposal sent or a page shipped.", "Log a concrete work result", "/logs/new?type=Focused%20work"));
   } else if (id === "life") {
