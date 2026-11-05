@@ -53,7 +53,7 @@ export function TodayCommandCenter({
           </p>
 
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">
-            Today, as recorded
+            Today
           </h1>
 
         </div>
@@ -83,8 +83,8 @@ export function TodayCommandCenter({
         </section>
 
         <div className="mt-5 flex flex-wrap gap-3">
-          <Link href="/insights" className="secondary-button">Explore insights by life area</Link>
-          <Link href="/insights/weekly" className="secondary-button">Review recent days</Link>
+          <Link href="/insights" className="secondary-button">Explore insights</Link>
+          <Link href="/insights/weekly" className="secondary-button">Recent days</Link>
           <Link href="/import/chat" className="secondary-button">Import conversations</Link>
         </div>
 
