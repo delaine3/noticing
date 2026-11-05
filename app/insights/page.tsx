@@ -11,7 +11,7 @@ export default async function InsightsPage() {
         <p className="text-sm font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Insights</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">Look back at your entries</h1>
         <p className="mt-3 max-w-3xl text-[var(--ink-soft)]">
-          Browse your entries by topic and see what you've been recording.
+          Browse your entries by topic and see what you&apos;ve been recording.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Link href="/insights/weekly" className="submit-button">Review your last 7 recorded days</Link>
