@@ -141,6 +141,7 @@ function JournalComposer({ today }: { today: string }) {
   const id = useRef<string | null>(null);
   const version = useRef(0);
   const saving = useRef<Promise<unknown>>(Promise.resolve());
+  const draftTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (!body.trim()) return;
@@ -158,6 +159,7 @@ function JournalComposer({ today }: { today: string }) {
         if (version.current === revision) setStatus(result.ok ? "Draft saved privately" : result.message);
       }).catch(() => { if (version.current === revision) setStatus("Draft could not save. Try again."); });
     }, 900);
+    draftTimer.current = timer;
     return () => window.clearTimeout(timer);
   }, [title, body, today]);
 
@@ -165,6 +167,7 @@ function JournalComposer({ today }: { today: string }) {
     if (!body.trim() || busy) return;
     setBusy(true);
     setStatus("Saving…");
+    if (draftTimer.current !== null) window.clearTimeout(draftTimer.current);
     try {
       id.current ??= crypto.randomUUID();
       // Pending autosaves finish before the final commit.
