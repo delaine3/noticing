@@ -83,7 +83,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
         <label className="flex gap-3 text-sm">
           <input type="checkbox" checked={invites} onChange={(e) => setInvites(e.target.checked)}
             className="mt-1 accent-[#25543d]"/>
-          Show an occasional check-in invitation on Today (maximum two per day)
+          Show check-in reminders on Today
         </label>
         <p className="text-sm text-[var(--ink-soft)]">
           Follow-up questions appear only when your answers make them useful.
@@ -92,15 +92,12 @@ export function SettingsForm({ settings, cloudConfigured }: {
       </div>
 
       <div className="space-y-3 border-t border-[var(--border-soft)] pt-5">
-        <h2 className="text-xl font-semibold">Optional cloud language understanding</h2>
+        <h2 className="text-xl font-semibold">Help understanding what I write</h2>
         <p className="text-sm">
-          Simple activity reports and coaching recommendations use built-in rules, not a language model.
-          Saved check-ins still sync to your private Supabase account.
-          Cloudflare Workers AI can help interpret unusual descriptions if you allow it.
+          Noticing can use Cloudflare AI to understand entries it can't recognize on its own. This is optional.
         </p>
         <p className="text-sm text-[var(--ink-soft)]">
-          When used, only the message you approve is sent to Cloudflare. Your saved logs,
-          personal health scores and previous chats are not automatically sent.
+          When used, only the message you approve is sent to Cloudflare. Your other entries and past conversations aren't sent with it.
           Cloudflare says Workers AI doesn&apos;t train on customer inputs and does not retain
           ordinary inference content after processing, subject to exceptions.
         </p>
@@ -111,14 +108,14 @@ export function SettingsForm({ settings, cloudConfigured }: {
         </p>
         {!cloudConfigured ? (
           <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">
-            Cloud AI is not configured on this server. Local recording remains available at no cost.
+            This feature isn't available right now. You can still save entries as usual.
           </p>
         ) : null}
         <label className="flex items-start gap-3 text-sm">
           <input type="checkbox" checked={cloud}
             onChange={(e) => { setCloud(e.target.checked); if (!e.target.checked) setConsent(false); }}
             className="mt-1 accent-[#25543d]"/>
-          Enable optional cloud interpretation
+          Use AI to understand my entries
         </label>
         {cloud ? (
           <label className="flex items-start gap-3 rounded-lg bg-white/80 p-3 text-sm">
@@ -129,8 +126,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
           </label>
         ) : null}
         <p className="text-xs text-[var(--ink-soft)]">
-          The app cannot upgrade your Cloudflare plan. The server must be configured
-          for an unbilled Workers Free account, and usage stops when the free allocation runs out.
+          AI may become unavailable when the free usage limit is reached.
         </p>
       </div>
 
