@@ -69,14 +69,15 @@ export function understandActivity(
   const drinkPhrase = drinkLead.exec(text);
   const drinkContext = drinkPhrase
     ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 60) : "";
-  const beverage = drinkContext.match(/^\s*(?:(?:a|an|one|two|some|the|of|glass|glasses|cup|cups|bottle|bottles|mug|mugs|iced|hot|cold|large|small|big|fresh|plain|sparkling|tap|black|oat)\s+|\d+(?:\.\d+)?\s*(?:ml|l|lit(?:er|re)s?)?\s*(?:of\s+)?){0,7}(coffee|water|tea|juice|milk|smoothie|soda)\b/i)?.[1]?.toLowerCase();
+  const drinkMatch = drinkContext.match(/^\s*(?:(?:a|an|one|two|some|the|of|glass|glasses|cup|cups|bottle|bottles|mug|mugs|iced|hot|cold|large|small|big|fresh|plain|sparkling|tap|black|oat)\s+|\d+(?:\.\d+)?\s*(?:ml|l|lit(?:er|re)s?)?\s*(?:of\s+)?){0,7}(coffee|water|tea|juice|milk|smoothie|soda)\b/i);
+  const beverage = drinkMatch?.[1]?.toLowerCase();
   if (beverage) {
     const type = beverage === "coffee" ? "Coffee" : "Water";
     const title = beverage === "water" ? "Drank water" : "Had " + beverage;
     const justNow = /\bjust\b/i.test(drinkPhrase?.[0] ?? "") &&
       !/\b(?:yesterday|last night|last week|last month|ago|earlier)\b/i.test(text);
     const proposed = record(type, title, day, time || (justNow ? localTime(now) : ""), text);
-    proposed.water_amount_ml = extractVolume(drinkContext);
+    proposed.water_amount_ml = extractVolume(drinkMatch?.[0] ?? "");
     result.push(proposed);
   }
 
