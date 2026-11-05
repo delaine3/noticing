@@ -38,7 +38,7 @@ export default function LoginPage() {
 
     if (!data.session) {
       setMessage(
-        "Login did not create a session. Check email confirmation settings.",
+        "We couldn't sign you in. Check your email for a confirmation link, then try again.",
       );
       return;
     }
@@ -70,7 +70,7 @@ export default function LoginPage() {
           className="danger-button w-full"
           disabled={isSubmitting}
         >
-          Login to demo account
+          Try the demo
         </button>
         <input
           type="email"
