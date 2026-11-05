@@ -62,6 +62,8 @@ test("a low value with incomplete records uses conditional advice", () => {
 test("check-in validation rejects invented values and excessive private text", () => {
   assert.equal(validateCheckIn(check()), true);
   assert.equal(validateCheckIn(check({stress: 11})), false);
-  assert.equal(validateCheckIn(check({thought_detail: "x".repeat(601)})), false);
+  assert.equal(validateCheckIn(check({thought_detail: "x".repeat(601)})), true);
+  assert.equal(validateCheckIn(check({thought_detail: "x".repeat(12000)})), true);
+  assert.equal(validateCheckIn(check({thought_detail: "x".repeat(12001)})), false);
   assert.equal(validateCheckIn(check({thirsty: "yes"})), false);
 });
