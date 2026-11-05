@@ -8,14 +8,14 @@ The main entry point is now the small **Tell Noticing** popup at the lower-right
 3. Answer "250 ml", "skip", or correct a time/date. Noticing summarizes the exact record and asks if it should save.
 4. Reply **yes** to save to your private Supabase logs, or **no** to discard it. Open **Adjust details (optional)** to make a correction without typing it in chat. Manual entry is still accessible from the chat and the New log navigation.
 
-### AI escalation, bandwidth and privacy
-- The deterministic local parser runs **first**, without network access or model downloads. Common drinks, meals, walks, gardening and bedtime/wake reports use this path.
-- If the parser cannot identify a record and WebGPU is available, Noticing asks permission for **optional downloads**, which could use over 2GB of internet data in total. It then tries the pinned local SmolLM2 360M model, followed by 1.7B when needed.
-- Both models run on the device. No text goes to a cloud inference API. The same pinned first-party runtime, exact-revision model downloads and integrity checks remain in force.
-- The browser needs adequate GPU memory and WebGPU support. If models cannot produce a reliable record, Noticing requests a simpler description instead of pretending a record was recognized.
-- A stalled model can leave the GPU occupied. The popup offers a stop option and uses timeouts; reloading the page may be needed to reclaim GPU resources.
-- No model output is saved without the user approving the proposed record.
-- **Important:** Only saved, approved record summaries enter Supabase; messages held in the popup are lost on full page reload.
+### Simple parsing, free cloud AI, bandwidth and privacy
+- The **zero-network deterministic parser** handles plain first-person reports first. Examples include "I just drank 500ml water", "I just ate a fruit salad", "I had yoghurt at 7am", walks, garden care and bedtime/wake times.
+- No on-device language model, GPU runtime, WebLLM dependency or multi-gigabyte model download remains.
+- For unfamiliar language, the only optional language model is **Cloudflare Workers AI**, pinned to a model Cloudflare lists as available on Workers Free. It is disabled until the app owner configures an actual Workers Free account and the user enables cloud interpretation in Coaching settings.
+- Each unrecognized message still requires a **separate permission reply** before that message is sent. The request includes only that text and extraction instructions, not the user's saved logs, check-in history or full conversation.
+- The server enforces an authenticated six-request daily cap per user as well as Cloudflare's Workers Free service quota. Cloudflare's quota fails closed on an actual Free plan. There is no paid fallback or automatic upgrade.
+- If cloud is disabled or unavailable, Noticing asks for a simpler action description. Existing structured logs and ordinary capture continue without cloud.
+- **No record is stored without the user explicitly approving the exact proposal.** Chat messages in the popup are not persisted across page reloads, but confirmed records are saved to Supabase.
 
 ## Night-time sleep flow
 The Today screen includes a short **bedtime suggestion after 9 PM**, based on the browser's local time, with one factual sleep benefit per calendar day. This is optional, not a medical bedtime prescription.
@@ -32,15 +32,16 @@ The app stores the browser's **time zone** in a first-party cookie to make Today
 - The large manual quick-action grid is collapsed by default.
 
 ## Verification
-CI executes `npm ci`, model manifest integrity check, `npm run build`, `node --experimental-strip-types --test tests/*.test.mjs`, and `npm run lint`.
+CI executes `npm ci`, `npm run build`, `node --experimental-strip-types --test tests/*.test.mjs`, and `npm run lint`.
 
 Manual browser checks before merge:
-- Click the floating assistant on several routes, then test "I drank coffee at 7am" → amount question → "250 ml" → confirmation → "yes" → Logs.
-- Test "I'm going to bed" without recording fabricated sleep hours.
-- Test the 9 PM local bedtime button and the next-morning wake button. Confirm cross-midnight duration is labeled **time in bed**.
-- Test "I woke up" with no time, confirm assistant asks for wake time or allows skipping it.
-- Test a hypothetical ("What if I walked 10 km?") and confirm no proposed event is created.
-- On a device without WebGPU, confirm ordinary offline capture works with no model download or API.
-- For unfamiliar natural language, confirm permission is required before significant model downloads. Inspect Network requests during on-device inference to verify chats are not transmitted.
-- Confirm opening the assistant and navigating between pages preserves the conversation until full page reload.
-- Confirm manual entry works and edited records remain private to their owner.
+- "I just drank 500ml water" → Water 500ml proposed → confirm → "yes" → Logs. No cloud call.
+- "I just ate a fruit salad" → Meal "Ate a fruit salad" proposed. No cloud call.
+- "I had a fruit salad for lunch" and "I ate yoghurt at 7am" → one Meal each, with correct time where stated.
+- "I just ate a fruit salad and drank 500ml water" → two independently reviewable records.
+- "I had a meeting" and "What if I ate a fruit salad?" → no erroneous food log.
+- "I'm going to bed" → bedtime, without invented sleep duration.
+- At bedtime/wake, test midnight crossing and labels showing time in bed.
+- Without Cloudflare credentials or consent, unusual input prompts for a simpler description. No WebLLM/GPU/model download code is loaded.
+- With a verified Workers Free account, test opt-in, per-message permission, input scoping and free-tier exhaustion on a nonproduction test account.
+- Confirm navigating between pages keeps the chat until page reload and that manual entry still works.
