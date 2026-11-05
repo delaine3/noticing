@@ -9,7 +9,7 @@ import {
 } from "../../lib/assistant-intent";
 import { extractLocalRecords } from "../../lib/free-capture";
 import { saveCaptureDrafts } from "../../capture/actions";
-import { withOperationTimeout } from "../../lib/operation-timeout";
+import { withOperationTimeout, OperationTimeoutError } from "../../lib/operation-timeout";
 import { validCaptureDate, type CaptureDraft } from "../../lib/capture-types";
 
 type Message = { role: "me" | "noticing"; text: string };
@@ -271,8 +271,7 @@ export function AssistantDock() {
     operation.current += 1;
     inFlight.current = false;
     setBusy(false);
-    setAiUnavailable(true);
-    reply("Okay, I've stopped waiting. Simple recording still works.");
+    reply("Stopped waiting. No new record was saved.");
   }
 
   return (
