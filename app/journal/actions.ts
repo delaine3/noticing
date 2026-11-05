@@ -57,8 +57,12 @@ export async function saveJournalEntry(payload: EntryPayload): Promise<JournalRe
     updated_at: new Date().toISOString(),
   };
   const { data: existing, error: readError } = await supabase.from("journal_entries")
-    .select("id").eq("id", payload.id).eq("user_id", user.id).maybeSingle();
+    .select("id,status").eq("id", payload.id).eq("user_id", user.id).maybeSingle();
   if (readError) return failure("Unable to check the journal entry.", readError.code);
+  // A late autosave must never turn a finished diary entry back into a draft.
+  if (existing?.status === "saved" && payload.status === "draft") {
+    return { ok: true, id: payload.id, message: "This entry is already saved." };
+  }
   if (existing) {
     const { error } = await supabase.from("journal_entries").update(fields)
       .eq("id", payload.id).eq("user_id", user.id);
