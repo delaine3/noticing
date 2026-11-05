@@ -40,7 +40,7 @@ export default function TermsPage() {
       </p>
       <h2>Availability and changes</h2>
       <p>
-        The service is an early-stage product. Features may change or become unavailable.
+        Features may change or become unavailable.
         Export any entries you need to preserve. We may suspend abusive accounts or temporarily
         restrict access to protect the service, subject to applicable law and user rights.
       </p>
@@ -56,7 +56,7 @@ export default function TermsPage() {
       <p>
         See our <Link href="/privacy">privacy notice</Link> for data handling and
         <Link href="/account"> Your data</Link> for export/deletion options. You may stop
-        using the service and request closure of your account.
+        using the service or delete your account directly in Settings.
       </p>
     </LegalPage>
   );
