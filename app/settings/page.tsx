@@ -25,7 +25,7 @@ export default async function SettingsPage() {
         {demo ? (
           <p className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950">
             This is a shared demo account. Export and account deletion are unavailable here.
-            Please don't save personal information in the demo.
+            Please don&apos;t save personal information in the demo.
           </p>
         ) : (
           <>
