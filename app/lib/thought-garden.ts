@@ -17,6 +17,7 @@ export type Flower = {
   color: string;
   center: string;
   label: string;
+  excerpt?: string;
   petals: number;
   tilt: number;
 };
@@ -69,5 +70,8 @@ export function bouquetThoughts(entries: ThoughtRecord[], max = 9) {
   // One flower per saved written thought. No AI-generated interpretation.
   return entries.filter((entry) => entry.body.trim() && entry.status === "saved")
     .sort((a, b) => a.entryDate.localeCompare(b.entryDate) || a.id.localeCompare(b.id))
-    .slice(-max).map(flowerForThought);
+    .slice(-max).map((entry) => ({
+      ...flowerForThought(entry),
+      excerpt: entry.body.replace(/\s+/g, " ").trim().slice(0, 110),
+    }));
 }
