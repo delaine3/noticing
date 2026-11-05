@@ -157,7 +157,7 @@ export function validateCheckIn(value: unknown): value is CheckInValues {
     typeof v[key] === "number" && Number.isInteger(v[key]) && (v[key] as number) >= 1 && (v[key] as number) <= 5)) return false;
   if (!["work", "worries", "planning", "relationships", "enjoyment", "everyday", "other", "prefer_not_to_say"].includes(String(v.thought_topic))) return false;
   if (v.thought_detail !== null && v.thought_detail !== undefined &&
-      (typeof v.thought_detail !== "string" || v.thought_detail.length > 600)) return false;
+      (typeof v.thought_detail !== "string" || v.thought_detail.length > 12000)) return false;
   return (["recently_ate", "thirsty", "physical_discomfort", "overwhelmed", "thought_actionable", "rested"] as const)
     .every((key) => v[key] === null || v[key] === true || v[key] === false);
 }
