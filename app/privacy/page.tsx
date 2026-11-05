@@ -67,8 +67,10 @@ export default function PrivacyPage() {
         Depending on applicable law, you may request access, correction, deletion, portability,
         restriction, or objection to particular processing. You can edit and delete journal logs
         in the app. Visit <Link href="/account">Your data</Link> to download a JSON copy of
-        your records or request account deletion where available. You may also email the
-        address above. We may need to verify your identity before handling a request.
+        your records or permanently delete your account directly in the app after identity
+        verification. No email request or operator approval is required for self-service
+        account deletion. You may email the address above for other privacy questions or
+        requests that cannot be completed through the app.
         You can complain to the relevant data-protection authority if your rights are not respected.
       </p>
       <h2>Children and cookies</h2>
