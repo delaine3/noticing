@@ -16,7 +16,7 @@ export default async function InsightsPage() {
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Link href="/insights/weekly" className="submit-button">Review your last 7 recorded days</Link>
-          <Link href="/logs/new?type=Daily%20check-in" className="secondary-button">Daily check-in</Link>
+          <Link href="/check-in" className="secondary-button">Daily check-in</Link>
           <Link href="/import/chat" className="secondary-button">Import ChatGPT conversations</Link>
           <Link href="/capture" className="submit-button">Talk to Noticing</Link>
         </div>
@@ -43,7 +43,6 @@ export default async function InsightsPage() {
           })}
         </section>
         <p className="mt-6 max-w-3xl text-sm text-[var(--ink-soft)]">
-          Not recorded does not mean not done. A score is your rating, not a proven cause.
           Insights use up to your {INSIGHT_LOG_LIMIT} most recent entries, rather than your complete history.
         </p>
       </div>
