@@ -58,7 +58,7 @@ export function CheckInFlow({ localDate, fluidRestricted }: { localDate: string;
   const [answeredExtra, setAnsweredExtra] = useState<QuestionKey[]>([]);
   const [draftMessage, setDraftMessage] = useState("");
   const journalDraftId = useRef<string | null>(null);
-  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const draftTimer = useRef<number | null>(null);
   const draftInFlight = useRef<Promise<unknown>>(Promise.resolve());
   const [followUp, setFollowUp] = useState(false);
   const [busy, setBusy] = useState(false);
