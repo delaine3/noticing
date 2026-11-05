@@ -13,9 +13,9 @@ export default function CommunityGuidelinesPage() {
       </p>
       <h2>Respect privacy</h2>
       <ul>
-        <li>Write about your own experiences without unnecessarily exposing someone else's private information.</li>
+        <li>Write about your own experiences without unnecessarily exposing someone else&apos;s private information.</li>
         <li>Never put real personal information into the shared demonstration account.</li>
-        <li>Do not attempt to view, extract, or alter another user's private entries.</li>
+        <li>Do not attempt to view, extract, or alter another user&apos;s private entries.</li>
       </ul>
       <h2>Respect other people</h2>
       <ul>
