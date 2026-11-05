@@ -179,3 +179,35 @@ test("do not convert future plans, negation or other people's meals into records
     assert.equal(withLocalParser(input).length, 0, input);
   }
 });
+
+test("common just-completed activities are understood without an AI model", () => {
+  const cases = [
+    ["I just walked 5 km", "Movement"],
+    ["I've just walked 5km", "Movement"],
+    ["I just watered my garden", "Plant care"],
+    ["I've just watered my roses", "Plant care"],
+    ["I just sent 3 applications", "Job application"],
+    ["I just sent 2 job applications", "Job application"],
+    ["I just painted a picture", "Creative time"],
+    ["I just slept 7 hours", "Sleep"],
+    ["I just finished a fruit salad", "Meal"],
+  ];
+  for (const [input, expectedType] of cases) {
+    const records = withLocalParser(input);
+    assert.ok(records.some((r) => r.log_type === expectedType), input);
+  }
+});
+
+test("tea and juice can be logged without AI and uncertain amounts are requested", () => {
+  for (const input of ["I just had tea", "I drank a cup of tea", "I just had a glass of juice"]) {
+    const records = withLocalParser(input);
+    assert.equal(records.length, 1, input);
+    assert.equal(records[0].log_type, "Water", input);
+    assert.equal(nextQuestion(records)?.field, "water_amount_ml", input);
+  }
+});
+
+test("preparing coffee is not proof of drinking it", () => {
+  assert.equal(withLocalParser("I made coffee").length, 0);
+  assert.equal(withLocalParser("I had a meeting with coffee on the table").length, 0);
+});
