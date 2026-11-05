@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 
@@ -10,12 +10,6 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if (window.location.search.includes("deleted=1")) {
-      setMessage("Your account has been deleted.");
-    }
-  }, []);
 
   async function loginWithCredentials(
     loginEmail: string,
@@ -38,7 +32,7 @@ export default function LoginPage() {
 
     if (!data.session) {
       setMessage(
-        "We couldn\'t sign you in. Check your email for a confirmation link, then try again.",
+        "We couldn't sign you in. Check your email for a confirmation link, then try again.",
       );
       return;
     }
