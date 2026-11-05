@@ -108,10 +108,10 @@ export function SettingsForm({ settings, cloudConfigured }: {
       <div className="space-y-3 border-t border-[var(--border-soft)] pt-5">
         <h2 className="text-xl font-semibold">Help understanding what I write</h2>
         <p className="text-sm">
-          Noticing can use Cloudflare AI to understand entries it can't recognize on its own. It's optional.
+          Noticing can use Cloudflare AI to understand entries it can&apos;t recognize on its own. It&apos;s optional.
         </p>
         <p className="text-sm text-[var(--ink-soft)]">
-          When used, only the message you approve is sent to Cloudflare. Your other entries and past conversations aren't sent with it.
+          When used, only the message you approve is sent to Cloudflare. Your other entries and past conversations aren&apos;t sent with it.
           Cloudflare says Workers AI doesn&apos;t train on customer inputs and does not retain
           ordinary inference content after processing, subject to exceptions.
         </p>
@@ -122,7 +122,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
         </p>
         {!cloudConfigured ? (
           <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">
-            This feature isn't available right now. You can still save entries as usual.
+            This feature isn&apos;t available right now. You can still save entries as usual.
           </p>
         ) : null}
         <label className="flex items-start gap-3 text-sm">
