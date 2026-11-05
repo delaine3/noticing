@@ -55,7 +55,7 @@ export default function TermsPage() {
       <h2>Privacy, termination, and contact</h2>
       <p>
         See our <Link href="/privacy">privacy notice</Link> for data handling and
-        <Link href="/account"> Your data</Link> for export/deletion options. You may stop
+        <Link href="/settings">Settings</Link> for export/deletion options. You may stop
         using the service or delete your account directly in Settings.
       </p>
     </LegalPage>
