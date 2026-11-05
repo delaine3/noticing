@@ -5,8 +5,9 @@
 ## Critical before onboarding strangers
 - [ ] Confirm Supabase RLS for **every** existing and future table, view, RPC, and storage bucket. The repo only contains the newer coaching migration, not the original schema. Test account A cannot read/update/delete account B records.
 - [ ] Inspect Supabase Auth policies, confirmation and password recovery, rate limits, MFA options, security events, and breached-password protection.
-- [ ] Verify the shared demo is populated only with synthetic data. Public demo credentials are present in the repository and browser; assume any visitor can read, edit, and delete demo entries. Prefer a read-only resettable demo with a dedicated isolated backend.
-- [ ] Implement authenticated self-service account deletion with secure recent reauthentication, database cascade verification, and provider cleanup. Current UI accepts deletion requests by email only.
+- [ ] **Rotate or disable the shared demo account in Supabase.** A password was published in previous commits. The login button and embedded credential have been removed from the proposed code, but Git history still exposes that old password. Do not re-enable a shared demo without isolation, synthetic data, and safeguards against users entering private material.
+- [ ] Test the new self-service account deletion from Settings end to end with a disposable user, including password verification, the auth record, user-owned table records and error handling. There is no email approval step. Check the Vercel server-only `SUPABASE_SERVICE_ROLE_KEY` setting.
+- [x] User confirmed zero orphaned rows in nine user-linked tables, applied auth.users ON DELETE CASCADE constraints in Supabase, and confirmed there are no Storage buckets (5 November 2026). The journal_entries migration includes its own cascading foreign key, but must be applied separately before journal writing works.
 - [ ] Verify privacy contact address is monitored, appropriate as a public contact, and able to receive access/erasure requests.
 - [ ] Review Vercel/Supabase/Cloudflare agreements, region and subprocessors, international transfer mechanisms, logging, retention, backup deletion windows, and incident notification obligations. Update the public privacy notice with verified specifics.
 - [ ] Confirm lawful bases and any requirements for processing sensitive health or emotional wellbeing information, including explicit consent if applicable. The checkbox currently records no versioned server-side consent evidence.
@@ -14,7 +15,7 @@
 - [ ] Assess the Eswatini Data Protection Act and regulator requirements, GDPR/UK GDPR, POPIA, CCPA/CPRA, COPPA and other rules where users are actually targeted. Registration, DPO, representative, DPIA, breach reporting and cross-border rules may apply depending on circumstances.
 - [ ] Run automated security scanning, dependency audit, authorization tests, accessibility testing, and an external penetration test before scale.
 - [ ] Establish incident response, breach contact and reporting procedures; a data inventory; a retention schedule; and processor contract records.
-- [ ] Test export across all current tables and large accounts. The export excludes auth-provider metadata, attachments and future tables unless explicitly added.
+- [ ] Test export across all current tables and large accounts. Export now covers journal_entries and login_events when readable, but excludes auth-provider metadata, provider logs, attachments and any tables added later.
 - [ ] Decide whether public signups should be disabled until launch gate is passed.
 
 ## Product risks
