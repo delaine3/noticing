@@ -9,16 +9,12 @@ import {
 } from "../../lib/assistant-intent";
 import { extractLocalRecords } from "../../lib/free-capture";
 import { saveCaptureDrafts } from "../../capture/actions";
-import { actionTypes } from "../../lib/log-types";
-import { withOperationTimeout, OperationTimeoutError } from "../../lib/operation-timeout";
-import { parseLocalCaptureResponse } from "../../lib/local-capture-response";
+import { withOperationTimeout } from "../../lib/operation-timeout";
 import { validCaptureDate, type CaptureDraft } from "../../lib/capture-types";
 
 type Message = { role: "me" | "noticing"; text: string };
 type Pending = AssistantPending & { ids: string[] };
-type Stage = "ordinary" | "download-permission" | "cloud-permission" | "more-info";
-const SMALL_MODEL = "SmolLM2-360M-Instruct-q4f16_1-MLC";
-const LARGE_MODEL = "SmolLM2-1.7B-Instruct-q4f16_1-MLC";
+type Stage = "ordinary" | "cloud-permission" | "more-info";
 
 function localDate(date: Date) {
   return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" +
@@ -62,8 +58,6 @@ export function AssistantDock() {
   const [pending, setPending] = useState<Pending | null>(null);
   const [stage, setStage] = useState<Stage>("ordinary");
   const [unknownText, setUnknownText] = useState("");
-  const [downloadAllowed, setDownloadAllowed] = useState(false);
-  const [aiUnavailable, setAiUnavailable] = useState(false);
   const [busy, setBusy] = useState(false);
   const [saveUncertain, setSaveUncertain] = useState(false);
   const [expandDetails, setExpandDetails] = useState(false);
@@ -96,40 +90,6 @@ export function AssistantDock() {
     const question = nextQuestion(next.records);
     if (question) reply(question.text);
     else reply(confirmation(next));
-  }
-
-  async function tryLocalModels(text: string) {
-    let ai: typeof import("../../lib/noticing-webllm");
-    try {
-      ai = await import("../../lib/noticing-webllm");
-    } catch {
-      return null;
-    }
-    const messages = [{ role: "user" as const, content: text }];
-    for (const modelId of [SMALL_MODEL, LARGE_MODEL]) {
-      if (aiUnavailable) return null;
-      try {
-        const raw = await withOperationTimeout(
-          ai.analyzeLocal({
-            messages,
-            localDate: localDate(new Date()),
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
-            modelId,
-            onProgress: () => {},
-          }),
-          180_000,
-          "Local processing timed out.",
-        );
-        const parsed = parseLocalCaptureResponse(raw, actionTypes);
-        if (parsed.proposed_records.length > 0) return parsed.proposed_records;
-      } catch (error) {
-        // A hung WebGPU request cannot safely be followed by another load.
-        if (error instanceof OperationTimeoutError) throw error;
-        // If the smaller model fails, the session manager unloads it before
-        // attempting the larger one. No server inference fallback exists.
-      }
-    }
-    return null;
   }
 
   async function optionalCloudIsEnabled() {
@@ -228,23 +188,6 @@ export function AssistantDock() {
         }
         return;
       }
-      if (stage === "download-permission") {
-        setStage("ordinary");
-        if (!isYes(text)) {
-          reply("That's fine. Tell me the action in simpler terms, or use the optional manual entry.");
-          return;
-        }
-        setDownloadAllowed(true);
-        const found = await tryLocalModels(unknownText);
-        if (token !== operation.current) return;
-        if (found?.length) startDrafts(found);
-        else {
-          setStage("more-info");
-          reply("I'm having trouble understanding that well enough to record it. Could you describe the specific action, time or amount?");
-        }
-        return;
-      }
-
       if (pending) {
         if (isNo(text)) {
           setPending(null);
@@ -305,36 +248,17 @@ export function AssistantDock() {
         if (token !== operation.current) return;
         setUnknownText(text);
         setStage("cloud-permission");
-        reply("I can ask Cloudflare's private AI to interpret only that message. " +
+        reply("I can ask Cloudflare Workers AI to interpret only that message. " +
           "Cloudflare says it doesn't train on customer prompts. May I send it? Reply yes or no.");
         return;
       }
 
-      if (aiUnavailable || !("gpu" in navigator)) {
-        reply("I couldn't reliably turn that into a record yet. Try telling me what you did and when, or use the optional manual entry.");
-        return;
-      }
-      if (!downloadAllowed) {
-        setUnknownText(text);
-        setStage("download-permission");
-        reply("I can try a more capable private assistant on your device. The first use may download a substantial amount of model files (possibly over 2 GB in total), using your internet data. Is that okay? Reply yes or no.");
-        return;
-      }
-      const found = await tryLocalModels(text);
+      reply("I couldn't identify a completed activity from that wording. " +
+        "Try a specific action, such as ‘I just ate a fruit salad’. " +
+        "For less familiar phrasing, you can enable free Cloudflare AI in Coaching settings.");
+    } catch {
       if (token !== operation.current) return;
-      if (found?.length) startDrafts(found);
-      else {
-        setStage("more-info");
-        reply("I couldn't confidently identify a completed activity. What exactly happened, and was it today?");
-      }
-    } catch (error) {
-      if (token !== operation.current) return;
-      if (error instanceof OperationTimeoutError) {
-        setAiUnavailable(true);
-        reply("The local assistant stopped responding. I can still record simple things without it. Reload the page to retry the larger model.");
-      } else {
-        reply("I couldn't finish that. Your message remains in our chat. Try a shorter description.");
-      }
+      reply("I couldn't finish that request. Try basic recording or adjust your message.");
     } finally {
       if (token === operation.current) {
         setBusy(false);
@@ -369,7 +293,7 @@ export function AssistantDock() {
             ))}
             {busy ? <p role="status" className="text-sm text-[var(--ink-soft)]">
               Working on it…
-              <button type="button" className="ml-2 underline" onClick={stopThinking}>Use simple recording</button>
+              <button type="button" className="ml-2 underline" onClick={stopThinking}>Stop waiting</button>
             </p> : null}
             <div ref={logBottom} />
           </div>
