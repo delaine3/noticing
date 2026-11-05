@@ -77,7 +77,7 @@ export function AssistantDock() {
 
   if (pathname === "/login" || pathname === "/signup" || pathname === "/privacy" ||
       pathname === "/terms" || pathname === "/community-guidelines" || pathname === "/safety" ||
-      pathname === "/account") return null;
+      pathname === "/account" || pathname === "/settings") return null;
   function reply(text: string) {
     setMessages((prev) => [...prev, { role: "noticing" as const, text }].slice(-32));
   }
