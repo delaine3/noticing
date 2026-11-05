@@ -11,9 +11,9 @@ export default async function WeeklyReviewPage() {
       <div className="mx-auto max-w-5xl">
         <Link href="/insights" className="text-sm font-semibold text-[var(--leaf-dark)] hover:underline">← Back to insights</Link>
         <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Weekly review</p>
-        <h1 className="mt-2 text-3xl font-bold sm:text-5xl">What happened, and what next?</h1>
+        <h1 className="mt-2 text-3xl font-bold sm:text-5xl">Your recent days</h1>
         <p className="mt-3 max-w-3xl text-[var(--ink-soft)]">
-          The seven calendar days ending on your most recent recorded date
+          The seven days up to your latest entry
           {review.latest ? " (" + review.latest + ")" : ""}. 
         </p>
         <section className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -32,22 +32,17 @@ export default async function WeeklyReviewPage() {
               return (
                 <article key={area.id} className="glass-card p-5">
                   <h3 className="text-xl font-bold">{area.title}</h3>
-                  <p className="mt-1 text-sm text-[var(--ink-soft)]">{areaLogs.length} entries in this review window</p>
+                  <p className="mt-1 text-sm text-[var(--ink-soft)]">{areaLogs.length} entries this week</p>
                   <p className="mt-3 text-[var(--ink-soft)]">{area.recordPrompt}</p>
-                  <Link href={`/insights/${area.id}`} className="mt-4 inline-block text-sm font-semibold text-[var(--leaf-dark)] hover:underline">Explore this area →</Link>
+                  <Link href={`/insights/${area.id}`} className="mt-4 inline-block text-sm font-semibold text-[var(--leaf-dark)] hover:underline">View entries →</Link>
                 </article>
               );
             })}
           </div>
         </section>
         <section className="glass-card mt-6 p-5">
-          <h2 className="text-2xl font-bold">Three questions for next week</h2>
-          <ol className="mt-4 list-decimal space-y-3 pl-6 text-[var(--ink-soft)]">
-            <li>Which activity produced a result you can name?</li>
-            <li>Which recurring difficulty could be reduced with one specific change?</li>
-            <li>What is worth repeating, and what should stop taking your time?</li>
-          </ol>
-          <p className="mt-4 text-sm">Record useful discoveries as you go.</p>
+          <h2 className="text-2xl font-bold">Looking ahead</h2>
+          <p className="mt-4 text-[var(--ink-soft)]">Is there anything from this week you want to remember or do differently?</p>
           <Link href="/check-in" className="submit-button mt-4 inline-block">Write a check-in</Link>
         </section>
         <p className="mt-6 text-sm text-[var(--ink-soft)]">Based on up to {INSIGHT_LOG_LIMIT} most recent records. Earlier entries may not be represented.</p>
