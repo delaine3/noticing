@@ -1,4 +1,4 @@
-# Noticing privacy/security launch gate (5 November 2026)
+# Hoolayah privacy/security launch gate (5 November 2026)
 
 **Status: NOT verified globally compliant. Do not invite public users until the critical checks are complete.**
 

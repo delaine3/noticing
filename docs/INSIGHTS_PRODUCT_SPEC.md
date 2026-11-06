@@ -1,7 +1,7 @@
-# Noticing: practical insights product specification
+# Hoolayah: practical insights product specification
 
 ## Product promise
-Noticing should help a person answer three concrete questions:
+Hoolayah should help a person answer three concrete questions:
 1. **What happened?** Record activities and measurable details without turning daily life into a compliance test.
 2. **What is repeatedly associated with better or worse days?** Compare like-for-like data with sufficient samples. Label observations as observations, not causes.
 3. **What can I change this week?** Show a realistic next action or a useful question to investigate.

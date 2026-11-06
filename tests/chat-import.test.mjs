@@ -60,7 +60,7 @@ test("extracts a completed application, not a plan to apply", () => {
   assert.equal(conversation.proposals.filter((p) => p.type === "Job application").length, 1);
 });
 
-test("accepts curated Noticing records and preserves actual dates and rich notes", () => {
+test("accepts curated Hoolayah records and preserves actual dates and rich notes", () => {
   const data = {
     format: "noticing-curated-v1",
     records: [{
@@ -84,12 +84,12 @@ test("accepts curated Noticing records and preserves actual dates and rich notes
   assert.match(group.proposals[0].messageExcerpt, /not an original chat quote/);
 });
 
-test("rejects duplicated identifiers in curated Noticing records", () => {
+test("rejects duplicated identifiers in curated Hoolayah records", () => {
   const record = {
     id: "duplicate", action_date: "2026-10-31", area: "life",
     log_type: "Plant care", title: "Watered roses", notes: "",
   };
   assert.throws(() => parseChatExport({
     format: "noticing-curated-v1", records: [record, record],
-  }), /Invalid curated Noticing record/);
+  }), /Invalid curated Hoolayah record/);
 });
