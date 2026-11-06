@@ -91,5 +91,5 @@ test("rejects duplicated identifiers in curated Hoolayah records", () => {
   };
   assert.throws(() => parseChatExport({
     format: "noticing-curated-v1", records: [record, record],
-  }), /Invalid curated Hoolayah record/);
+  }), /Invalid curated (?:Hoolayah|Noticing) record/);
 });
