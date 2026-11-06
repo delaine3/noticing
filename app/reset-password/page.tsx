@@ -25,7 +25,9 @@ export default function ResetPasswordPage() {
     });
     async function checkLink() {
       const params = new URLSearchParams(window.location.search);
-      if (params.has("error") || params.has("error_description")) {
+      const hasRecoveryLink = params.get("recovery") === "1" || Boolean(params.get("code")) ||
+        new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery";
+      if (!hasRecoveryLink || params.has("error") || params.has("error_description")) {
         if (live) {
           setMessage("This reset link is invalid or expired. Please request a new one.");
           setChecking(false);
