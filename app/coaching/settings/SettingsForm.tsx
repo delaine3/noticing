@@ -56,28 +56,28 @@ export function SettingsForm({ settings, cloudConfigured }: {
       <div className="space-y-3">
         <h2 className="text-xl font-semibold">Hydration</h2>
         <label className="block text-sm">
-          Daily drink goal (ml)
+          Daily hydration tracking goal (ml)
           <input type="number" min={1200} max={4000} step={100} value={goal}
             onChange={(e) => setGoal(Number(e.target.value))}
             className="mt-2 block w-40 rounded-lg border p-3"/>
         </label>
         <p className="text-sm text-[var(--ink-soft)]">
-          The starting 1,800 ml goal is a general adult drinks guide, not a medical prescription.
+          The starting 1,800 ml goal is a general guide for beverages, not a medical prescription.
           Heat and prolonged activity may increase needs.
         </p>
         <label className="block text-sm">
-          Has a clinician asked you to restrict your fluid intake?
+          Has a clinician set a medical fluid restriction?
           <select value={restriction} onChange={(e) => setRestriction(e.target.value as typeof restriction)}
             className="mt-2 block w-full max-w-sm rounded-lg border p-3">
             <option value="unknown">Not specified</option>
-            <option value="yes">Yes, restrict fluid suggestions</option>
+            <option value="yes">Yes, follow my medical restriction</option>
             <option value="no">No</option>
           </select>
         </label>
         <label className="flex items-start gap-3 text-sm">
           <input type="checkbox" checked={complete} onChange={(e) => setComplete(e.target.checked)}
             className="mt-1 accent-[#25543d]"/>
-          I normally record all my drinks here
+          I normally record all my water and other beverages here
         </label>
       </div>
 
