@@ -282,20 +282,28 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5f8868]">Hoolayah · Private diary</p>
         <h1 className="text-4xl font-semibold text-[#284f3b] sm:text-5xl">The Thought Garden 🌷</h1>
         <p className="max-w-3xl text-sm text-[#556a59]">
-          Private entries are encrypted on this device before upload. The vault passphrase stays in memory
-          and is never sent to Hoolayah or Supabase. Dates and entry status remain visible to the database.
+          Your diary is locked on this device before it is stored online. We do not receive your
+          vault passphrase. The people running Hoolayah cannot read your encrypted words by opening
+          the stored records. Dates and whether an entry is saved remain visible.
         </p>
         <div className="flex flex-wrap gap-3"><Link href="/" className="secondary-button">Today</Link>
           <Link href="/check-in" className="secondary-button">Check-in</Link>
           <Link href="/privacy" className="secondary-button">Privacy</Link>
         </div>
         {notice ? <p role="status" className="rounded-xl border border-[#cbd9c5] bg-white p-4 text-sm">{notice}</p> : null}
+        <section aria-labelledby="how-your-diary-is-protected" className="rounded-2xl border border-[#cbd9c5] bg-white/85 p-5 space-y-3 text-sm">
+          <h2 id="how-your-diary-is-protected" className="text-lg font-semibold">Who can read my diary? 🔒</h2>
+          <p><strong>Your words stay private:</strong> New entries in Thought Garden are scrambled on your device before they are saved. The people who run Hoolayah, including its owner, cannot read those stored entries through their database access. You unlock them with your own vault passphrase.</p>
+          <p><strong>Can you recover my passphrase?</strong> No. We do not receive or store it, and we cannot reset it or retrieve your encrypted words if you lose it. Keep a safe copy.</p>
+          <p><strong>What is not covered?</strong> Older diary entries are not protected until you move them into the vault. Check-in ratings, everyday logs, account details and messages to the activity assistant are not encrypted this way. Dates and other basic details about locked entries remain visible.</p>
+          <p className="text-xs text-[#5f6f62]">This protects stored diary text, not a compromised device or harmful code sent by a website update. Read our <Link href="/privacy" className="underline">privacy notice</Link> for the limits.</p>
+        </section>
         {loading ? <p>Loading your vault…</p> : !unlocked ? (
           <section className="glass-card max-w-xl space-y-4 p-6">
             <h2 className="text-2xl font-semibold">{config ? "Unlock your diary" : "Create your private vault"}</h2>
             <p className="text-sm">
               {config ? "Enter the separate passphrase you created for this vault." :
-                "Use a long, unique passphrase and save it in a password manager. Nobody, including the app operator, can recover your journal without it."}
+                "Create a separate, long passphrase and save it safely, ideally in a password manager. We cannot look it up, reset it, or unlock your diary if you forget it."}
             </p>
             {userId ? (
               <form onSubmit={e => { e.preventDefault(); void unlockOrCreate(); }} className="space-y-3">
@@ -314,7 +322,7 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
                 </button>
               </form>
             ) : null}
-            <p className="text-xs text-[#845b4c]">Losing this passphrase means losing access to your encrypted journal. This vault is separate from your login password.</p>
+            <p className="text-xs text-[#845b4c]">Your vault passphrase is different from your sign-in password. If you lose it, we cannot recover your encrypted thoughts.</p>
           </section>
         ) : (
           <>
@@ -353,15 +361,15 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
             </section>
             <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 space-y-3">
               <h2 className="font-semibold">Protect older entries</h2>
-              <p className="text-sm">Older Noticing journal pages and check-in writing remain readable to database administrators until you migrate them. Migration is optional and affects Noticing too because the two apps share a database.</p>
+              <p className="text-sm">Thoughts written before this protection was introduced are still stored in a readable form. You can move them into your locked diary. This also removes the old readable copies from Noticing because both apps use the same storage. Old backup copies may remain for some time.</p>
               <button type="button" disabled={busy} className="secondary-button" onClick={() => void inspectLegacy()}>
-                Review old plaintext entries
+                Check older entries
               </button>
               {legacy !== null ? <div className="space-y-2 text-sm">
-                <p>{legacy.length} written entries are still stored as plaintext.</p>
+                <p>{legacy.length} older written entries are not yet encrypted.</p>
                 {legacy.length > 0 ? <button disabled={busy} type="button"
                   className="submit-button" onClick={() => void migrate()}>
-                  Encrypt, verify, then remove plaintext originals
+                  Protect older entries and remove readable copies
                 </button> : null}
                 <p>Before removal, every encrypted copy is read back and decrypted locally to verify its contents. Interrupted migrations can be retried. Database backups may still contain older versions.</p>
               </div> : null}
