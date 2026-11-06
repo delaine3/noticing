@@ -31,14 +31,14 @@ export default async function SettingsPage() {
             simply by opening those records.
           </p>
           <p className="text-sm">
-            Your diary password is separate from your sign-in password. It is not sent to us,
-            and we do not keep a copy of the key needed to unlock your writing.
-            We cannot find or reset your diary password, or recover locked entries if you lose it.
-            Keep it somewhere safe.
+            Your diary passphrase is separate from your sign-in password. We never receive
+            the passphrase, the recovery code or the key that unlocks your writing. You can reset
+            your diary passphrase yourself using the recovery code supplied when you secure
+            your Thought Garden. If you lose both, no one can recover your encrypted writing.
           </p>
           <p className="text-xs text-[var(--ink-soft)]">
-            Older unmigrated reflections, activity logs, check-in scores, account information,
-            and assistant messages do not have this protection.
+            This diary protection does not cover activity logs, check-in scores,
+            account information or assistant messages.
             {" "}<Link href="/privacy" className="underline">See what stays private.</Link>
           </p>
         </section>
