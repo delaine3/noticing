@@ -35,6 +35,10 @@ export async function saveWellnessCheckIn(payload: {
       (payload.journalDraftId != null && !isUuid(payload.journalDraftId))) {
     return { ok: false, message: "Check the scores and date before saving." };
   }
+  // Hoolayah does not accept plaintext private writing through check-in actions.
+  if (payload.values.thought_detail?.trim() || payload.journalDraftId) {
+    return { ok: false, message: "Please write private reflections in the encrypted Thought Garden." };
+  }
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, message: "Sign in to save a check-in." };
@@ -57,7 +61,7 @@ export async function saveWellnessCheckIn(payload: {
     mood: v.mood,
     stress: v.stress,
     thought_topic: v.thought_topic,
-    thought_detail: v.thought_detail?.trim() || null,
+    thought_detail: null,
     recently_ate: v.recently_ate,
     thirsty: v.thirsty,
     physical_discomfort: v.physical_discomfort,
