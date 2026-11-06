@@ -17,17 +17,19 @@ export default function LoginPage() {
     loginPassword: string,
   ) {
     setIsSubmitting(true);
-    setMessage("Logging in...");
+    setMessage("");
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
+      email: loginEmail.trim(),
       password: loginPassword,
     });
 
     setIsSubmitting(false);
 
     if (error) {
-      setMessage(error.message);
+      setMessage(error.message.toLowerCase().includes("email not confirmed")
+        ? "Please confirm your email before signing in. Check your inbox and spam folder."
+        : "We couldn\'t sign you in. Check your email and password, or reset your password.");
       return;
     }
 
@@ -38,7 +40,7 @@ export default function LoginPage() {
       return;
     }
 
-    setMessage("Logged in!");
+    setMessage("");
     router.replace("/");
     router.refresh();
   }
@@ -51,9 +53,13 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center page px-4">
       <form onSubmit={handleLogin} className="w-full max-w-md space-y-4">
+        <h1 className="text-2xl font-semibold">Welcome back</h1>
+        <p className="text-sm text-[var(--ink-soft)]">Sign in with your email address, not your username.</p>
         <input
           type="email"
-          placeholder="Email"
+          aria-label="Email address"
+          autoComplete="email"
+          placeholder="Email address"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className="w-full rounded border px-4 py-3"
@@ -61,6 +67,8 @@ export default function LoginPage() {
         />
         <input
           type="password"
+          aria-label="Password"
+          autoComplete="current-password"
           placeholder="Password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
@@ -74,6 +82,9 @@ export default function LoginPage() {
         >
           {isSubmitting ? "Logging in..." : "Login"}
         </button>
+        <div className="text-right">
+          <Link href="/forgot-password" className="text-sm underline">Forgot your password?</Link>
+        </div>
         {message ? (
           <p className="text-sm text-[var(--ink-soft)]">{message}</p>
         ) : null}
