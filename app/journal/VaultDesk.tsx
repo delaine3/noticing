@@ -37,7 +37,7 @@ async function fetchAll(table: "journal_entries" | "wellness_checkins",
   columns: string, userId: string): Promise<Record<string, unknown>[]> {
   const result: Record<string, unknown>[] = [];
   for (let offset = 0; offset < 10000; offset += 500) {
-    const query = supabase.from(table).select(columns).eq("user_id", userId).range(offset, offset + 499);
+    const query = supabase.from(table).select(columns).eq("user_id", userId).order("id", { ascending: true }).range(offset, offset + 499);
     const { data, error } = await query;
     if (error) throw new Error("Could not read old entries. Nothing was removed.");
     const rows = (data ?? []) as unknown as Record<string, unknown>[];
@@ -98,6 +98,8 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
         out.push({ ...row, ...await decryptThought(key, id, row.id, row) });
       } catch { failures++; }
     }
+    // An earlier request must not show decrypted text after the user locks the vault.
+    if (keyRef.current !== key) return;
     setRows(out.sort((a, b) => b.entry_date.localeCompare(a.entry_date) || b.updated_at.localeCompare(a.updated_at)));
     setFailedRows(failures);
   }, [month]);
@@ -318,7 +320,7 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-[#52705d]">🔒 Unlocked in this tab. No key is saved to local storage.</p>
-              <button className="secondary-button" type="button" onClick={() => {
+              <button className="secondary-button" type="button" disabled={busy} onClick={() => {
                 keyRef.current = null; setUnlocked(false); setRows([]); setLegacy(null);
                 setBody(""); setEditingId(null); setNotice("Vault locked.");
               }}>Lock now</button>
