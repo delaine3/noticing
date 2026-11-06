@@ -1,6 +1,6 @@
-# Noticing
+# Hoolayah
 
-Noticing is a full-stack self-tracking app for logging daily actions and turning them into useful personal evidence.
+Hoolayah is a full-stack self-tracking app for logging daily actions and turning them into useful personal evidence.
 
 It started from a practical question:
 
@@ -10,31 +10,24 @@ The app tracks small but meaningful actions like water, meals, sunlight, movemen
 
 The point is not perfection, it is to notice patterns early enough to do something useful with them.
 
-Noticing is built around a simple personal rule:
+Hoolayah is built around a simple personal rule:
 
 > Support your mind and body first. Then reassess.
 
 ---
 
 ## Live Demo at:
-https://noticing-six.vercel.app/
+https://hoolayah.vercel.app/
 
 The hosted app is authentication-protected because user logs are private.
 
-A demo account is available for portfolio review:
-
-```txt
-Email: demo@noticing.com
-Password: D3m0Pa$$w0rd783!
-```
-
-The demo account contains sample data so the dashboard, logs page, and insights page can be viewed without creating a personal account.
+For testing, create your own account. Do not use a shared demo account for private reflections.
 
 ---
 
 ## What the App Does
 
-Noticing lets users log daily actions and see those actions organized into useful feedback.
+Hoolayah lets users log daily actions and see those actions organized into useful feedback.
 
 Current features include:
 
@@ -64,7 +57,7 @@ Current features include:
 
 ## Why I Built It
 
-A lot of self-improvement tools assume the problem is motivation. Noticing assumes the first problem is often missing data.
+A lot of self-improvement tools assume the problem is motivation. Hoolayah assumes the first problem is often missing data.
 
 Some days feel terrible for some reason, but then you look closer and realize:
 
@@ -75,13 +68,13 @@ Some days feel terrible for some reason, but then you look closer and realize:
 - You had a high-intensity thought loop.
 - You tried to fix your entire life while underfed and dehydrated.
 
-Noticing is a way to catch that pattern and reduce avoidable suffering by making the basics visible.
+Hoolayah is a way to catch that pattern and reduce avoidable suffering by making the basics visible.
 
 ---
 
 ## Core Philosophy
 
-Noticing is based on what I call **The At Least Method**.
+Hoolayah is based on what I call **The At Least Method**.
 
 Some days just need the minimum effective intervention:
 Atleast:
@@ -183,7 +176,7 @@ This keeps the app easier to navigate as features grow.
 
 ## Authentication and Data Ownership
 
-Noticing uses Supabase Auth for email/password login.
+Hoolayah uses Supabase Auth for email/password login.
 
 The app uses two Supabase clients:
 
@@ -545,10 +538,16 @@ The interesting parts were architectural:
 - making demo access possible without exposing private data
 - building a system that can grow without getting messy
 
-Noticing is small in concept, but it touches the same concerns as larger production apps: auth, data ownership, permissions, routing, server/client boundaries, reusable components, pagination, aggregation, and stateful forms.
+Hoolayah is small in concept, but it touches the same concerns as larger production apps: auth, data ownership, permissions, routing, server/client boundaries, reusable components, pagination, aggregation, and stateful forms.
 
 ---
 
 ## Status
 
-Noticing is in active development.
+Hoolayah is in active development.
+
+## Hoolayah deployment notes
+
+This rebranded branch is a separate Vercel deployment. If it is configured with the same Supabase project as the original Noticing app, authentication accounts and journal entries are shared until a separate Supabase project is provisioned. Keep authorization and Row Level Security policies enabled.
+
+Password-reset and confirmation URLs must permit the Hoolayah production hostname in Supabase Authentication settings. The sender display name in Supabase SMTP is global to that backend and must be updated separately if dedicated to Hoolayah.

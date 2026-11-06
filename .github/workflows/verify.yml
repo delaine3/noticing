@@ -1,4 +1,4 @@
-name: Verify Noticing
+name: Verify Hoolayah
 
 on:
   pull_request:
