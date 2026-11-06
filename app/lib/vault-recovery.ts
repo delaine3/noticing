@@ -135,6 +135,21 @@ export async function enableRecoveryOnExistingVault(
   return wrapExistingMaster(raw, passphrase, record);
 }
 
+export async function replaceRecoveryCodeWithPassphrase(
+  passphrase: string, config: RecoverableVaultRecord,
+): Promise<{ record: RecoverableVaultRecord; recoveryCode: string }> {
+  if (!isV2(config)) return enableRecoveryOnExistingVault(passphrase, config);
+  try {
+    const wrapKey = await deriveVaultKey(passphrase, config);
+    const raw = await open(wrapKey, config.wrapped_key_iv!, config.wrapped_key_ciphertext!, masterAAD);
+    const key = await importMaster(raw);
+    if (!await verifyVaultKey(key, config)) throw new Error("Incorrect diary passphrase.");
+    return wrapExistingMaster(raw, passphrase, config);
+  } catch {
+    throw new Error("Could not replace the recovery code. Check your diary passphrase.");
+  }
+}
+
 export async function resetVaultWithRecovery(
   recoveryCode: string, newPassphrase: string, config: RecoverableVaultRecord,
 ): Promise<NewRecoveryVault> {
