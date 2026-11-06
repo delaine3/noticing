@@ -5,11 +5,11 @@ import Link from "next/link";
 import { supabase } from "../lib/supabase";
 import { bouquetThoughts, safeMonth, shiftMonth, type ThoughtRecord } from "../lib/thought-garden";
 import { ThoughtBouquet } from "./ThoughtBouquet";
+import { decryptThought, encryptThought, type VaultPlaintext } from "../lib/vault-crypto";
 import {
-  VAULT_ITERATIONS, createVerifier, decryptThought, deriveVaultKey,
-  encryptThought, newSalt, verifyVaultKey,
-  type VaultKeyRecord, type VaultPlaintext,
-} from "../lib/vault-crypto";
+  hasRecovery, makeNewVault, unlockRecoverableVault, resetVaultWithRecovery,
+  replaceRecoveryCodeWithPassphrase, type RecoverableVaultRecord,
+} from "../lib/vault-recovery";
 
 type VaultRow = {
   id: string; user_id: string; entry_date: string; status: "draft" | "saved";
@@ -17,10 +17,6 @@ type VaultRow = {
   source_id: string | null; iv: string; ciphertext: string; updated_at: string;
 };
 type OpenedRow = VaultRow & VaultPlaintext;
-type Legacy = {
-  id: string; kind: "legacy_journal" | "legacy_checkin";
-  date: string; title: string; body: string; status: "draft" | "saved";
-};
 function asMessage(error: unknown) {
   return error instanceof Error ? error.message : "Something went wrong.";
 }
@@ -33,42 +29,11 @@ function isValidDay(value: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) &&
     !Number.isNaN(Date.parse(value + "T00:00:00Z"));
 }
-async function fetchAll(table: "journal_entries" | "wellness_checkins",
-  columns: string, userId: string): Promise<Record<string, unknown>[]> {
-  const result: Record<string, unknown>[] = [];
-  for (let offset = 0; offset < 10000; offset += 500) {
-    const query = supabase.from(table).select(columns).eq("user_id", userId).order("id", { ascending: true }).range(offset, offset + 499);
-    const { data, error } = await query;
-    if (error) throw new Error("Could not read old entries. Nothing was removed.");
-    const rows = (data ?? []) as unknown as Record<string, unknown>[];
-    result.push(...rows);
-    if (rows.length < 500) return result;
-  }
-  throw new Error("More than 10,000 old entries. Contact support to migrate them in batches.");
-}
-async function readLegacy(userId: string): Promise<Legacy[]> {
-  const [journals, checkins] = await Promise.all([
-    fetchAll("journal_entries", "id,entry_date,title,body,status", userId),
-    fetchAll("wellness_checkins", "id,local_date,thought_detail", userId),
-  ]);
-  return [
-    ...journals.filter(x => typeof x.body === "string" && x.body.length > 0).map(x => ({
-      id: String(x.id), kind: "legacy_journal" as const, date: String(x.entry_date),
-      title: String(x.title), body: String(x.body),
-      status: x.status === "draft" ? "draft" as const : "saved" as const,
-    })),
-    ...checkins.filter(x => typeof x.thought_detail === "string" && x.thought_detail.length > 0).map(x => ({
-      id: String(x.id), kind: "legacy_checkin" as const, date: String(x.local_date),
-      title: "Check-in reflection", body: String(x.thought_detail), status: "saved" as const,
-    })),
-  ];
-}
-
 export function VaultDesk({ today, initialMonth }: { today: string; initialMonth: string }) {
   const month = safeMonth(initialMonth, today.slice(0, 7));
   const keyRef = useRef<CryptoKey | null>(null);
   const [userId, setUserId] = useState("");
-  const [config, setConfig] = useState<VaultKeyRecord | null>(null);
+  const [config, setConfig] = useState<RecoverableVaultRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [unlocked, setUnlocked] = useState(false);
   const [passphrase, setPassphrase] = useState("");
@@ -77,7 +42,12 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
   const [failedRows, setFailedRows] = useState(0);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
-  const [legacy, setLegacy] = useState<Legacy[] | null>(null);
+  const [recoveryCode, setRecoveryCode] = useState("");
+  const [recoveryInput, setRecoveryInput] = useState("");
+  const [newPassphrase, setNewPassphrase] = useState("");
+  const [newConfirmation, setNewConfirmation] = useState("");
+  const [showRecover, setShowRecover] = useState(false);
+  const [managePassphrase, setManagePassphrase] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState("A thought from today");
   const [body, setBody] = useState("");
@@ -113,10 +83,10 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
         if (user.email?.toLowerCase() === "demo@noticing.com")
           throw new Error("A shared demo account cannot hold a private vault. Use a personal account.");
         const { data, error: readError } = await supabase.from("hoolayah_vault_keys")
-          .select("salt,verifier_iv,verifier_ciphertext,kdf_iterations")
+          .select("salt,verifier_iv,verifier_ciphertext,kdf_iterations,vault_version,wrapped_key_iv,wrapped_key_ciphertext,recovery_salt,recovery_iv,recovery_ciphertext")
           .eq("user_id", user.id).maybeSingle();
         if (readError) throw new Error("The private vault is unavailable.");
-        if (active) { setUserId(user.id); setConfig(data as VaultKeyRecord | null); }
+        if (active) { setUserId(user.id); setConfig(data as RecoverableVaultRecord | null); }
       } catch (e) { if (active) setNotice(asMessage(e)); }
       finally { if (active) setLoading(false); }
     })();
@@ -134,27 +104,22 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
     if (!config && passphrase !== confirmation) { setNotice("Passphrases do not match."); return; }
     setBusy(true); setNotice("");
     try {
-      if (!config && !window.confirm(
-        "Your vault passphrase cannot be reset by Hoolayah. If you lose it, your encrypted diary cannot be recovered. Have you saved it safely?"
-      )) return;
-      const setup = config ?? {
-        salt: newSalt(), kdf_iterations: VAULT_ITERATIONS,
-        verifier_iv: "", verifier_ciphertext: "",
-      };
-      const key = await deriveVaultKey(passphrase, setup);
+      let key: CryptoKey;
       if (config) {
-        if (!await verifyVaultKey(key, config)) throw new Error("Incorrect passphrase, or the vault record has been corrupted.");
+        key = await unlockRecoverableVault(passphrase, config);
       } else {
-        const verifier = await createVerifier(key);
-        const record = { ...setup, verifier_iv: verifier.iv, verifier_ciphertext: verifier.ciphertext };
-        const { error } = await supabase.from("hoolayah_vault_keys").insert({ user_id: userId, ...record });
-        if (error) throw new Error("Could not create the vault. Refresh before retrying.");
-        setConfig(record);
+        const setup = await makeNewVault(passphrase);
+        const { error } = await supabase.from("hoolayah_vault_keys")
+          .insert({ user_id: userId, ...setup.record });
+        if (error) throw new Error("Could not create the private diary. Refresh before retrying.");
+        key = setup.key;
+        setConfig(setup.record);
+        setRecoveryCode(setup.recoveryCode);
       }
       keyRef.current = key;
       setPassphrase(""); setConfirmation(""); setUnlocked(true);
       await load(userId, key);
-      setNotice("Vault unlocked on this device. Your passphrase was not uploaded.");
+      setNotice("Diary unlocked. Your passphrase and recovery code stay on your device.");
     } catch(e) { setNotice(asMessage(e)); }
     finally { setBusy(false); }
   }
@@ -199,68 +164,46 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
     setBusy(false);
   }
 
-  async function inspectLegacy() {
-    if (busy || !userId) return;
+  async function recoverVault() {
+    if (busy || !userId || !config || !hasRecovery(config)) return;
+    if (newPassphrase.length < 12 || newPassphrase !== newConfirmation) {
+      setNotice("New passphrase must be at least 12 characters and match the confirmation.");
+      return;
+    }
     setBusy(true); setNotice("");
     try {
-      const result = await readLegacy(userId);
-      setLegacy(result);
-      setNotice(result.length ? "Review the warning before migrating." : "No old plaintext reflections found.");
-    } catch(e) { setNotice(asMessage(e)); }
+      const restored = await resetVaultWithRecovery(recoveryInput, newPassphrase, config);
+      const { data, error } = await supabase.from("hoolayah_vault_keys")
+        .update(restored.record).eq("user_id", userId)
+        .eq("verifier_ciphertext", config.verifier_ciphertext)
+        .select("user_id").single();
+      if (error || !data) throw new Error("Could not save your new diary passphrase. Your existing recovery code still applies.");
+      keyRef.current = restored.key;
+      setConfig(restored.record);
+      setRecoveryCode(restored.recoveryCode);
+      setRecoveryInput(""); setNewPassphrase(""); setNewConfirmation("");
+      setShowRecover(false); setUnlocked(true);
+      await load(userId, restored.key);
+      setNotice("Passphrase changed. Save your NEW recovery code. The previous code no longer works with active records.");
+    } catch (error) { setNotice(asMessage(error)); }
     finally { setBusy(false); }
   }
-  async function migrate() {
-    if (busy || !userId || !keyRef.current || !legacy?.length) return;
-    if (!window.confirm(
-      "This copies old reflections into your encrypted vault, verifies them, then DELETES their plaintext originals from the SHARED database. Old diary pages and check-in writing will disappear from Noticing too. Check-in scores remain. Continue?"
-    )) return;
+
+  async function renewRecovery() {
+    if (busy || !userId || !config || managePassphrase.length < 12) {
+      setNotice("Enter your current diary passphrase first."); return;
+    }
     setBusy(true); setNotice("");
-    const key = keyRef.current;
-    let protectedCount = 0; let retained = 0;
     try {
-      // Refresh before migrating to reduce the window for concurrent edits in Noticing.
-      const current = await readLegacy(userId);
-      for (const item of current) {
-        try {
-          const { data: prior, error: priorError } = await supabase.from("hoolayah_vault_entries")
-            .select("id").eq("user_id", userId).eq("origin", item.kind)
-            .eq("source_id", item.id).maybeSingle();
-          if (priorError) throw new Error("Lookup failed.");
-          const id = prior?.id ?? crypto.randomUUID();
-          const cipher = await encryptThought(key, userId, id, { title: item.title, body: item.body });
-          const { error: putError } = await supabase.from("hoolayah_vault_entries").upsert({
-            id, user_id: userId, entry_date: item.date, status: item.status,
-            origin: item.kind, source_id: item.id, ...cipher, updated_at: new Date().toISOString(),
-          }, { onConflict: "user_id,origin,source_id" });
-          if (putError) throw new Error("Encrypted write failed.");
-          const { data: saved, error: verifyError } = await supabase.from("hoolayah_vault_entries")
-            .select("id,iv,ciphertext").eq("user_id", userId)
-            .eq("origin", item.kind).eq("source_id", item.id).single();
-          if (verifyError || !saved) throw new Error("Could not verify protected copy.");
-          const decoded = await decryptThought(key, userId, saved.id, saved);
-          if (decoded.body !== item.body || decoded.title !== item.title)
-            throw new Error("Verification mismatch.");
-          // Compare-and-delete: concurrent edits must stay in plaintext until explicitly re-migrated.
-          if (item.kind === "legacy_journal") {
-            const { data: deleted, error } = await supabase.from("journal_entries")
-              .delete().eq("user_id", userId).eq("id", item.id)
-              .eq("title", item.title).eq("body", item.body)
-              .select("id");
-            if (error || deleted?.length !== 1) throw new Error("Source changed or could not be deleted.");
-          } else {
-            const { data: cleared, error } = await supabase.from("wellness_checkins")
-              .update({ thought_detail: null }).eq("user_id", userId)
-              .eq("id", item.id).eq("thought_detail", item.body).select("id");
-            if (error || cleared?.length !== 1) throw new Error("Source changed or could not be cleared.");
-          }
-          protectedCount++;
-        } catch { retained++; } // Never delete old content if encryption, verification or cleanup fails.
-      }
-      setLegacy(null);
-      await load(userId, key);
-      setNotice(protectedCount + " entries verified and removed from plaintext storage. " +
-        retained + " old entries still need attention. Existing backups may retain earlier plaintext.");
-    } catch(e) { setNotice("Migration stopped: " + asMessage(e) + ". Old entries were not bulk deleted."); }
+      const updated = await replaceRecoveryCodeWithPassphrase(managePassphrase, config);
+      const { data, error } = await supabase.from("hoolayah_vault_keys")
+        .update(updated.record).eq("user_id", userId)
+        .eq("verifier_ciphertext", config.verifier_ciphertext)
+        .select("user_id").single();
+      if (error || !data) throw new Error("Could not save recovery settings. Your existing passphrase still works.");
+      setConfig(updated.record); setRecoveryCode(updated.recoveryCode); setManagePassphrase("");
+      setNotice("Recovery code updated. Save the NEW code. Older codes no longer work with the active vault.");
+    } catch(error) { setNotice(asMessage(error)); }
     finally { setBusy(false); }
   }
 
@@ -295,8 +238,8 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
         <section aria-labelledby="how-your-diary-is-protected" className="rounded-2xl border border-[#cbd9c5] bg-white/85 p-5 space-y-3 text-sm">
           <h2 id="how-your-diary-is-protected" className="text-lg font-semibold">Who can read my diary? 🔒</h2>
           <p><strong>Can Hoolayah&apos;s owner read my diary?</strong> Not by opening the saved records. Your new Thought Garden entries are locked on your device first. We can see that an entry exists, but its title and words are unreadable without the secret that unlocks them.</p>
-          <p><strong>Can you recover my diary password or key?</strong> No. Your separate diary passphrase is not sent to us, and we do not keep the unlocking key. We cannot look it up, reset it, or recover your locked entries if you forget it. Keep a safe copy, ideally in a password manager.</p>
-          <p><strong>Is everything in Hoolayah locked this way?</strong> No. This protection covers new Thought Garden entries and older entries you move into it. We can still access account details, everyday logs, check-in scores, assistant messages, and basic details such as entry dates. Older diary writing stays readable until you protect it.</p>
+          <p><strong>Can I reset my diary passphrase?</strong> Yes, using the personal recovery code supplied when you protect your diary. Only you can use that code. We never receive your passphrase, recovery code or diary key, and cannot retrieve them. Without either your passphrase or recovery code, your writing cannot be recovered.</p>
+          <p><strong>Is everything in Hoolayah locked this way?</strong> No. This protection covers Thought Garden writing. Account details, everyday activity logs, check-in scores, assistant messages, and entry dates are not locked by your diary passphrase.</p>
           <p className="text-xs text-[#5f6f62]">A compromised device or harmful website update could still expose your writing when you unlock it. Read our <Link href="/privacy" className="underline">privacy notice</Link> for the limits.</p>
         </section>
         {loading ? <p>Loading your vault…</p> : !unlocked ? (
@@ -304,7 +247,7 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
             <h2 className="text-2xl font-semibold">{config ? "Unlock your diary" : "Create your private vault"}</h2>
             <p className="text-sm">
               {config ? "Enter the separate passphrase you created for this vault." :
-                "Create a separate, long passphrase and save it safely, ideally in a password manager. We cannot look it up, reset it, or unlock your diary if you forget it."}
+                "Create a separate, long passphrase. You will also receive a one-time recovery code. Keep both in a safe place, ideally a password manager."}
             </p>
             {userId ? (
               <form onSubmit={e => { e.preventDefault(); void unlockOrCreate(); }} className="space-y-3">
@@ -323,17 +266,71 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
                 </button>
               </form>
             ) : null}
-            <p className="text-xs text-[#845b4c]">Your vault passphrase is different from your sign-in password. If you lose it, we cannot recover your encrypted thoughts.</p>
+            {config && hasRecovery(config) ? (
+              <button type="button" onClick={() => setShowRecover(open => !open)}
+                className="text-sm font-semibold underline" disabled={busy}>
+                {showRecover ? "Use my diary passphrase instead" : "Forgot diary passphrase? Use recovery code"}
+              </button>
+            ) : null}
+            {showRecover && config && hasRecovery(config) ? (
+              <form onSubmit={e => { e.preventDefault(); void recoverVault(); }} className="space-y-3 rounded-xl border p-4">
+                <p className="font-semibold">Reset your diary passphrase</p>
+                <p className="text-xs">Your recovery code was shown when your diary was secured. We cannot look it up.</p>
+                <label className="block text-sm">Recovery code
+                  <input className="mt-1 w-full rounded-xl border p-3 font-mono text-xs" type="password"
+                    autoComplete="off" required value={recoveryInput} onChange={e => setRecoveryInput(e.target.value)} />
+                </label>
+                <label className="block text-sm">New diary passphrase
+                  <input className="mt-1 w-full rounded-xl border p-3" type="password" minLength={12} required
+                    autoComplete="new-password" value={newPassphrase} onChange={e => setNewPassphrase(e.target.value)} />
+                </label>
+                <label className="block text-sm">Repeat new passphrase
+                  <input className="mt-1 w-full rounded-xl border p-3" type="password" minLength={12} required
+                    autoComplete="new-password" value={newConfirmation} onChange={e => setNewConfirmation(e.target.value)} />
+                </label>
+                <button className="submit-button" disabled={busy} type="submit">Reset passphrase with recovery code</button>
+              </form>
+            ) : null}
+            <p className="text-xs text-[#845b4c]">Your diary passphrase is separate from sign-in. If both passphrase and recovery code are lost, your writing cannot be recovered.</p>
           </section>
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-[#52705d]">🔒 Unlocked in this tab. No key is saved to local storage.</p>
               <button className="secondary-button" type="button" disabled={busy} onClick={() => {
-                keyRef.current = null; setUnlocked(false); setRows([]); setLegacy(null);
-                setBody(""); setEditingId(null); setNotice("Vault locked.");
+                keyRef.current = null; setUnlocked(false); setRows([]); setRecoveryCode("");
+                setManagePassphrase(""); setBody(""); setEditingId(null); setNotice("Diary locked.");
               }}>Lock now</button>
             </div>
+            {recoveryCode ? (
+              <section className="rounded-2xl border-2 border-amber-500 bg-amber-50 p-5 space-y-3" aria-label="Your one-time recovery code">
+                <h2 className="text-lg font-semibold">Save your recovery code 🔑</h2>
+                <p className="text-sm">This code lets you reset your diary passphrase without revealing your writing to us. It is displayed only now. Copy it into a password manager or another secure offline location.</p>
+                <p className="break-all rounded-lg bg-white p-3 font-mono text-sm select-all" aria-label="One-time recovery code">{recoveryCode}</p>
+                <div className="flex gap-3 flex-wrap">
+                  <button type="button" className="secondary-button" onClick={() => void navigator.clipboard.writeText(recoveryCode)
+                    .catch(() => setNotice("Clipboard unavailable. Select and copy the code manually."))}>Copy code</button>
+                  <button type="button" className="secondary-button" onClick={() => setRecoveryCode("")}>I have saved my code</button>
+                </div>
+                <p className="text-xs">Anyone with this code and access to your account could unlock your diary. Never share it.</p>
+              </section>
+            ) : null}
+            <section className="rounded-2xl border border-[#cbd9c5] bg-white p-5 space-y-3">
+              <h2 className="font-semibold">Recovery settings</h2>
+              <p className="text-sm">{config && hasRecovery(config)
+                ? "You can replace your recovery code here if you still know your diary passphrase."
+                : "Enable a recovery code for this diary. Your writing will stay encrypted and existing entries will not be changed."}</p>
+              <form onSubmit={e => { e.preventDefault(); void renewRecovery(); }} className="flex flex-col gap-2 sm:flex-row">
+                <label className="flex-1 text-sm">Current diary passphrase
+                  <input type="password" autoComplete="off" minLength={12} required
+                    className="mt-1 w-full rounded-xl border p-3" value={managePassphrase}
+                    onChange={e => setManagePassphrase(e.target.value)} />
+                </label>
+                <button className="secondary-button self-end" type="submit" disabled={busy}>
+                  {config && hasRecovery(config) ? "Replace recovery code" : "Create recovery code"}
+                </button>
+              </form>
+            </section>
             <section className="rounded-3xl border border-[#cbd9c5] bg-[#f9fcf3] p-5 sm:p-7 space-y-3">
               <h2 className="text-2xl font-semibold">{editingId ? "Edit encrypted thought" : "Plant a thought 🌱"}</h2>
               <p className="text-sm">Your words and title are encrypted before saving. Press Save explicitly; unsaved writing stays only in this tab.</p>
@@ -359,21 +356,6 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
                   setEditingId(null); setBody(""); setTitle("A thought from today"); setEntryDate(today); setDraft(false);
                 }}>Cancel edit</button> : null}
               </div>
-            </section>
-            <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 space-y-3">
-              <h2 className="font-semibold">Protect older entries</h2>
-              <p className="text-sm">Thoughts written before this protection was introduced are still stored in a readable form. You can move them into your locked diary. This also removes the old readable copies from Noticing because both apps use the same storage. Old backup copies may remain for some time.</p>
-              <button type="button" disabled={busy} className="secondary-button" onClick={() => void inspectLegacy()}>
-                Check older entries
-              </button>
-              {legacy !== null ? <div className="space-y-2 text-sm">
-                <p>{legacy.length} older written entries are not yet encrypted.</p>
-                {legacy.length > 0 ? <button disabled={busy} type="button"
-                  className="submit-button" onClick={() => void migrate()}>
-                  Protect older entries and remove readable copies
-                </button> : null}
-                <p>Before removal, every encrypted copy is read back and decrypted locally to verify its contents. Interrupted migrations can be retried. Database backups may still contain older versions.</p>
-              </div> : null}
             </section>
             <nav className="flex justify-between items-center gap-3" aria-label="Diary months">
               <Link className="secondary-button" href={`/journal?month=${shiftMonth(month, -1)}`}>← Previous</Link>
