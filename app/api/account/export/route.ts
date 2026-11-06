@@ -8,6 +8,7 @@ const tables = [
   "profiles", "logs", "strength_sets", "coaching_preferences",
   "wellness_checkins", "coaching_interventions", "coaching_outcomes",
   "coaching_cloud_usage", "login_events", "journal_entries",
+  "hoolayah_vault_keys", "hoolayah_vault_entries",
 ] as const;
 
 async function fetchAll(supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
@@ -48,7 +49,7 @@ export async function GET() {
       exported_at: new Date().toISOString(),
       account: { id: user.id, email: user.email, created_at: user.created_at },
       records, unavailable_tables: unavailable,
-      note: "This export covers listed Hoolayah tables; provider metadata and backups are not included.",
+      note: "Includes encrypted vault ciphertext and key metadata but never the vault passphrase. Keep your passphrase separately to restore your journal. This export covers listed Hoolayah tables; provider metadata and backups are not included.",
     }, null, 2);
     return new Response(payload, {
       status: 200,
