@@ -25,20 +25,20 @@ export default function PrivacyPage() {
         summaries, protect accounts, respond to requests, and maintain the service. You decide what to record. Optional AI is off unless you turn it on,
         and you can turn it off again at any time.
       </p>
-      <h2>Can Hoolayah read my private diary?</h2>
+      <h2>What happens when I save a Thought Garden entry?</h2>
       <p>
-        When you save a new entry in the locked Thought Garden, your device turns the title and
-        writing into unreadable text before storing them online. Your separate vault passphrase is
-        what unlocks those words. Under the current design, the owner of Hoolayah and anyone with
-        database administration access cannot read the contents of these encrypted entries just
-        by looking at the stored records. We do not receive or store your vault passphrase or the
-        secret needed to unlock the entries.
+        Your device locks the entry title and writing using the separate diary password you create.
+        Only the locked version is saved online. The people running Hoolayah, including its owner,
+        can access stored records but cannot read the protected writing just by opening those
+        records. We can still see basic details, such as the date, whether the entry is a draft,
+        and which account it belongs to.
       </p>
-      <h2>Can you recover my vault passphrase or unlock my diary for me?</h2>
+      <h2>Can you see or recover my diary password or key?</h2>
       <p>
-        No. We cannot look up, reset, or recover your vault passphrase. If you forget it and have
+        No. Your diary password is not sent to us, and we do not keep the secret key needed to
+        unlock your saved writing. We cannot look it up or reset it. If you forget it and have
         not kept a copy, your encrypted diary may be permanently unreadable, even if you can still
-        sign in to your account. Store the separate passphrase safely, such as in a password manager.
+        sign in to your account. Store it safely, such as in a password manager.
       </p>
       <h2>What information is not locked this way?</h2>
       <p>
@@ -68,8 +68,9 @@ export default function PrivacyPage() {
       </p>
       <h2>Service providers and international transfers</h2>
       <p>
-        Hoolayah uses Vercel for hosting and Supabase for authentication and database storage.
-        Cloudflare is used for optional AI processing when enabled. These providers may process
+        Hoolayah uses outside companies to run the website and store information: Vercel hosts
+        the website, Supabase manages sign-in and online storage, and Cloudflare processes
+        messages you explicitly send to optional AI. These providers may process
         data outside Eswatini and your country of residence. We do not sell your journal entries or use them for advertising.
       </p>
       <h2>Who can see your content</h2>
