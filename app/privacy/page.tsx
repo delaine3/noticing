@@ -25,6 +25,25 @@ export default function PrivacyPage() {
         summaries, protect accounts, respond to requests, and maintain the service. You decide what to record. Optional AI is off unless you turn it on,
         and you can turn it off again at any time.
       </p>
+      <h2>Encrypted Thought Garden</h2>
+      <p>
+        New entries created in Hoolayah&apos;s unlocked Thought Garden are encrypted in your browser
+        using a key derived from your separate vault passphrase. Only ciphertext, dates, status
+        and technical metadata are sent to Supabase. We do not store the vault passphrase or a
+        usable decryption key. Losing the passphrase can make these entries permanently unreadable.
+        Browser encryption reduces exposure to database administrators, but it cannot protect
+        against malicious code served to your browser, a compromised device, or entries you
+        explicitly export or disclose.
+      </p>
+      <p>
+        Existing Noticing journal entries and written check-in notes remain readable to database
+        administrators until you explicitly migrate them. Migration creates and verifies encrypted
+        copies before removing live plaintext originals. Since Hoolayah and Noticing share one
+        database, migrated entries will no longer appear as plaintext in Noticing. Provider backups
+        may retain older plaintext. Check-in scores, dates, account details, routine activity logs,
+        imported records and conversational capture are NOT end-to-end encrypted. Do not write
+        private journal content into those fields.
+      </p>
       <h2>AI and imported chats</h2>
       <p>
         Core recording and built-in suggestions use software rules. If you enable optional
@@ -59,7 +78,7 @@ export default function PrivacyPage() {
       <h2>Your rights and options</h2>
       <p>
         Depending on applicable law, you may request access, correction, deletion, portability,
-        restriction, or objection to particular processing. You can edit and delete journal logs
+        restriction, or objection to particular processing. You can edit and delete encrypted diary entries and ordinary logs
         in the app. Visit <Link href="/settings">Settings</Link> to download a JSON copy of
         your records or delete your account yourself in Settings, after confirming your
         password. You don&apos;t need to email us to delete your account. For requests that
