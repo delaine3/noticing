@@ -102,7 +102,9 @@ export async function makeNewVault(passphrase: string): Promise<NewRecoveryVault
   const raw = encode(crypto.getRandomValues(new Uint8Array(32)));
   const key = await importMaster(raw);
   const verifier = await createVerifier(key);
-  const setup = await wrapExistingMaster(raw, passphrase, verifier);
+  const setup = await wrapExistingMaster(raw, passphrase, {
+    verifier_iv: verifier.iv, verifier_ciphertext: verifier.ciphertext,
+  });
   return { key, ...setup };
 }
 
