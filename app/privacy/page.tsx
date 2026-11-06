@@ -25,24 +25,36 @@ export default function PrivacyPage() {
         summaries, protect accounts, respond to requests, and maintain the service. You decide what to record. Optional AI is off unless you turn it on,
         and you can turn it off again at any time.
       </p>
-      <h2>Encrypted Thought Garden</h2>
+      <h2>Can Hoolayah read my private diary?</h2>
       <p>
-        New entries created in Hoolayah&apos;s unlocked Thought Garden are encrypted in your browser
-        using a key derived from your separate vault passphrase. Only ciphertext, dates, status
-        and technical metadata are sent to Supabase. We do not store the vault passphrase or a
-        usable decryption key. Losing the passphrase can make these entries permanently unreadable.
-        Browser encryption reduces exposure to database administrators, but it cannot protect
-        against malicious code served to your browser, a compromised device, or entries you
-        explicitly export or disclose.
+        When you save a new entry in the locked Thought Garden, your device turns the title and
+        writing into unreadable text before storing them online. Your separate vault passphrase is
+        what unlocks those words. Under the current design, the owner of Hoolayah and anyone with
+        database administration access cannot read the contents of these encrypted entries just
+        by looking at the stored records. We do not receive or store your vault passphrase or the
+        secret needed to unlock the entries.
+      </p>
+      <h2>Can you recover my vault passphrase or unlock my diary for me?</h2>
+      <p>
+        No. We cannot look up, reset, or recover your vault passphrase. If you forget it and have
+        not kept a copy, your encrypted diary may be permanently unreadable, even if you can still
+        sign in to your account. Store the separate passphrase safely, such as in a password manager.
+      </p>
+      <h2>What information is not locked this way?</h2>
+      <p>
+        We can still access some ordinary account and app records when operating the service,
+        including email addresses, activity logs, wellness check-in scores, and details about
+        when diary entries were saved. Messages sent to the activity assistant and approved AI
+        requests are not protected by the diary vault. Older journal pages and written check-in
+        notes also remain readable until you explicitly move them into the encrypted vault.
+        When you migrate them, the readable originals are removed from the active shared database;
+        they also disappear from the original Noticing app. Older backup copies may remain for a time.
       </p>
       <p>
-        Existing Noticing journal entries and written check-in notes remain readable to database
-        administrators until you explicitly migrate them. Migration creates and verifies encrypted
-        copies before removing live plaintext originals. Since Hoolayah and Noticing share one
-        database, migrated entries will no longer appear as plaintext in Noticing. Provider backups
-        may retain older plaintext. Check-in scores, dates, account details, routine activity logs,
-        imported records and conversational capture are NOT end-to-end encrypted. Do not write
-        private journal content into those fields.
+        Encryption protects stored diary text, but it does not protect against a compromised
+        device, malicious code served to your browser, or private text you share outside the
+        vault. Your browser receives Hoolayah&apos;s website code, so you must still trust the
+        service to deliver safe code. These limits matter even with encrypted storage.
       </p>
       <h2>AI and imported chats</h2>
       <p>
