@@ -36,7 +36,7 @@ export default async function CoachingSettingsPage() {
   return (
     <main className="min-h-screen px-4 py-8 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-4xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Noticing · Coaching</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">Hoolayah · Coaching</p>
         <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">Your preferences</h1>
         <p className="mt-3 text-[var(--ink-soft)]">
           Manage check-ins and optional AI.

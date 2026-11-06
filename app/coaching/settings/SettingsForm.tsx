@@ -108,7 +108,7 @@ export function SettingsForm({ settings, cloudConfigured }: {
       <div className="space-y-3 border-t border-[var(--border-soft)] pt-5">
         <h2 className="text-xl font-semibold">Help understanding what I write</h2>
         <p className="text-sm">
-          Noticing can use Cloudflare AI to understand entries it can&apos;t recognize on its own. It&apos;s optional.
+          Hoolayah can use Cloudflare AI to understand entries it can&apos;t recognize on its own. It&apos;s optional.
         </p>
         <p className="text-sm text-[var(--ink-soft)]">
           When used, only the message you approve is sent to Cloudflare. Your other entries and past conversations aren&apos;t sent with it.

@@ -65,7 +65,7 @@ export async function saveSleepMoment(
   return {
     ok: true,
     message: kind === "Bedtime"
-      ? "Bedtime noted. When you wake, Noticing can record that time too. Good night 🌙"
+      ? "Bedtime noted. When you wake, Hoolayah can record that time too. Good night 🌙"
       : "Wake time saved. 🌤️",
   };
 }

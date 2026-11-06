@@ -10,7 +10,7 @@ export default async function CheckInPage() {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
-  const zone = (await cookies()).get("noticing_timezone")?.value;
+  const zone = (await cookies()).get("hoolayah_timezone")?.value;
   const date = dayInTimeZone(zone);
 
   const { data: due, error } = await supabase.from("coaching_interventions")
@@ -28,7 +28,7 @@ export default async function CheckInPage() {
     <main className="min-h-screen px-4 py-8 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-4xl">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--leaf-dark)]">
-          Noticing · Check-in
+          Hoolayah · Check-in
         </p>
         <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">How are you doing right now?</h1>
         <p className="mt-3 max-w-2xl text-[var(--ink-soft)]">

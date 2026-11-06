@@ -140,7 +140,7 @@ export async function recordCoachingOutcome(payload: {
     .eq("id", payload.interventionId).eq("user_id", user.id);
   revalidatePath("/");
   revalidatePath("/check-in");
-  return { ok: true, message: "Recorded. Noticing will use your feedback when reviewing what tends to help." };
+  return { ok: true, message: "Recorded. Hoolayah will use your feedback when reviewing what tends to help." };
 }
 
 export async function saveCoachingPreferences(payload: {
