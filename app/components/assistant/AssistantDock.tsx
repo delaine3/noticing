@@ -345,11 +345,66 @@ export function AssistantDock() {
             <div ref={logBottom} />
           </div>
 
-          {pending ? (
-            <details open={expandDetails} onToggle={(event) => setExpandDetails(event.currentTarget.open)}
-              className="max-h-48 overflow-y-auto border-t border-[var(--border-soft)] bg-white/85 px-3 py-2 text-sm">
-              <summary className="cursor-pointer font-medium text-[var(--leaf-dark)]">Adjust details (optional)</summary>
-              <div className="mt-3 space-y-3">
+          {stage === "cloud-permission" ? (
+            <section aria-label="Optional AI permission"
+              className="shrink-0 border-t border-[var(--border-soft)] bg-white px-4 py-3">
+              <p className="text-sm font-semibold text-[#25543d]">Use AI to understand this message?</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--ink-soft)]">
+                Only your last message will be sent to the AI provider. Nothing is saved without your approval.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button type="button" disabled={busy || saveUncertain}
+                  onClick={() => void answerCloudWithButton(true)}
+                  className="min-h-10 flex-1 rounded-xl bg-[#25543d] px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">
+                  Use AI once
+                </button>
+                <button type="button" disabled={busy || saveUncertain}
+                  onClick={() => void answerCloudWithButton(false)}
+                  className="min-h-10 flex-1 rounded-xl border border-[var(--border-soft)] bg-white px-3 py-2 text-sm font-semibold disabled:opacity-50">
+                  Not now
+                </button>
+              </div>
+            </section>
+          ) : pending ? (
+            <section aria-label="Review unsaved activity"
+              className="shrink-0 border-t border-[var(--border-soft)] bg-white px-4 py-3">
+              <p className="text-sm font-semibold text-[#25543d]">
+                {pending.phase === "confirm" ? "Ready to save" : "One more detail"}
+              </p>
+              <p className="mt-1 max-h-20 overflow-y-auto break-words text-sm leading-5 text-[var(--ink-soft)]">
+                {summarizeRecords(pending.records)}
+              </p>
+              {pending.phase === "detail" ? (
+                <>
+                  <p className="mt-2 text-sm">{nextQuestion(pending.records)?.text ?? "Add the missing detail below."}</p>
+                  <button type="button" disabled={busy || saveUncertain} onClick={skipWithButton}
+                    className="mt-2 min-h-10 rounded-xl border border-[var(--border-soft)] px-4 py-2 text-sm font-semibold disabled:opacity-50">
+                    Skip this detail
+                  </button>
+                </>
+              ) : (
+                <div className="mt-3 flex gap-2">
+                  <button type="button" disabled={busy || saveUncertain} onClick={() => void saveWithButton()}
+                    className="min-h-11 flex-1 rounded-xl bg-[#25543d] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+                    {busy ? "Saving…" : pending.records.length === 1 ? "Save entry" : "Save entries"}
+                  </button>
+                  <button type="button" disabled={busy || saveUncertain} onClick={discardWithButton}
+                    className="min-h-11 flex-1 rounded-xl border border-[var(--border-soft)] px-4 py-2.5 text-sm font-semibold disabled:opacity-50">
+                    Discard
+                  </button>
+                </div>
+              )}
+              <button type="button" disabled={busy || saveUncertain}
+                onClick={() => setExpandDetails((open) => !open)}
+                className="mt-2 rounded-md py-1 text-sm font-medium text-[#25543d] underline underline-offset-2 disabled:opacity-50">
+                {expandDetails ? "Hide details" : "Edit details"}
+              </button>
+            </section>
+          ) : null}
+
+          {pending && expandDetails ? (
+            <div className="max-h-[min(38vh,280px)] overflow-y-auto border-t border-[var(--border-soft)] bg-white/90 px-3 py-3 text-sm">
+              <div className="space-y-3">
                 {pending.records.map((item, i) => (
                   <div key={pending.ids[i]} className="space-y-2 rounded-lg border border-[var(--border-soft)] p-2">
                     <label className="block text-xs">Activity
@@ -385,7 +440,7 @@ export function AssistantDock() {
                   </div>
                 ))}
               </div>
-            </details>
+            </div>
           ) : null}
 
           <div className="border-t border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
@@ -404,14 +459,16 @@ export function AssistantDock() {
                     e.preventDefault(); void send();
                   }
                 }}
-                placeholder="Tell me what happened…"
+                placeholder={stage === "cloud-permission" ? "Or reply yes/no…" :
+                  pending?.phase === "detail" ? "Enter an amount or time…" :
+                  pending ? "Type a correction…" : "Tell me what happened…"}
                 className="min-w-0 flex-1 resize-none rounded-xl border border-[var(--border-soft)] p-3 text-sm" />
               <button type="submit" disabled={busy || !input.trim() || saveUncertain}
                 className="rounded-xl bg-[#25543d] px-4 py-3 font-semibold text-white disabled:opacity-45"
                 aria-label="Send message">Send</button>
             </div>
             <div className="mt-2 flex justify-between gap-2 text-xs text-[var(--ink-soft)]">
-              <span>I&apos;ll ask before saving.</span>
+              <span>Nothing saves until you approve it.</span>
               <span className="flex items-center gap-3">
                 <Link href="/coaching/settings" onClick={() => setOpen(false)} className="underline">Privacy</Link>
                 <Link href="/logs/new" onClick={() => setOpen(false)} className="underline">Manual entry</Link>
