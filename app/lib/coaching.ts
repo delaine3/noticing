@@ -177,7 +177,7 @@ export function assessHydration(
   const fraction = Math.min(1, total / goal);
   let guidance: string;
   if (fluidRestricted === true) {
-    guidance = "Follow the fluid limit set by your clinician. Noticing won't suggest extra drinks.";
+    guidance = "Follow the fluid limit set by your clinician. Hoolayah won't suggest extra drinks.";
   } else if (total >= goal) {
     guidance = "You've reached your daily drink goal. Continue to use thirst and your circumstances as guides.";
   } else if (hour < 11) {

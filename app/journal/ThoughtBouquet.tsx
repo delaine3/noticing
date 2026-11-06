@@ -34,14 +34,14 @@ export function ThoughtBouquet({ month, flowers, total }: {
     [264, 252], [210, 225], [223, 300],
   ] as const;
   function saveBouquet() {
-    const drawing = document.getElementById("noticing-thought-bouquet");
+    const drawing = document.getElementById("hoolayah-thought-bouquet");
     if (!(drawing instanceof SVGSVGElement)) return;
     const content = new XMLSerializer().serializeToString(drawing);
     const blob = new Blob([content], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `noticing-thought-bouquet-${month}.svg`;
+    a.download = `hoolayah-thought-bouquet-${month}.svg`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -49,7 +49,7 @@ export function ThoughtBouquet({ month, flowers, total }: {
   }
   return (
     <div className="mt-5 flex flex-col items-center gap-4">
-      <svg id="noticing-thought-bouquet" xmlns="http://www.w3.org/2000/svg"
+      <svg id="hoolayah-thought-bouquet" xmlns="http://www.w3.org/2000/svg"
         width="440" height="515" viewBox="0 0 440 515"
         className="w-full max-w-[440px] rounded-3xl border border-[#efdad0] bg-[#fffcf5]"
         role="img" aria-label={`A hand-drawn flower bouquet representing ${total} journal reflections from ${monthText}`}>
@@ -61,7 +61,7 @@ export function ThoughtBouquet({ month, flowers, total }: {
         </defs>
         <rect x="0" y="0" width="440" height="515" rx={18} fill="#fffcf5"/>
         <text x="220" y="46" textAnchor="middle" fontSize="16" fontFamily="Georgia,serif" fill="#80565a">
-          Noticing · Thought Bouquet
+          Hoolayah · Thought Bouquet
         </text>
         <text x="220" y="73" textAnchor="middle" fontSize="24" fontFamily="Georgia,serif" fill="#3c6a50">
           {monthText}

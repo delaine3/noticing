@@ -183,7 +183,7 @@ export default function ChatImportReview() {
               ))}
             </select>
             <p className="text-sm text-[var(--ink-soft)]">
-              Noticing can get things wrong. Check each date and detail before saving.
+              Hoolayah can get things wrong. Check each date and detail before saving.
             </p>
             <button type="button" className="text-sm font-semibold text-[var(--leaf-dark)] underline"
               onClick={() => setShowSignals((v) => !v)}>

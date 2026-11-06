@@ -104,7 +104,7 @@ export function getNextActionCopy(
   if (!hasLog(logs, ["Water", "Coffee"])) {
     return {
       title: "Time for a drink?",
-      body: "Have some water if you need it, or tell Noticing about a drink you had.",
+      body: "Have some water if you need it, or tell Hoolayah about a drink you had.",
       href: "/logs/new?type=Water",
       label: "Record a drink",
       benefit: "Fluid intake supports circulation and temperature regulation. Recording amounts helps you see what you actually drank.",

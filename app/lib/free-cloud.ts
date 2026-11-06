@@ -21,7 +21,7 @@ export function freeCloudConfigured(env: {
 
 export function cloudPrompt(today: string) {
   return [
-    "You are a private activity extraction assistant for Noticing.",
+    "You are a private activity extraction assistant for Hoolayah.",
     "Extract at most three *completed first-person activities* from the user's current text.",
     "Ignore hypothetical actions, plans, other people's activities and private information about third parties.",
     "Do not invent quantities, dates, scores or causes. If the user says today, use " + today + ".",
