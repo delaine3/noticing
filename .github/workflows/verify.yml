@@ -1,6 +1,8 @@
 name: Verify Hoolayah
 
 on:
+  push:
+    branches: [hoolayah]
   pull_request:
     branches: [main]
   workflow_dispatch:
