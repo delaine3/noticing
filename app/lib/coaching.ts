@@ -34,7 +34,7 @@ const questions: Record<QuestionKey, AdaptiveQuestion> = {
   thirsty: {
     key: "thirsty",
     prompt: "Are you feeling thirsty?",
-    reason: "Thirst is one signal to check your hydration and fluid needs.",
+    reason: "Thirst can be a useful cue to check your hydration.",
   },
   physical_discomfort: {
     key: "physical_discomfort",
@@ -177,19 +177,19 @@ export function assessHydration(
   const fraction = Math.min(1, total / goal);
   let guidance: string;
   if (fluidRestricted === true) {
-    guidance = "Follow the fluid limit set by your clinician. Hoolayah won't recommend additional fluids.";
+    guidance = "Follow the limit set by your clinician. Hoolayah won't recommend increasing your intake.";
   } else if (total >= goal) {
-    guidance = "You've reached your daily fluid goal. Continue to use thirst and your circumstances as guides.";
+    guidance = "You've met your daily hydration tracking goal. Continue to use thirst and your circumstances as guides.";
   } else if (hour < 11) {
     guidance = "Check your hydration this morning, and keep water available as you go.";
   } else if (hour >= 17 && total < goal * 0.65) {
     guidance = allDrinksLogged
-      ? "Your recorded fluids are below your daily goal this evening. If you have no medical fluid restriction, consider water and sip as needed."
-      : "If this is most of your fluid intake today, consider some water this evening rather than trying to catch up all at once, unless you have a medical fluid restriction.";
+      ? "Your hydration log is below your daily goal this evening. If you have no medical fluid restriction, consider some water and sip as needed."
+      : "If you've logged most of what you've had today, consider some water this evening rather than trying to catch up all at once, unless you have a medical fluid restriction.";
   } else if (total < goal * 0.45 && hour >= 12) {
-    guidance = "Check in with your hydration. If you have no fluid restriction, consider some water and keep it nearby this afternoon.";
+    guidance = "Check in with your hydration. Unless you have a medical fluid restriction, consider some water and keep it nearby this afternoon.";
   } else {
-    guidance = "Keep fluids available throughout the day. Fluid needs can increase during heat, illness or extended exercise.";
+    guidance = "Keep water available throughout the day. Hydration needs may increase during heat, illness or extended exercise.";
   }
   return {
     loggedMl: total, goalMl: goal, fraction,
