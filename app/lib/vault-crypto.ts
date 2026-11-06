@@ -28,7 +28,7 @@ function from64(input: string): Uint8Array {
 export function newSalt(): string {
   return bytesTo64(crypto.getRandomValues(new Uint8Array(16)));
 }
-export async function deriveVaultKey(passphrase: string, record: Pick<VaultKeyRecord, "salt" | "kdf_iterations">): Promise<CryptoKey> {
+export async function deriveVaultKey(passphrase: string, record: Pick<VaultKeyRecord, "salt" | "kdf_iterations">, extractable = false): Promise<CryptoKey> {
   if (!Number.isInteger(record.kdf_iterations) || record.kdf_iterations < VAULT_ITERATIONS ||
     record.kdf_iterations > 2000000) throw new Error("Unsupported vault key settings.");
   const input = await crypto.subtle.importKey("raw", encoder.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
@@ -36,7 +36,7 @@ export async function deriveVaultKey(passphrase: string, record: Pick<VaultKeyRe
     name: "PBKDF2", hash: "SHA-256",
     salt: Uint8Array.from(from64(record.salt)),
     iterations: record.kdf_iterations,
-  }, input, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+  }, input, { name: "AES-GCM", length: 256 }, extractable, ["encrypt", "decrypt"]);
 }
 async function seal(key: CryptoKey, data: string, aad: string): Promise<VaultCipher> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
