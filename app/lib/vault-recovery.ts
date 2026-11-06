@@ -2,7 +2,7 @@
  * includes the passphrase, recovery code, or plaintext diary key.
  * Version 1 vaults remain readable; users may explicitly enable recovery.
  */
-import { createVerifier, deriveVaultKey, newSalt, VAULT_ITERATIONS, verifyVaultKey, type VaultKeyRecord } from "./vault-crypto";
+import { createVerifier, deriveVaultKey, newSalt, VAULT_ITERATIONS, verifyVaultKey, type VaultKeyRecord } from "./vault-crypto.ts";
 
 export type RecoverableVaultRecord = VaultKeyRecord & {
   vault_version?: number | null;
