@@ -1,6 +1,6 @@
 # ChatGPT conversation import: private MVP
 
-## Curated Noticing JSON files (small, already-cleaned imports)
+## Curated Hoolayah JSON files (small, already-cleaned imports)
 
 The importer also accepts a compact `noticing-curated-v1` JSON object. This is intended for records paraphrased or manually reconstructed from earlier conversations, not a manufactured ChatGPT transcript.
 
@@ -28,7 +28,7 @@ Only supported activity types can be imported; the importer rejects invalid date
 Do not upload a curated personal history into the source-code repository. Select it locally through the browser.
 
 ## What this feature does
-A signed-in Noticing user can open `/import/chat`, select a local ChatGPT `conversations.json` export, choose a conversation, review a series of proposed entries, edit each date, type, title, note and quantities, and individually approve up to 25 entries per save. Only those approved summaries and a hashed source identifier are sent to Supabase.
+A signed-in Hoolayah user can open `/import/chat`, select a local ChatGPT `conversations.json` export, choose a conversation, review a series of proposed entries, edit each date, type, title, note and quantities, and individually approve up to 25 entries per save. Only those approved summaries and a hashed source identifier are sent to Supabase.
 
 A short topic-signal panel suggests additional areas of life worth tracking. Those suggestions are not interpreted as confirmed personal facts and are not saved.
 
@@ -43,7 +43,7 @@ A short topic-signal panel suggests additional areas of life worth tracking. Tho
 ## How to use
 1. Export ChatGPT data from your ChatGPT account's Data Controls.
 2. Extract the downloaded ZIP locally; locate `conversations.json`.
-3. Sign in to Noticing and visit `/import/chat`.
+3. Sign in to Hoolayah and visit `/import/chat`.
 4. Select the JSON file. The browser reads it locally, without uploading the transcript.
 5. Pick a conversation. Read the source excerpt beside every proposal.
 6. Confirm that the event happened, correct its **actual** date and data, remove identifying details about other people, and tick Approve.

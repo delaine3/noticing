@@ -1,4 +1,4 @@
-# Noticing 2.0: adaptive coaching + optional private free cloud AI
+# Hoolayah 2.0: adaptive coaching + optional private free cloud AI
 
 ## Product goal
 One practical suggestion in the moment, based on a short voluntary check-in,
@@ -63,7 +63,7 @@ Sources:
 
 The initial 1,800ml setting is a configurable reference, **not** a universal
 prescription. Advice uses time of day. If the user indicates they log all
-drinks and is well below the goal in the evening, Noticing can say so and
+drinks and is well below the goal in the evening, Hoolayah can say so and
 suggest one glass, not a dangerous catch-up volume. If recording is incomplete,
 the app frames the advice conditionally. This is neither diagnosis nor
 medical-grade fluid balance accounting.
@@ -131,7 +131,7 @@ is deliberately **not** used.
   appropriate professional help, not an ordinary productivity recommendation.
 - The Cloudflare privacy agreement includes exceptions for storage when users
   explicitly enable stateful services and other legal/process obligations.
-  Noticing uses ordinary stateless inference, not Gateway caching/logging.
+  Hoolayah uses ordinary stateless inference, not Gateway caching/logging.
 
 ## Test before production merge
 1. Run `npm ci`, `npm run build`, `npm run lint`,

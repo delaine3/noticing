@@ -1,11 +1,11 @@
-# Noticing's personal assistant
+# Hoolayah's personal assistant
 
-The main entry point is now the small **Tell Noticing** popup at the lower-right of signed-in pages. Visiting `/capture` opens the same assistant through the Today page.
+The main entry point is now the small **Tell Hoolayah** popup at the lower-right of signed-in pages. Visiting `/capture` opens the same assistant through the Today page.
 
 ## How it works
 1. Say what happened in plain language: "I drank coffee at 7am."
-2. Noticing extracts a proposed record locally. If a useful detail is missing, it asks within the chat: "About how much coffee was it? You can say skip."
-3. Answer "250 ml", "skip", or correct a time/date. Noticing summarizes the exact record and asks if it should save.
+2. Hoolayah extracts a proposed record locally. If a useful detail is missing, it asks within the chat: "About how much coffee was it? You can say skip."
+3. Answer "250 ml", "skip", or correct a time/date. Hoolayah summarizes the exact record and asks if it should save.
 4. Reply **yes** to save to your private Supabase logs, or **no** to discard it. Open **Adjust details (optional)** to make a correction without typing it in chat. Manual entry is still accessible from the chat and the New log navigation.
 
 ### Simple parsing, free cloud AI, bandwidth and privacy
@@ -14,7 +14,7 @@ The main entry point is now the small **Tell Noticing** popup at the lower-right
 - For unfamiliar language, the only optional language model is **Cloudflare Workers AI**, pinned to a model Cloudflare lists as available on Workers Free. It is disabled until the app owner configures an actual Workers Free account and the user enables cloud interpretation in Coaching settings.
 - Each unrecognized message still requires a **separate permission reply** before that message is sent. The request includes only that text and extraction instructions, not the user's saved logs, check-in history or full conversation.
 - The server enforces an authenticated six-request daily cap per user as well as Cloudflare's Workers Free service quota. Cloudflare's quota fails closed on an actual Free plan. There is no paid fallback or automatic upgrade.
-- If cloud is disabled or unavailable, Noticing asks for a simpler action description. Existing structured logs and ordinary capture continue without cloud.
+- If cloud is disabled or unavailable, Hoolayah asks for a simpler action description. Existing structured logs and ordinary capture continue without cloud.
 - **No record is stored without the user explicitly approving the exact proposal.** Chat messages in the popup are not persisted across page reloads, but confirmed records are saved to Supabase.
 
 ## Night-time sleep flow
