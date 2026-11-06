@@ -13,7 +13,7 @@ export default async function JournalPage({ searchParams }: {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   const cookieStore = await cookies();
-  const zone = cookieStore.get("noticing_timezone")?.value;
+  const zone = cookieStore.get("hoolayah_timezone")?.value;
   const today = dayInTimeZone(zone);
   const query = await searchParams;
   const month = safeMonth(typeof query.month === "string" ? query.month : undefined, today.slice(0, 7));
@@ -68,7 +68,7 @@ export default async function JournalPage({ searchParams }: {
     <main className="min-h-screen px-4 py-8 sm:px-6 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5f8868]">
-          Noticing · Your personal diary
+          Hoolayah · Your personal diary
         </p>
         <h1 className="mt-2 text-4xl font-semibold tracking-tight text-[#284f3b] sm:text-5xl">
           The Thought Garden 🌷

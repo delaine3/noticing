@@ -15,7 +15,7 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, maxDailyInvi
       const now = new Date();
       setHour(now.getHours());
       setNowMs(now.getTime());
-      setDismissed(window.localStorage.getItem("noticing_checkin_dismissed") ===
+      setDismissed(window.localStorage.getItem("hoolayah_checkin_dismissed") ===
         new Date().toLocaleDateString("en-CA"));
     }, 0);
     return () => window.clearTimeout(t);
@@ -52,7 +52,7 @@ export function AdaptiveCheckInInvite({ todayCount, invitesEnabled, maxDailyInvi
         </Link>
         {!pendingReviews ? (
           <button type="button" className="text-sm underline" onClick={() => {
-            window.localStorage.setItem("noticing_checkin_dismissed",
+            window.localStorage.setItem("hoolayah_checkin_dismissed",
               new Date().toLocaleDateString("en-CA"));
             setDismissed(true);
           }}>Not today</button>

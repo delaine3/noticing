@@ -50,7 +50,7 @@ export function TodayCommandCenter({
       <section className="mx-auto max-w-6xl">
         <div className="mb-6">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-green-700">
-            Noticing
+            Hoolayah
           </p>
 
           <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">

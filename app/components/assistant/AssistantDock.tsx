@@ -12,7 +12,7 @@ import { saveCaptureDrafts } from "../../capture/actions";
 import { withOperationTimeout, OperationTimeoutError } from "../../lib/operation-timeout";
 import { validCaptureDate, type CaptureDraft } from "../../lib/capture-types";
 
-type Message = { role: "me" | "noticing"; text: string };
+type Message = { role: "me" | "hoolayah"; text: string };
 type Pending = AssistantPending & { ids: string[] };
 type Stage = "ordinary" | "cloud-permission" | "more-info";
 
@@ -52,7 +52,7 @@ export function AssistantDock() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "noticing", text: "Hi 🌿 What's on your mind? I'll ask before saving anything." },
+    { role: "hoolayah", text: "Hi 🌿 What's on your mind? I'll ask before saving anything." },
   ]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState<Pending | null>(null);
@@ -79,7 +79,7 @@ export function AssistantDock() {
       pathname === "/terms" || pathname === "/community-guidelines" || pathname === "/safety" ||
       pathname === "/account" || pathname === "/settings") return null;
   function reply(text: string) {
-    setMessages((prev) => [...prev, { role: "noticing" as const, text }].slice(-32));
+    setMessages((prev) => [...prev, { role: "hoolayah" as const, text }].slice(-32));
   }
   function typed(text: string) {
     setMessages((prev) => [...prev, { role: "me" as const, text }].slice(-32));
@@ -275,10 +275,10 @@ export function AssistantDock() {
   return (
     <div className="fixed bottom-4 right-4 z-[80] sm:bottom-6 sm:right-6">
       {open ? (
-        <section role="dialog" aria-label="Noticing journal assistant"
+        <section role="dialog" aria-label="Hoolayah journal assistant"
           className="flex h-[min(76vh,620px)] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-[#f8f9f0] shadow-2xl">
           <header className="flex items-center justify-between bg-[#25543d] px-4 py-3 text-white">
-            <div><h2 className="font-semibold">🌿 Noticing</h2><p className="text-xs text-white/80">Your journal</p></div>
+            <div><h2 className="font-semibold">🌿 Hoolayah</h2><p className="text-xs text-white/80">Your journal</p></div>
             <button type="button" aria-label="Close assistant" onClick={() => setOpen(false)}
               className="rounded-lg px-2 py-1 text-xl hover:bg-white/20">×</button>
           </header>
@@ -341,8 +341,8 @@ export function AssistantDock() {
           <form className="border-t border-[var(--border-soft)] bg-white p-3"
             onSubmit={(event) => { event.preventDefault(); void send(); }}>
             <div className="flex items-end gap-2">
-              <label htmlFor="noticing-message" className="sr-only">Tell Noticing what happened</label>
-              <textarea id="noticing-message" rows={2} maxLength={1200}
+              <label htmlFor="hoolayah-message" className="sr-only">Tell Hoolayah what happened</label>
+              <textarea id="hoolayah-message" rows={2} maxLength={1200}
                 value={input} onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -368,9 +368,9 @@ export function AssistantDock() {
           </form>
         </section>
       ) : (
-        <button type="button" onClick={() => setOpen(true)} aria-label="Talk to Noticing"
+        <button type="button" onClick={() => setOpen(true)} aria-label="Talk to Hoolayah"
           className="rounded-full bg-[#25543d] px-5 py-3 font-semibold text-white shadow-xl hover:bg-[#173b29]">
-          🌿 Tell Noticing
+          🌿 Tell Hoolayah
         </button>
       )}
     </div>
