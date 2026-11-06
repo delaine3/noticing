@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { LegalPage } from "../components/LegalPage";
 
-export const metadata = { title: "Privacy Notice | Noticing" };
+export const metadata = { title: "Privacy Notice | Hoolayah" };
 
 export default function PrivacyPage() {
   return (
     <LegalPage title="Privacy notice">
       <p>
-        Noticing is operated by Delaine Abner, based in Eswatini. This notice explains how the
+        Hoolayah is operated by Delaine Abner, based in Eswatini. This notice explains how the
         service handles personal information. For privacy requests or questions, email{" "}
         <a href="mailto:delaineabner3@gmail.com">delaineabner3@gmail.com</a>.
         This notice does not replace any rights you have under applicable law.
@@ -32,12 +32,12 @@ export default function PrivacyPage() {
         is transmitted to Cloudflare for interpretation. Do not include information you do not
         want sent to that provider. Turning this off stops future optional transmissions but
         cannot undo completed processing. ChatGPT JSON imports are parsed in your browser;
-        only records you individually approve are uploaded to your Noticing account.
+        only records you individually approve are uploaded to your Hoolayah account.
         Machine-generated suggestions can be wrong. See the <Link href="/safety">safety notice</Link>.
       </p>
       <h2>Service providers and international transfers</h2>
       <p>
-        Noticing uses Vercel for hosting and Supabase for authentication and database storage.
+        Hoolayah uses Vercel for hosting and Supabase for authentication and database storage.
         Cloudflare is used for optional AI processing when enabled. These providers may process
         data outside Eswatini and your country of residence. We do not sell your journal entries or use them for advertising.
       </p>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
       <h2>Retention</h2>
       <p>
         Saved entries are kept while your account is active unless you delete them. Account
-        removal is intended to erase active Noticing account data. Provider backups, security
+        removal is intended to erase active Hoolayah account data. Provider backups, security
         logs, or legally required records may remain temporarily according to provider schedules
         or applicable law. Account deletion doesn&apos;t immediately remove information from every backup.
       </p>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
       </p>
       <h2>Children and cookies</h2>
       <p>
-        Noticing is intended for adults aged 18 or older, not children. Noticing uses cookies to keep you signed in and remember your timezone.
+        Hoolayah is intended for adults aged 18 or older, not children. Hoolayah uses cookies to keep you signed in and remember your timezone.
         We do not use advertising trackers. Our hosting and security providers may collect
         technical information needed to run the service.
       </p>

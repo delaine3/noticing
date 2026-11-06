@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { LegalPage } from "../components/LegalPage";
 
-export const metadata = { title: "Community Guidelines | Noticing" };
+export const metadata = { title: "Community Guidelines | Hoolayah" };
 
 export default function CommunityGuidelinesPage() {
   return (
     <LegalPage title="Community guidelines">
       <p>
-        Noticing is a private journal, not a public social network.
+        Hoolayah is a private journal, not a public social network.
         Please respect other people&apos;s privacy and use the service responsibly.
       </p>
       <h2>Respect privacy</h2>
@@ -25,7 +25,7 @@ export default function CommunityGuidelinesPage() {
       <h2>Use wellbeing features carefully</h2>
       <p>
         Do not treat automatically generated suggestions as a diagnosis or emergency guidance.
-        Noticing is not monitored for urgent requests. If someone is in immediate danger,
+        Hoolayah is not monitored for urgent requests. If someone is in immediate danger,
         contact local emergency services or an appropriate professional.
       </p>
       <h2>Concerns and enforcement</h2>

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { LegalPage } from "../components/LegalPage";
 
-export const metadata = { title: "Terms of Use | Noticing" };
+export const metadata = { title: "Terms of Use | Hoolayah" };
 
 export default function TermsPage() {
   return (
     <LegalPage title="Terms of use">
       <p>
-        Noticing is a personal journaling and reflection application operated by Delaine Abner
+        Hoolayah is a personal journaling and reflection application operated by Delaine Abner
         from Eswatini. These terms apply when you use the service. Contact{" "}
         <a href="mailto:delaineabner3@gmail.com">delaineabner3@gmail.com</a> about the service.
       </p>
@@ -19,14 +19,14 @@ export default function TermsPage() {
       </p>
       <h2>Your records remain yours</h2>
       <p>
-        You retain rights to text and records you provide. You grant Noticing only the limited
+        You retain rights to text and records you provide. You grant Hoolayah only the limited
         permission needed to store, process, and display that material to provide the service,
         perform operations you authorize, and meet legal obligations. Do not upload material
         that you lack the right to use or that unlawfully exposes another person.
       </p>
       <h2>AI and wellbeing</h2>
       <p>
-        Outputs and insights are informational and may contain mistakes. Noticing is not a
+        Outputs and insights are informational and may contain mistakes. Hoolayah is not a
         therapist, physician, emergency response service, or medical device. It does not
         diagnose, treat, or prevent illness. Do not use it for emergencies, medical decisions,
         or crisis support. Read the <Link href="/safety">wellbeing and safety notice</Link>.
@@ -46,7 +46,7 @@ export default function TermsPage() {
       </p>
       <h2>Responsibility and statutory rights</h2>
       <p>
-        To the extent permitted by applicable law, Noticing is provided without a promise of
+        To the extent permitted by applicable law, Hoolayah is provided without a promise of
         uninterrupted availability or perfect accuracy. Nothing here excludes liability that
         cannot legally be excluded or limits your statutory consumer, privacy, or data-protection
         rights. Specific governing-law, consumer, and dispute rules may apply depending on
