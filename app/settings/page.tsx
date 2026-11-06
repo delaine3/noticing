@@ -22,6 +22,24 @@ export default async function SettingsPage() {
           <p>You can edit or delete individual entries in <Link href="/logs" className="underline">Logs</Link> or <Link href="/journal" className="underline">your journal</Link>.</p>
           <Link href="/coaching/settings" className="secondary-button inline-block">Check-in settings</Link>
         </section>
+        <section className="glass-card space-y-2 p-6">
+          <h2 className="text-xl font-semibold">Your private diary 🔒</h2>
+          <p className="text-sm">
+            Entries created in the locked <Link href="/journal" className="underline">Thought Garden</Link>
+            {" "}are encrypted before being saved online. The people running Hoolayah cannot
+            read the stored writing using their database access.
+          </p>
+          <p className="text-sm">
+            Your diary has its own passphrase, separate from your account password.
+            We never receive or store that passphrase and cannot retrieve, reset, or
+            recover it for you. Keep it safe.
+          </p>
+          <p className="text-xs text-[var(--ink-soft)]">
+            Older unmigrated reflections, activity logs, check-in scores, account information,
+            and assistant messages do not have this protection.
+            {" "}<Link href="/privacy" className="underline">See what stays private.</Link>
+          </p>
+        </section>
         {demo ? (
           <p className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950">
             This is a shared demo account. Export and account deletion are unavailable here.
