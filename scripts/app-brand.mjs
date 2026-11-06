@@ -7,11 +7,14 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
+if (process.env.VERCEL && !process.env.NEXT_PUBLIC_APP_BRAND) {
+  throw new Error("Missing NEXT_PUBLIC_APP_BRAND. Refusing to deploy with a guessed public name.");
+}
 const brand = process.env.NEXT_PUBLIC_APP_BRAND ?? "Hoolayah";
 if (brand !== "Hoolayah" && brand !== "Noticing") {
   throw new Error("NEXT_PUBLIC_APP_BRAND must be Hoolayah or Noticing.");
 }
-if (brand === "Hoolayah") process.exit(0);
+
 
 function visit(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
@@ -31,4 +34,15 @@ function visit(directory) {
     if (updated !== original) writeFileSync(path, updated);
   }
 }
-visit("app");
+if (brand === "Noticing") visit("app");
+
+for (const [file, expected] of [
+  ["app/components/AppNav.tsx", brand],
+  ["app/components/assistant/AssistantDock.tsx", "Tell " + brand],
+  ["app/layout.tsx", 'title: "' + brand + '"'],
+]) {
+  if (!readFileSync(file, "utf8").includes(expected)) {
+    throw new Error("Public branding check failed in " + file);
+  }
+}
+console.log("Verified public app brand: " + brand);
