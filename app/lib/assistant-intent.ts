@@ -65,7 +65,9 @@ export function understandActivity(
   // Simple drink reports must not require cloud AI. Require drink words
   // directly after a drinking verb to avoid treating "had fruit salad with
   // coffee" as a confirmed drink. "Made coffee" is not proof of drinking.
-  const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b/i;
+  // People often omit "I" in chat: "drank 430ml coffee". Accept shorthand
+  // only at the beginning of the message, never from "she drank..." reports.
+  const drinkLead = /\b(?:i\s+(?:have\s+)?(?:just\s+)?(?:had|drank|drunk|finished)|i['’]ve\s+(?:just\s+)?(?:had|drunk|finished))\b|^\s*(?:just\s+)?drank\b/i;
   const drinkPhrase = drinkLead.exec(text);
   const drinkContext = drinkPhrase
     ? text.slice(drinkPhrase.index + drinkPhrase[0].length, drinkPhrase.index + drinkPhrase[0].length + 60) : "";
