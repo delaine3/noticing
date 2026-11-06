@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { LegalPage } from "../components/LegalPage";
 
-export const metadata = { title: "Wellbeing & Safety | Noticing" };
+export const metadata = { title: "Wellbeing & Safety | Hoolayah" };
 
 export default function SafetyPage() {
   return (
     <LegalPage title="Wellbeing and safety">
       <p>
-        Noticing helps you preserve experiences and reflect on your own records. Its prompts,
+        Hoolayah helps you preserve experiences and reflect on your own records. Its prompts,
         check-ins, trends, and optional AI responses are not medical or psychological assessments.
       </p>
       <h2>Not a crisis or clinical service</h2>
       <p>
-        Noticing is not monitored for emergencies and cannot provide emergency intervention.
+        Hoolayah is not monitored for emergencies and cannot provide emergency intervention.
         If you or someone else may be in immediate danger, contact your local emergency
         number, a local crisis service, or a qualified professional now. Do not wait for an
         app response. Health concerns and medication decisions belong with licensed clinicians.

@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({
-      error: "AI didn't respond. No charges were made by Noticing.",
+      error: "AI didn't respond. No charges were made by Hoolayah.",
     }, { status: 502 });
   } finally {
     clearTimeout(timer);

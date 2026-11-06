@@ -8,7 +8,7 @@ import { dayInTimeZone } from "./lib/local-day";
 import { validateCheckIn, type CheckInValues } from "./lib/coaching";
 
 export default async function Home() {
-  const zone = (await cookies()).get("noticing_timezone")?.value;
+  const zone = (await cookies()).get("hoolayah_timezone")?.value;
   const today = dayInTimeZone(zone);
   const supabase = await createSupabaseServerClient();
   const {
