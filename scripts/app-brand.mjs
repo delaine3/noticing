@@ -23,7 +23,11 @@ function visit(directory) {
     if (!entry.isFile() || !/\.(tsx?|jsx?)$/.test(entry.name)) continue;
     const original = readFileSync(path, "utf8");
     // Display name only. Do not alter encryption domains or database identifiers.
-    const updated = original.replaceAll("Hoolayah", brand);
+    // Keep the factual dual-brand disclosure intact on both websites.
+    const updated = original
+      .replaceAll("Noticing and Hoolayah", "__PUBLIC_BRAND_PAIR__")
+      .replaceAll("Hoolayah", brand)
+      .replaceAll("__PUBLIC_BRAND_PAIR__", "Noticing and Hoolayah");
     if (updated !== original) writeFileSync(path, updated);
   }
 }
