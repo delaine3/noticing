@@ -20,7 +20,7 @@ export const quickActions = [
   { label: "Record sleep", href: "/logs/new?type=Sleep" },
   { label: "I woke up", href: "/logs/new?type=Woke%20up" },
   { label: "I ate", href: "/logs/new?type=First%20meal" },
-  { label: "I had a drink", href: "/logs/new?type=Water" },
+  { label: "Log my fluids", href: "/logs/new?type=Water" },
   { label: "I went outside", href: "/logs/new?type=Sunlight" },
   { label: "I moved", href: "/logs/new?type=Movement" },
   { label: "I applied to a job", href: "/logs/new?type=Job%20application" },
@@ -103,11 +103,13 @@ export function getNextActionCopy(
 
   if (!hasLog(logs, ["Water", "Coffee"])) {
     return {
-      title: "Time for a drink?",
-      body: "Have some water if you need it, or tell Hoolayah about a drink you had.",
+      title: "Hydration check" ,
+      body: coaching?.fluidRestricted === true
+        ? "Track your fluids and follow the intake limit advised by your clinician."
+        : "Track the fluids you’ve had today. If you’re thirsty, consider water unless you have a medical fluid restriction.",
       href: "/logs/new?type=Water",
-      label: "Record a drink",
-      benefit: "Fluid intake supports circulation and temperature regulation. Recording amounts helps you see what you actually drank.",
+      label: "Log fluids",
+      benefit: "Recording fluid amounts helps you see how much you’ve had today.",
     };
   }
 
@@ -213,12 +215,12 @@ function getDrinkReport(logs: DailyLog[]): ReportItem {
   const total = getTotalWaterMl(logs);
   const drinks = logs.filter((log) => log.water_amount_ml !== null);
   return {
-    label: "Drinks",
+    label: "Fluids",
     status: drinks.length ? "check" : "neutral",
     emoji: drinks.length ? "📝" : "○",
     message: drinks.length
-      ? drinks.length + " drink entries, " + total + " ml recorded. Includes coffee and other liquids."
-      : "Record a drink to track your fluid goal.",
+      ? drinks.length + (drinks.length === 1 ? " fluid entry, " : " fluid entries, ") + total + " ml recorded. Includes coffee and other liquids."
+      : "Log fluids to track your daily total.",
   };
 }
 
