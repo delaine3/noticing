@@ -38,12 +38,6 @@ function makePending(records: Proposed[], now: Date): Pending {
   };
 }
 
-function confirmation(pending: Pending) {
-  return "I have: " + summarizeRecords(pending.records) + ". Shall I save " +
-    (pending.records.length === 1 ? "it" : "these") +
-    "? Reply “yes”, “no”, or tell me what to correct.";
-}
-
 function isYes(text: string) { return /^(?:yes|y|yeah|yep|sure|save(?: it| them)?|please do|go ahead|okay|ok)[.!\s]*$/i.test(text.trim()); }
 function isNo(text: string) { return /^(?:no|n|cancel|discard|forget it|never mind)[.!\s]*$/i.test(text.trim()); }
 
@@ -89,9 +83,7 @@ export function AssistantDock() {
     setPending(next);
     setStage("ordinary");
     setExpandDetails(false);
-    const question = nextQuestion(next.records);
-    if (question) reply(question.text);
-    else reply(confirmation(next));
+    // The review panel shows any missing detail and the save or discard controls.
   }
 
   async function optionalCloudIsEnabled() {
@@ -160,6 +152,65 @@ export function AssistantDock() {
     }
   }
 
+  async function saveWithButton() {
+    if (!pending || pending.phase !== "confirm" || inFlight.current || busy || saveUncertain) return;
+    inFlight.current = true;
+    const token = ++operation.current;
+    setBusy(true);
+    try {
+      await savePending(pending);
+    } finally {
+      if (token === operation.current) {
+        setBusy(false);
+        inFlight.current = false;
+      }
+    }
+  }
+
+  function discardWithButton() {
+    if (!pending || inFlight.current || busy || saveUncertain) return;
+    setPending(null);
+    setExpandDetails(false);
+    reply("Discarded. Nothing was saved.");
+  }
+
+  function skipWithButton() {
+    if (!pending || pending.phase !== "detail" || inFlight.current || busy || saveUncertain) return;
+    const updated = applyDetailReply(pending, "skip");
+    if (updated) setPending({ ...pending, ...updated });
+  }
+
+  async function answerCloudWithButton(allow: boolean) {
+    if (stage !== "cloud-permission" || inFlight.current || busy || saveUncertain) return;
+    setStage("ordinary");
+    if (!allow) {
+      setUnknownText("");
+      reply("Okay. Try rephrasing it, or add an entry manually.");
+      return;
+    }
+    inFlight.current = true;
+    const token = ++operation.current;
+    setBusy(true);
+    try {
+      const found = await tryConsentedCloud(unknownText);
+      if (token !== operation.current) return;
+      setUnknownText("");
+      if (found?.length) startDrafts(found);
+      else {
+        setStage("more-info");
+        reply("I didn't quite get that. What happened, and when?");
+      }
+    } catch (error) {
+      if (token !== operation.current) return;
+      reply(error instanceof Error ? error.message : "AI couldn't process that message. Please rephrase it.");
+    } finally {
+      if (token === operation.current) {
+        setBusy(false);
+        inFlight.current = false;
+      }
+    }
+  }
+
   async function send() {
     const text = input.trim();
     if (!text || inFlight.current || saveUncertain) return;
@@ -206,7 +257,6 @@ export function AssistantDock() {
           }
           const next: Pending = { ...pending, ...updated };
           setPending(next);
-          reply(confirmation(next));
           return;
         }
         if (isYes(text)) {
@@ -229,9 +279,8 @@ export function AssistantDock() {
           }));
           const changed = { ...pending, records };
           setPending(changed);
-          reply(confirmation(changed));
         } else {
-          reply("I can correct a time, date or drink amount here. Or open “Adjust details” below. Reply “yes” when it's right.");
+          reply("You can correct a time, date or drink amount here, or tap Edit details below.");
         }
         return;
       }
@@ -249,7 +298,7 @@ export function AssistantDock() {
         if (token !== operation.current) return;
         setUnknownText(text);
         setStage("cloud-permission");
-        reply("Would you like me to use Cloudflare AI to understand that message? Only this message will be sent. Reply yes or no.");
+        reply("I didn't recognize that activity. You can use AI for just this message, if you want.");
         return;
       }
 
@@ -269,7 +318,8 @@ export function AssistantDock() {
     operation.current += 1;
     inFlight.current = false;
     setBusy(false);
-    reply("Stopped waiting. No new record was saved.");
+    if (pending?.phase === "confirm") setSaveUncertain(true);
+    reply("Stopped waiting. If a save was in progress, check Logs before trying again.");
   }
 
   return (
