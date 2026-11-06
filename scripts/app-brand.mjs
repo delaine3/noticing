@@ -1,6 +1,6 @@
 /**
  * Both public apps use the same audited source. Vercel sets NEXT_PUBLIC_APP_BRAND
- * separately for Noticing and Hoolayah. The build adjusts display copy only.
+ * separately for Noticing and Sinegugu. The build adjusts display copy only.
  * Never replace lowercase crypto markers, database names, cookies or URLs.
  * This runs in the temporary build workspace, never edits user data.
  */
@@ -10,9 +10,9 @@ import { join } from "node:path";
 if (process.env.VERCEL && !process.env.NEXT_PUBLIC_APP_BRAND) {
   throw new Error("Missing NEXT_PUBLIC_APP_BRAND. Refusing to deploy with a guessed public name.");
 }
-const brand = process.env.NEXT_PUBLIC_APP_BRAND ?? "Hoolayah";
-if (brand !== "Hoolayah" && brand !== "Noticing") {
-  throw new Error("NEXT_PUBLIC_APP_BRAND must be Hoolayah or Noticing.");
+const brand = process.env.NEXT_PUBLIC_APP_BRAND ?? "Sinegugu";
+if (brand !== "Sinegugu" && brand !== "Noticing") {
+  throw new Error("NEXT_PUBLIC_APP_BRAND must be Sinegugu or Noticing.");
 }
 
 
@@ -30,11 +30,11 @@ function visit(directory) {
     const updated = original
       .replaceAll("Noticing and Hoolayah", "__PUBLIC_BRAND_PAIR__")
       .replaceAll("Hoolayah", brand)
-      .replaceAll("__PUBLIC_BRAND_PAIR__", "Noticing and Hoolayah");
+      .replaceAll("__PUBLIC_BRAND_PAIR__", "Noticing and Sinegugu");
     if (updated !== original) writeFileSync(path, updated);
   }
 }
-if (brand === "Noticing") visit("app");
+visit("app");
 
 for (const [file, expected] of [
   ["app/components/AppNav.tsx", brand],
