@@ -338,6 +338,11 @@ export function AssistantDock() {
             </details>
           ) : null}
 
+          <div className="border-t border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
+            This activity assistant is <strong>not end-to-end encrypted</strong>. For private reflections,
+            use <Link href="/journal" onClick={() => setOpen(false)} className="underline">Thought Garden 🔒</Link>.
+            Approved activity records are stored as ordinary logs.
+          </div>
           <form className="border-t border-[var(--border-soft)] bg-white p-3"
             onSubmit={(event) => { event.preventDefault(); void send(); }}>
             <div className="flex items-end gap-2">
