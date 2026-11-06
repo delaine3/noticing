@@ -82,7 +82,7 @@ export function AppNav() {
 
           <div className="leading-tight">
             <span className="block text-base font-semibold tracking-tight text-[var(--ink)]">
-              Noticing
+              Hoolayah
             </span>
             <span className="block text-xs font-medium text-[var(--ink-soft)]">
               your journal

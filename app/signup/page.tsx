@@ -46,6 +46,7 @@ export default function SignupPage() {
         email: email.trim(),
         password,
         options: {
+          emailRedirectTo: window.location.origin + "/login",
           data: {
             full_name: fullName.trim(),
             username: normalizedUsername,
@@ -136,7 +137,7 @@ export default function SignupPage() {
           onChange={(e) => setAccepted(e.target.checked)} required className="mt-1" />
           <span>I have read and agree to the <Link className="underline" href="/terms">Terms</Link>
           {" "}and acknowledge the <Link className="underline" href="/privacy">Privacy Notice</Link>.
-          Noticing is not a medical or crisis service.</span></label>
+          Hoolayah is not a medical or crisis service.</span></label>
         <button type="submit" disabled={!adult || !accepted || busy || submitted} className="submit-button w-full disabled:opacity-50">
           {busy ? "Creating account…" : "Create account"}
         </button>

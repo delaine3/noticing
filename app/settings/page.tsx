@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "../lib/supabase-server";
 import { DeleteAccountForm } from "./DeleteAccountForm";
 
-export const metadata = { title: "Settings | Noticing" };
+export const metadata = { title: "Settings | Hoolayah" };
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {

@@ -89,7 +89,7 @@ export default function LoginPage() {
           <p className="text-sm text-[var(--ink-soft)]">{message}</p>
         ) : null}
         <p className="text-center text-sm text-[var(--ink-soft)]">
-          New to Noticing? <Link href="/signup" className="underline">Create an account</Link>
+          New to Hoolayah? <Link href="/signup" className="underline">Create an account</Link>
         </p>
       </form>
     </main>

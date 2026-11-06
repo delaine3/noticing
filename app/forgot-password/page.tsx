@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
     <main className="page flex min-h-screen items-center justify-center px-4">
       <section className="w-full max-w-md space-y-5 rounded-2xl border border-[var(--border-soft)] bg-white/85 p-6">
         <h1 className="text-2xl font-semibold">Reset your password</h1>
-        <p>Enter the email address you used for Noticing. We&apos;ll email you a link.</p>
+        <p>Enter the email address you used for Hoolayah. We&apos;ll email you a link.</p>
         {!sent ? (
           <form onSubmit={(event) => void requestReset(event)} className="space-y-4">
             <label className="block text-sm font-medium" htmlFor="recovery-email">Email</label>

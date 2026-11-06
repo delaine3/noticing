@@ -6,7 +6,7 @@ import { AssistantDock } from "./components/assistant/AssistantDock";
 import { TimezoneSync } from "./components/TimezoneSync";
 
 export const metadata: Metadata = {
-  title: "Noticing",
+  title: "Hoolayah",
   description: "A personal tracker for patterns, care, and daily evidence.",
 };
 
