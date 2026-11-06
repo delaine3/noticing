@@ -1,0 +1,33 @@
+name: Sync verified features to Noticing
+
+on:
+  workflow_run:
+    workflows: ["Verify both app brands"]
+    types: [completed]
+    branches: [hoolayah]
+
+permissions:
+  contents: write
+
+jobs:
+  sync-main:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: sync-public-brands
+      cancel-in-progress: false
+    steps:
+      - name: Checkout exact verified commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Only fast-forward Noticing to the verified version
+        env:
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git merge-base --is-ancestor origin/main "$VERIFIED_SHA"
+          git push origin "$VERIFIED_SHA:refs/heads/main"
