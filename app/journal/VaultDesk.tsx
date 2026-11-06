@@ -179,7 +179,7 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
       if (error) throw new Error("Could not save encrypted entry.");
       setEditingId(null); setTitle("A thought from today"); setBody(""); setEntryDate(today); setDraft(false);
       await load(userId, key);
-      setNotice("Saved. Supabase received only encrypted text.");
+      setNotice("Saved. Your words were locked on this device before being stored online.");
     } catch(e) { setNotice(asMessage(e)); }
     finally { setBusy(false); }
   }
@@ -282,9 +282,10 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5f8868]">Hoolayah · Private diary</p>
         <h1 className="text-4xl font-semibold text-[#284f3b] sm:text-5xl">The Thought Garden 🌷</h1>
         <p className="max-w-3xl text-sm text-[#556a59]">
-          Your diary is locked on this device before it is stored online. We do not receive your
-          vault passphrase. The people running Hoolayah cannot read your encrypted words by opening
-          the stored records. Dates and whether an entry is saved remain visible.
+          When you save a Thought Garden entry, your device locks its words before sending it to
+          online storage. The people running Hoolayah cannot read the protected writing just by
+          opening the saved records. Only you have your diary passphrase. We can still see basic
+          details, such as when an entry was written.
         </p>
         <div className="flex flex-wrap gap-3"><Link href="/" className="secondary-button">Today</Link>
           <Link href="/check-in" className="secondary-button">Check-in</Link>
@@ -293,10 +294,10 @@ export function VaultDesk({ today, initialMonth }: { today: string; initialMonth
         {notice ? <p role="status" className="rounded-xl border border-[#cbd9c5] bg-white p-4 text-sm">{notice}</p> : null}
         <section aria-labelledby="how-your-diary-is-protected" className="rounded-2xl border border-[#cbd9c5] bg-white/85 p-5 space-y-3 text-sm">
           <h2 id="how-your-diary-is-protected" className="text-lg font-semibold">Who can read my diary? 🔒</h2>
-          <p><strong>Your words stay private:</strong> New entries in Thought Garden are scrambled on your device before they are saved. The people who run Hoolayah, including its owner, cannot read those stored entries through their database access. You unlock them with your own vault passphrase.</p>
-          <p><strong>Can you recover my passphrase?</strong> No. We do not receive or store it, and we cannot reset it or retrieve your encrypted words if you lose it. Keep a safe copy.</p>
-          <p><strong>What is not covered?</strong> Older diary entries are not protected until you move them into the vault. Check-in ratings, everyday logs, account details and messages to the activity assistant are not encrypted this way. Dates and other basic details about locked entries remain visible.</p>
-          <p className="text-xs text-[#5f6f62]">This protects stored diary text, not a compromised device or harmful code sent by a website update. Read our <Link href="/privacy" className="underline">privacy notice</Link> for the limits.</p>
+          <p><strong>Can Hoolayah's owner read my diary?</strong> Not by opening the saved records. Your new Thought Garden entries are locked on your device first. We can see that an entry exists, but its title and words are unreadable without the secret that unlocks them.</p>
+          <p><strong>Can you recover my diary password or key?</strong> No. Your separate diary passphrase is not sent to us, and we do not keep the unlocking key. We cannot look it up, reset it, or recover your locked entries if you forget it. Keep a safe copy, ideally in a password manager.</p>
+          <p><strong>Is everything in Hoolayah locked this way?</strong> No. This protection covers new Thought Garden entries and older entries you move into it. We can still access account details, everyday logs, check-in scores, assistant messages, and basic details such as entry dates. Older diary writing stays readable until you protect it.</p>
+          <p className="text-xs text-[#5f6f62]">A compromised device or harmful website update could still expose your writing when you unlock it. Read our <Link href="/privacy" className="underline">privacy notice</Link> for the limits.</p>
         </section>
         {loading ? <p>Loading your vault…</p> : !unlocked ? (
           <section className="glass-card max-w-xl space-y-4 p-6">
