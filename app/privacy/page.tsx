@@ -66,6 +66,13 @@ export default function PrivacyPage() {
         only records you individually approve are uploaded to your Hoolayah account.
         Machine-generated suggestions can be wrong. See the <Link href="/safety">safety notice</Link>.
       </p>
+      <h2>Noticing and Hoolayah</h2>
+      <p>
+        Noticing and Hoolayah are two names for the same underlying service.
+        They use the same accounts and online storage, so records you save in one
+        may also appear in the other. Your private Thought Garden uses the same
+        personal diary passphrase and recovery settings on both websites.
+      </p>
       <h2>Service providers and international transfers</h2>
       <p>
         Hoolayah uses outside companies to run the website and store information: Vercel hosts
