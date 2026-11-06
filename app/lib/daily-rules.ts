@@ -20,7 +20,7 @@ export const quickActions = [
   { label: "Record sleep", href: "/logs/new?type=Sleep" },
   { label: "I woke up", href: "/logs/new?type=Woke%20up" },
   { label: "I ate", href: "/logs/new?type=First%20meal" },
-  { label: "Log my fluids", href: "/logs/new?type=Water" },
+  { label: "Log hydration", href: "/logs/new?type=Water" },
   { label: "I went outside", href: "/logs/new?type=Sunlight" },
   { label: "I moved", href: "/logs/new?type=Movement" },
   { label: "I applied to a job", href: "/logs/new?type=Job%20application" },
@@ -105,11 +105,11 @@ export function getNextActionCopy(
     return {
       title: "Hydration check" ,
       body: coaching?.fluidRestricted === true
-        ? "Track your fluids and follow the intake limit advised by your clinician."
-        : "Track the fluids you’ve had today. If you’re thirsty, consider water unless you have a medical fluid restriction.",
+        ? "Track what you have and follow the intake limit advised by your clinician."
+        : "Track water and other beverages today. If you’re thirsty, consider water unless you have a medical fluid restriction.",
       href: "/logs/new?type=Water",
-      label: "Log fluids",
-      benefit: "Recording fluid amounts helps you see how much you’ve had today.",
+      label: "Log hydration",
+      benefit: "Recording amounts helps you review your hydration habits.",
     };
   }
 
@@ -215,12 +215,12 @@ function getDrinkReport(logs: DailyLog[]): ReportItem {
   const total = getTotalWaterMl(logs);
   const drinks = logs.filter((log) => log.water_amount_ml !== null);
   return {
-    label: "Fluids",
+    label: "Hydration",
     status: drinks.length ? "check" : "neutral",
     emoji: drinks.length ? "📝" : "○",
     message: drinks.length
-      ? drinks.length + (drinks.length === 1 ? " fluid entry, " : " fluid entries, ") + total + " ml recorded. Includes coffee and other liquids."
-      : "Log fluids to track your daily total.",
+      ? drinks.length + (drinks.length === 1 ? " entry, " : " entries, ") + total + " ml recorded. Includes coffee and other beverages."
+      : "Log water or other beverages to track your daily total.",
   };
 }
 
