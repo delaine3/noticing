@@ -48,13 +48,13 @@ export async function GET() {
       exported_at: new Date().toISOString(),
       account: { id: user.id, email: user.email, created_at: user.created_at },
       records, unavailable_tables: unavailable,
-      note: "This export covers listed Noticing tables; provider metadata and backups are not included.",
+      note: "This export covers listed Hoolayah tables; provider metadata and backups are not included.",
     }, null, 2);
     return new Response(payload, {
       status: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="noticing-data.json"',
+        "Content-Disposition": 'attachment; filename="hoolayah-data.json"',
         "Cache-Control": "private, no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",
       },

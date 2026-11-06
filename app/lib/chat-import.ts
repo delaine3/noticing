@@ -164,7 +164,7 @@ function parseCuratedRecords(input: Dict): ImportConversation[] {
   // activities, not a reconstructed or fabricated ChatGPT transcript.
   const entries = input.records;
   if (!Array.isArray(entries) || entries.length > 500) {
-    throw new Error("Curated Noticing files need a records array with 500 or fewer entries.");
+    throw new Error("Curated Hoolayah files need a records array with 500 or fewer entries.");
   }
   const allowed = new Set<string>(IMPORT_TYPES.map((type) => type.value));
   const areas: Record<string, { title: string; proposals: ImportProposal[] }> = {
@@ -191,7 +191,7 @@ function parseCuratedRecords(input: Dict): ImportConversation[] {
         !/^\d{4}-\d{2}-\d{2}$/.test(eventDate) ||
         !title.trim() || title.length > 120 ||
         notes.length > 1500) {
-      throw new Error("Invalid curated Noticing record at position " + (index + 1) + ".");
+      throw new Error("Invalid curated Hoolayah record at position " + (index + 1) + ".");
     }
     const date = new Date(eventDate + "T12:00:00Z");
     if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== eventDate) {
@@ -234,7 +234,7 @@ export function parseChatExport(input: unknown): ImportConversation[] {
   if (structured && structured.format === "noticing-curated-v1") {
     return parseCuratedRecords(structured);
   }
-  if (!Array.isArray(input)) throw new Error("Expected a ChatGPT conversations.json array or a Noticing curated-v1 JSON file.");
+  if (!Array.isArray(input)) throw new Error("Expected a ChatGPT conversations.json array or a Hoolayah curated-v1 JSON file.");
   if (input.length > 100000) throw new Error("This export is too large for an in-browser preview.");
   const result: ImportConversation[] = [];
   for (const [index, value] of input.entries()) {

@@ -4,7 +4,7 @@
  * stable duplicate-detection identifiers.
  *
  * Do not put arbitrary user text in the metadata viewer: recognize only
- * the markers Noticing itself writes.
+ * the markers Hoolayah itself writes.
  */
 const IMPORT_MARKER = /\[noticing-(?:import:[a-f0-9]{64}|chat:[a-f0-9-]{36})\]/gi;
 const IMPORT_LABEL = /Approved from (?:reviewed import|ChatGPT export)\./gi;

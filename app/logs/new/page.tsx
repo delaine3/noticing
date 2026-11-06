@@ -172,7 +172,7 @@ export default async function NewLogPage({ searchParams }: NewLogPageProps) {
     .slice(0, 10)
     .map(([title]) => title);
 
-  const today = dayInTimeZone((await cookies()).get("noticing_timezone")?.value);
+  const today = dayInTimeZone((await cookies()).get("hoolayah_timezone")?.value);
 
   return (
     <main className="min-h-screen px-6 py-10 text-black-950">
