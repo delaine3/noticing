@@ -5,14 +5,14 @@ The main entry point is now the small **Tell Hoolayah** popup at the lower-right
 ## How it works
 1. Say what happened in plain language: "I drank coffee at 7am."
 2. Hoolayah extracts a proposed record locally. If a useful detail is missing, it asks within the chat: "About how much coffee was it? You can say skip."
-3. Answer "250 ml", "skip", or correct a time/date. Hoolayah summarizes the exact record and asks if it should save.
-4. Reply **yes** to save to your private Supabase logs, or **no** to discard it. Open **Adjust details (optional)** to make a correction without typing it in chat. Manual entry is still accessible from the chat and the New log navigation.
+3. Enter "250 ml", or tap **Skip this detail** if the amount is unknown. Review the proposed record in the compact panel beneath the conversation.
+4. Tap **Save entry** or **Discard** without typing yes/no. Tap **Edit details** to correct the amount, date or time. Nothing is saved until Save is pressed. Manual entry remains available.
 
 ### Simple parsing, free cloud AI, bandwidth and privacy
 - The **zero-network deterministic parser** handles plain first-person reports first. Examples include "I just drank 500ml water", "I just ate a fruit salad", "I had yoghurt at 7am", walks, garden care and bedtime/wake times.
 - No on-device language model, GPU runtime, WebLLM dependency or multi-gigabyte model download remains.
 - For unfamiliar language, the only optional language model is **Cloudflare Workers AI**, pinned to a model Cloudflare lists as available on Workers Free. It is disabled until the app owner configures an actual Workers Free account and the user enables cloud interpretation in Coaching settings.
-- Each unrecognized message still requires a **separate permission reply** before that message is sent. The request includes only that text and extraction instructions, not the user's saved logs, check-in history or full conversation.
+- Each unrecognized message still requires **one-tap consent** via **Use AI once** before that message is sent. **Not now** declines. The request includes only that text and extraction instructions, not the user's saved logs, check-in history or full conversation.
 - The server enforces an authenticated six-request daily cap per user as well as Cloudflare's Workers Free service quota. Cloudflare's quota fails closed on an actual Free plan. There is no paid fallback or automatic upgrade.
 - If cloud is disabled or unavailable, Hoolayah asks for a simpler action description. Existing structured logs and ordinary capture continue without cloud.
 - **No record is stored without the user explicitly approving the exact proposal.** Chat messages in the popup are not persisted across page reloads, but confirmed records are saved to Supabase.
@@ -35,7 +35,7 @@ The app stores the browser's **time zone** in a first-party cookie to make Today
 CI executes `npm ci`, `npm run build`, `node --experimental-strip-types --test tests/*.test.mjs`, and `npm run lint`.
 
 Manual browser checks before merge:
-- "I just drank 500ml water" → Water 500ml proposed → confirm → "yes" → Logs. No cloud call.
+- "I just drank 500ml water" → Water 500ml proposed → **Save entry** button → Logs. No cloud call.
 - "I just ate a fruit salad" → Meal "Ate a fruit salad" proposed. No cloud call.
 - "I had a fruit salad for lunch" and "I ate yoghurt at 7am" → one Meal each, with correct time where stated.
 - "I just ate a fruit salad and drank 500ml water" → two independently reviewable records.
