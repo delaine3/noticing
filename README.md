@@ -16,10 +16,11 @@ Hoolayah is built around a simple personal rule:
 
 ---
 
-## Live Demo at:
-https://hoolayah.vercel.app/
+## Planned deployment
 
-The hosted app is authentication-protected because user logs are private.
+Hoolayah is being prepared for a separate Vercel deployment. Do not assume `hoolayah.vercel.app` is live until the deployment is verified.
+
+The application requires sign-in because personal records are private.
 
 For testing, create your own account. Do not use a shared demo account for private reflections.
 
