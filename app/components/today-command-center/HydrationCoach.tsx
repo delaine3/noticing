@@ -38,7 +38,7 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
         ) : <p className="text-sm text-[var(--ink-soft)]">Your doctor&apos;s fluid limit</p>}
       </div>
       {fluidRestricted !== true ? (
-        <div role="progressbar" aria-label="Daily drink goal progress" aria-valuemin={0}
+        <div role="progressbar" aria-label="Daily fluid intake progress" aria-valuemin={0}
           aria-valuemax={assessment.goalMl} aria-valuenow={Math.min(assessment.loggedMl, assessment.goalMl)}
           className="mt-4 h-3 overflow-hidden rounded-full bg-[#e3e9df]">
           <div className="h-full rounded-full bg-[#37869d] transition-all"
@@ -48,7 +48,7 @@ export function HydrationCoach({ totalMl, fluidGoalMl, fluidRestricted, allDrink
       <p className="mt-3 text-sm leading-6">{assessment.guidance}</p>
       {assessment.caution ? <p className="mt-2 text-xs text-[var(--ink-soft)]">{assessment.caution}</p> : null}
       <div className="mt-4 flex flex-wrap gap-3">
-        <Link href="/logs/new?type=Water" className="secondary-button">Record a drink</Link>
+        <Link href="/logs/new?type=Water" className="secondary-button">Log fluids</Link>
         <Link href="/coaching/settings" className="text-sm font-semibold underline">Adjust goal</Link>
       </div>
     </section>
