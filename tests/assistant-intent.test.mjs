@@ -29,6 +29,27 @@ test("explicit volume and time need no extra question", () => {
   assert.equal(nextQuestion([coffee]), null);
 });
 
+test("short drink messages work without a pronoun or cloud AI", () => {
+  for (const input of [
+    "drank 430ml coffee",
+    "Drank 430 ml of coffee",
+    "just drank 430ml coffee",
+    "drank 0.43l coffee",
+  ]) {
+    const records = understandActivity(input, now, fallback);
+    assert.equal(records.length, 1, input);
+    assert.equal(records[0].log_type, "Coffee", input);
+    assert.equal(records[0].water_amount_ml, 430, input);
+    assert.equal(nextQuestion(records), null, input);
+  }
+});
+
+test("short drink messages do not falsely log someone else's drink", () => {
+  for (const input of ["She drank 430ml coffee", "My friend drank 430ml coffee", "What if I drank 430ml coffee?"]) {
+    assert.equal(understandActivity(input, now, fallback).length, 0, input);
+  }
+});
+
 test("going to bed is not falsely recorded as actual sleep", () => {
   const [bedtime] = understandActivity("I'm going to bed now", now, fallback);
   assert.equal(bedtime.log_type, "Bedtime");
