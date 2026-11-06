@@ -25,14 +25,16 @@ export default async function SettingsPage() {
         <section className="glass-card space-y-2 p-6">
           <h2 className="text-xl font-semibold">Your private diary 🔒</h2>
           <p className="text-sm">
-            Entries created in the locked <Link href="/journal" className="underline">Thought Garden</Link>
-            {" "}are encrypted before being saved online. The people running Hoolayah cannot
-            read the stored writing using their database access.
+            Entries you save in the <Link href="/journal" className="underline">Thought Garden</Link>
+            {" "}are locked on your device before being stored online. We can access saved records,
+            but neither the owner nor the people running Hoolayah can read the protected words
+            simply by opening those records.
           </p>
           <p className="text-sm">
-            Your diary has its own passphrase, separate from your account password.
-            We never receive or store that passphrase and cannot retrieve, reset, or
-            recover it for you. Keep it safe.
+            Your diary password is separate from your sign-in password. It is not sent to us,
+            and we do not keep a copy of the key needed to unlock your writing.
+            We cannot find or reset your diary password, or recover locked entries if you lose it.
+            Keep it somewhere safe.
           </p>
           <p className="text-xs text-[var(--ink-soft)]">
             Older unmigrated reflections, activity logs, check-in scores, account information,
