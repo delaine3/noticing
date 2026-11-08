@@ -44,11 +44,11 @@ test("hydration at 500ml late in the day produces useful advice", () => {
   assert.equal(status.loggedMl, 500);
   assert.ok(status.fraction < 0.3);
   assert.match(status.guidance, /below your daily goal/i);
-  assert.match(status.guidance, /glass of water/i);
+  assert.match(status.guidance, /consider some water and sip as needed/i);
 });
 test("early hydration is encouraged without treating 500ml as a failure", () => {
   const status = assessHydration(500, 1800, 9, false, false);
-  assert.match(status.guidance, /Start the day/i);
+  assert.match(status.guidance, /Check your hydration this morning/i);
 });
 test("fluid restrictions suppress drinking recommendations", () => {
   const status = assessHydration(500, 1800, 19, true, true);
@@ -57,7 +57,7 @@ test("fluid restrictions suppress drinking recommendations", () => {
 });
 test("a low value with incomplete records uses conditional advice", () => {
   const status = assessHydration(500, 1800, 19, false, false);
-  assert.match(status.guidance, /If this is most/i);
+  assert.match(status.guidance, /If you've logged most/i);
 });
 test("check-in validation rejects invented values and excessive private text", () => {
   assert.equal(validateCheckIn(check()), true);
