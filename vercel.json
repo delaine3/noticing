@@ -3,7 +3,8 @@
   "git": {
     "deploymentEnabled": {
       "**": false,
-      "hoolayah": true
+      "hoolayah": true,
+      "main": true
     }
   }
 }
